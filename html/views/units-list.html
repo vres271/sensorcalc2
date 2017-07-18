@@ -1,0 +1,50 @@
+<nav class="navbar navbar-fluide navbar-fixed-top" style="margin-top: 50px; background: white;">
+	<div class="container">
+		<form action="" class="navbar-form ">
+			<div class="form-group">
+				<input ng-model="filter.nm" class="form-control" type="text" name="" placeholder="Filter by Name">
+			</div>
+			<div class="form-group">
+				<input ng-model="filter.uid" class="form-control" type="text" name="" placeholder="Uid">
+			</div>
+			<div class="form-group">
+				<input ng-model="filter.ph" class="form-control" type="text" name="" placeholder="Ph">
+			</div>
+			<div class="form-group ">
+				<label  for="limit">Limit:</label>
+				<select ng-model="limit" ng-options="value for value in [20,50,100,250,500,1000,10000]" class="form-control" name="" placeholder="Limit" id="limit"></select>
+			</div>
+		</form>
+	</div>
+</nav>
+<br>
+<div class="container">
+	<br>
+	<br>
+	<div class="table-responsive">
+		<table class="table table-stripped" id="items-table">
+			<thead>
+                <tr>
+                  <th width="50px">#</th>
+                  <th>Name</th>
+                  <th>UID</th>
+                  <th>Phone</th>
+                </tr>
+          	</thead>
+          	<tbody>						
+				<tr ng-repeat="item in units.items | filter: filter | orderBy : ['crt','nm'] | limitTo : limit : 0 as items_result" class="item-row">
+					<td>{{$index+1}}</td>
+					<td><a href="">{{item.nm}}</a></td>
+					<td>{{item.uid}}</td>
+					<td>{{item.ph}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<nav ng-hide="!((units.items.length > limit)&&(items_result.length === limit))" class="text-center" id="paginator">
+		<ul class="pagination">
+			<li><a href="" ng-click="limit = limit + limit">Ещё {{limit}} строк<br><i class="fa fa-chevron-down"></a></i></li>
+		</ul>
+	</nav>
+	<br>
+</div>
