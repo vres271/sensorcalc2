@@ -15,3 +15,12 @@
 	margin-top: 200px;
 	font-size: 100px;
 }
+.green{
+	color: rgba(88, 208, 118, 0.69);
+}
+.red{
+	color: rgba(202, 93, 68, 0.69);
+}
+.yellow{
+	color: rgba(225, 177, 45, 0.66);
+}

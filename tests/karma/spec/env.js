@@ -1,3 +1,5 @@
+var test_mode = true;
+
 var wpath = 'https://hst-api.wialon.com/wialon/ajax.html?svc=';
 
 var saved_sid = 's4459f6668f8bd3cc48d556a53f1dd12';

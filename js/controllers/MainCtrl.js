@@ -1,4 +1,4 @@
-Main.controller('MainCtrl',['$scope', 'Ready','$http', 'Wialon', function($scope, Ready, $http, Wialon) {
+Main.controller('MainCtrl', function($scope, Ready, $http, $interval, Wialon) {
 	
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
@@ -16,5 +16,10 @@ Main.controller('MainCtrl',['$scope', 'Ready','$http', 'Wialon', function($scope
 			location.hash = '';
 		});
 	}
+
+	$interval(function() {
+		$scope.now = parseInt(new Date().getTime()/1000);
+	},1000);
+
 	
-}]);
+});

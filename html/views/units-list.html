@@ -10,8 +10,13 @@
 			<div class="form-group">
 				<input ng-model="filter.ph" class="form-control" type="text" name="" placeholder="Ph">
 			</div>
+			<div class="form-group">
+				<input ng-model="custom_filter.mint" class="form-control" type="text" name="" placeholder="min t">
+			</div>
+			<div class="form-group">
+				<input ng-model="custom_filter.maxt" class="form-control" type="text" name="" placeholder="max t">
+			</div>
 			<div class="form-group ">
-				<label  for="limit">Limit:</label>
 				<select ng-model="limit" ng-options="value for value in [20,50,100,250,500,1000,10000]" class="form-control" name="" placeholder="Limit" id="limit"></select>
 			</div>
 		</form>
@@ -29,14 +34,18 @@
                   <th>Name</th>
                   <th>UID</th>
                   <th>Phone</th>
+                  <th colspan="100">Msg</th>
                 </tr>
           	</thead>
-          	<tbody>						
-				<tr ng-repeat="item in units.items | filter: filter | orderBy : ['crt','nm'] | limitTo : limit : 0 as items_result" class="item-row">
+          	<tbody>
+				<tr ng-repeat="item in units.items | filter: filter | UnitsFilter: custom_filter : now | orderBy : orderby | limitTo : limit : 0 as items_result" class="item-row">
 					<td>{{$index+1}}</td>
 					<td><a href="">{{item.nm}}</a></td>
 					<td>{{item.uid}}</td>
 					<td>{{item.ph}}</td>
+					<td>{{(now-item.lmsg.t) | UTtoTime}}</td>
+					<td>{{item.lmsg.pos.s}}</td>
+					<td><i class="fa fa-circle {{['green','red'][1*((now-item.lmsg.t)>300)]}}"></i></td>
 				</tr>
 			</tbody>
 		</table>

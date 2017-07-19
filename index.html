@@ -21,6 +21,7 @@
 				<li><a href="" ng-href="#options"  >Options</a></li>
 			</ul>
 	        <ul ng-hide="!wialon.auth" class="nav navbar-nav navbar-right">
+	          <li><a href="#">{{now*1000|date:'yyyy-MM-dd HH:mm:ss'}}</a></li>	
 		      <li><a href="#" id="username"><span class="glyphicon glyphicon-user"></span> {{wialon.user.nm}}</a></li>
 		      <li><a ng-click="logout()" href="#" id="logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
 	    	</ul>
@@ -45,6 +46,7 @@
 	<script src="js/route.js"></script>
 	<!-- Services -->
 	<script src="js/services/GurtamWialon.js"></script>
+	<script src="js/services/State.js"></script>
 	<script src="js/services/Wialon.js"></script>
 	<script src="js/services/Ready.js"></script>
 	<script src="js/services/Units.js"></script>
