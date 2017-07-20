@@ -15,10 +15,16 @@ Main.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
                 '': {templateUrl: 'html/views/login.html', controller: 'LoginCtrl'}
             }
         })
-    	.state('units-list', {
+        .state('units-list', {
             url: '/units'
             ,views: {
                 '': {templateUrl: 'html/views/units-list.html', controller: 'UnitsListCtrl'}
+            }
+        })
+    	.state('unit', {
+            url: '/unit/:id'
+            ,views: {
+                '': {templateUrl: 'html/views/unit.html', controller: 'UnitCtrl'}
             }
         })
     	.state('options', {

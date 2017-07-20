@@ -35,7 +35,7 @@ describe('UnitsListCtrl with empty items in Units Service', function() {
 	}));
  	 
  	it('Units list', function() {
- 		expect(scope.filters).toEqual({});
+ 		expect(scope.filter).toEqual({});
  		expect(Units.items.length).toEqual(0);
 
 		httpBackend.flush();

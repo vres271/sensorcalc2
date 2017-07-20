@@ -1,0 +1,57 @@
+<br>
+<div class="container">
+	<h3>Main</h3>
+	<div class="row">
+		<div class="col-sm-6">
+			<form class="form-horizontal" action="">
+			    <div class="form-group">
+			      <label class="control-label col-sm-3" for="nm">Unit Name:</label>
+			      <div class="col-sm-9">
+			        <input ng-model="item.nm" type="text" class="form-control" id="nm" placeholder="" name="nm">
+			      </div>
+			    </div>
+			    <div class="form-group">
+			      <label class="control-label col-sm-3" for="uid">Uniq ID:</label>
+			      <div class="col-sm-9">
+			        <input ng-model="item.uid" type="text" class="form-control" id="uid" placeholder="" name="uid">
+			      </div>
+			    </div>
+			    <div class="form-group">
+			      <label class="control-label col-sm-3" for="ph">Phone:</label>
+			      <div class="col-sm-9">
+			        <input ng-model="item.ph" type="text" class="form-control" id="ph" placeholder="" name="ph">
+			      </div>
+			    </div>
+			    <div class="form-group">
+			      <label class="control-label col-sm-3" for="hw">Hardware Type:</label>
+			      <div class="col-sm-9">
+			        <input ng-model="item.hw" type="text" class="form-control" id="hw" placeholder="" name="hw">
+			      </div>
+			    </div>
+			</form>
+		</div>
+		<div class="col-sm-6 text-center">
+			<p>Last Message: {{(now.ut-short_item.lmsg.t) | UTtoTime}}</p>
+			<p><i class="fa fa-circle {{['green','red'][1*((now.ut-short_item.lmsg.t)>300)]}} fa-4x"></i></p>
+			<p> {{short_item.lmsg.pos.s}} km/h</p>
+			<p><a target="_blank" href="{{'https://yandex.ru/maps/11147/engels/?text='+short_item.lmsg.pos.y+','+short_item.lmsg.pos.x}}">{{short_item.lmsg.pos.y}},{{short_item.lmsg.pos.x}} </a>({{short_item.lmsg.pos.sc}})</p>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="table-responsive">
+		<h3>Sensors</h3>
+		<table class="table table-stripped">
+			<tbody>
+				<tr ng-repeat="sensor in item.sens">
+					<td>{{$index+1}}</td>
+					<td>{{sensor.n}}</td>
+					<td>{{sensor.p}}</td>
+					<td>{{short_item.lmsg.p[sensor.p]}}</td>
+					<td>{{sensor | ParamToSensorValue : short_item.lmsg}}</td>
+					<td>{{sensor.m}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

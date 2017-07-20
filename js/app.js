@@ -58,3 +58,24 @@ Main.filter('UTtoTime',function(){
 		return '';
  	}
 })
+
+Main.filter('ParamToSensorValue',function(){
+	return function (sensor,msg) {
+		if(!sensor || !msg) return '';
+		if(!msg.p) return '';
+		var param_name = sensor.p;
+		if(msg.p[param_name] === undefined) return '';
+		var last_row = 0;
+		var val = msg.p[param_name];
+		for(var key in sensor.tbl) {
+			var row = sensor.tbl[key];
+			if(val) {
+				if(val <= row.x) {
+					return Math.round((last_row.a * val + 1*last_row.b)*100)/100 //a*x+b
+				}
+			}
+			last_row = row;
+		}
+		return val;
+ 	}
+})

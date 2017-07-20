@@ -12,6 +12,13 @@ Main.service('Units', function(Wialon){
     	});
 	}
 
+	_s.getById = function(id, callback) {
+		var params = {"id":1*id,"flags":"4294967295"}
+    	Wialon.request('core/search_item', params, function(data) {
+    		callback(data.item);
+    	});
+	}
+
 	_s.addToSession = function() {
 		var params = {"spec":[{"type":"type","data":'avl_unit',"flags":1025,"mode":0}]};
 		// var params = {"spec":[{"type":"col","data":[528621],"flags":1025,"mode":0}]};

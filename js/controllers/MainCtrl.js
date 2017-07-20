@@ -1,14 +1,17 @@
-Main.controller('MainCtrl', function($scope, Ready, $http, $interval, Wialon) {
+Main.controller('MainCtrl', function($scope, Ready, $http, $interval, WaitFor, State, Wialon, Units) {
 	
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
-	
-	//Wialon.turnOnTestMode();
+	$scope.now = State.now;
 
 	var sid_from_storage = sessionStorage.getItem('sid');
 	if(sid_from_storage) { 
 		Wialon.duplicate(false,sid_from_storage);
 	}
+
+	WaitFor(function() {return Wialon.auth;} ,function() {
+		if(Units.items.length===0) Units.get();
+	});
 
 	$scope.logout = function() {
 		Ready.wialon = false;
@@ -16,10 +19,5 @@ Main.controller('MainCtrl', function($scope, Ready, $http, $interval, Wialon) {
 			location.hash = '';
 		});
 	}
-
-	$interval(function() {
-		$scope.now = parseInt(new Date().getTime()/1000);
-	},1000);
-
 	
 });
