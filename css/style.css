@@ -27,3 +27,29 @@
 .grey{
 	color: rgba(0, 0, 0, 0.3);
 }
+.lmsg-indicator.red{
+	display: inline-block;
+	width: 85px;
+	height: 85px;
+	border-radius: 50%;
+	border: 0px solid rgba(202, 93, 68, 0.69);
+    background: rgba(202, 93, 68, 0.50);
+	transition: background 0.5s, border 0.5s;
+}
+.lmsg-indicator.green{
+	display: inline-block;
+	width: 85px;
+	height: 85px;
+	border-radius: 50%;
+	border: 0px solid rgba(88, 208, 118, 0.69);
+    background: rgba(88, 208, 118, 0.50);
+	transition: background 0.5s, border 0.5s;
+}
+.lmsg-indicator.blink.red {
+    border: 35px solid rgba(202, 93, 68, 0);
+    background: rgba(202, 93, 68, 0);
+}
+.lmsg-indicator.blink.green {
+    border: 35px solid rgba(88, 208, 118, 0);
+    background: rgba(88, 208, 118, 0);
+}

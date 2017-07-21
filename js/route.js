@@ -21,11 +21,14 @@ Main.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
                 '': {templateUrl: 'html/views/units-list.html', controller: 'UnitsListCtrl'}
             }
         })
-    	.state('unit', {
+        .state('unit', {
             url: '/unit/:id'
             ,views: {
                 '': {templateUrl: 'html/views/unit.html', controller: 'UnitCtrl'}
             }
+        })
+    	.state('unit.sensor', {
+            url: '/sensor/:sensor_id'
         })
     	.state('options', {
             url: '/options'

@@ -1,4 +1,4 @@
-Main.controller('MainCtrl', function($scope, Ready, $http, $interval, WaitFor, State, Wialon, Units) {
+Main.controller('MainCtrl', function($scope, Ready, $http, $interval, WaitFor, State, Wialon, Units, HWTypes) {
 	
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
@@ -11,6 +11,7 @@ Main.controller('MainCtrl', function($scope, Ready, $http, $interval, WaitFor, S
 
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		if(Units.items.length===0) Units.get();
+		if(HWTypes.items.length===0) HWTypes.get();
 	});
 
 	$scope.logout = function() {

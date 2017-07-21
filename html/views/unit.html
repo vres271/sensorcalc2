@@ -25,15 +25,15 @@
 			    <div class="form-group">
 			      <label class="control-label col-sm-3" for="hw">Hardware Type:</label>
 			      <div class="col-sm-9">
-			        <input ng-model="item.hw" type="text" class="form-control" id="hw" placeholder="" name="hw">
+		    		<select ng-model="item.hw" ng-options="type.id as type.name for type in hwtypes.items | orderBy : 'name'" class="form-control"  id="hw" name="hw"></select>
 			      </div>
 			    </div>
 			</form>
 		</div>
 		<div class="col-sm-6 text-center">
 			<p>Last Message: {{(now.ut-short_item.lmsg.t) | UTtoTime}}</p>
-			<p><i class="fa fa-circle {{['green','red'][1*((now.ut-short_item.lmsg.t)>300)]}} fa-4x"></i></p>
-			<p> {{short_item.lmsg.pos.s}} km/h</p>
+			<div class="lmsg-indicator {{blink ? 'blink' : ''}} {{['green','red'][1*((now.ut-short_item.lmsg.t)>420)]}}" ></div>
+			<p>Speed: {{short_item.lmsg.pos.s}} km/h</p>
 			<p><a target="_blank" href="{{'https://yandex.ru/maps/11147/engels/?text='+short_item.lmsg.pos.y+','+short_item.lmsg.pos.x}}">{{short_item.lmsg.pos.y}},{{short_item.lmsg.pos.x}} </a>({{short_item.lmsg.pos.sc}})</p>
 		</div>
 	</div>
@@ -41,15 +41,94 @@
 <div class="container">
 	<div class="table-responsive">
 		<h3>Sensors</h3>
-		<table class="table table-stripped">
+		<table class="table">
 			<tbody>
-				<tr ng-repeat="sensor in item.sens">
+				<tr ng-repeat-start="sensor in item.sens">
 					<td>{{$index+1}}</td>
-					<td>{{sensor.n}}</td>
+					<td><a href="" ng-href="#/unit/{{id}}/sensor/{{sensor.id}}" ng-click="goto(sensor.id)">{{sensor.n}}</a></td>
+					<td>{{sensor.t}}</td>
 					<td>{{sensor.p}}</td>
 					<td>{{short_item.lmsg.p[sensor.p]}}</td>
 					<td>{{sensor | ParamToSensorValue : short_item.lmsg}}</td>
 					<td>{{sensor.m}}</td>
+				</tr>
+				<tr ng-hide="1*sensor.id !== 1*sensor_id" ng-repeat-end>
+					<td></td>
+					<td colspan="100">
+						<br>
+						<div class="container">
+							<div class="row">
+								<div class="col-sm-5">
+									<form class="form-horizontal" action="">
+									    <div class="form-group">
+									      <label class="control-label col-sm-3" for="{{'n_'+sensor.id}}">Name:</label>
+									      <div class="col-sm-9">
+									        <input ng-model="sensor.n" type="text" class="form-control"  placeholder="" name="{{'n_'+sensor.id}}" id="{{'n_'+sensor.id}}">
+									      </div>
+									    </div>
+									    <div class="form-group">
+									      <label class="control-label col-sm-3" for="{{'t_'+sensor.id}}">Type:</label>
+									      <div class="col-sm-9">
+									        <input ng-model="sensor.t" type="text" class="form-control"  placeholder="" name="{{'t_'+sensor.id}}" id="{{'t_'+sensor.id}}" >
+									      </div>
+									    </div>
+									    <div class="form-group">
+									      <label class="control-label col-sm-3" for="{{'p_'+sensor.id}}">Param</label>
+									      <div class="col-sm-9">
+									        <input ng-model="sensor.p" type="text" class="form-control"  placeholder="" name="{{'p_'+sensor.id}}" id="{{'p_'+sensor.id}}" >
+									      </div>
+									    </div>
+									    <div class="form-group">
+									      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">Units</label>
+									      <div class="col-sm-9">
+									        <input ng-model="sensor.m" type="text" class="form-control"  placeholder="" name="{{'m_'+sensor.id}}" id="{{'m_'+sensor.id}}" >
+									      </div>
+									    </div>
+									    <div class="form-group">
+									      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">Source Table</label>
+									      <div class="col-sm-9">
+									        <textarea ng-model="sensor._dsrc" type="text" class="form-control" rows="10" placeholder="" name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" ng-change="parseD(sensor);" ></textarea>
+									      </div>
+									    </div>
+									</form>
+								</div>
+								<div class="col-sm-3">
+									<table class="table table-striped table-bordered" >
+										<thead>
+											<tr>
+												<th>x</th>
+												<th>y</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="row in sensor._d">
+												<td>{{row.x}}</td>
+												<td>{{row.y}}</td>
+											</tr>
+										</tbody>
+									</table>
+									</div>
+								<div class="col-sm-3">
+									<table class="table table-striped table-bordered" >
+										<thead>
+											<tr>
+												<th>a</th>
+												<th>x</th>
+												<th>b</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="row in sensor.tbl">
+												<td>{{row.a}}</td>
+												<td>{{row.x}}</td>
+												<td>{{row.b}}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>

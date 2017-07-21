@@ -31,6 +31,7 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
   }
 
   _s.removeEventsHandler = function(name) {
+    if(_s.EventsHandlers[name] === undefined) return false;
     delete _s.EventsHandlers[name];
   }
 
