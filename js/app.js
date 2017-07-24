@@ -5,7 +5,7 @@ Main.filter('UnitsFilter',function(){
 		if(!items) return items;
 		if(items.length===0) { return items};
 		if(!criterion) {return items};
-		if(criterion.mint==='' && criterion.maxt==='') {return items};
+		if(!criterion.mint && !criterion.maxt) {return items};
     	var tmp = [];
     	for(var key in items){
     	    var item = items[key];

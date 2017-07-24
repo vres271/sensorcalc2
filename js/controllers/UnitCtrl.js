@@ -37,12 +37,15 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 		$scope.sensor_id = sensor_id;
 	}
 
-	$scope.parseD = function(sensor) {
-		var dsrc = sensor._dsrc.split("\n");
-		for(var key in dsrc) {
-			var row = dsrc[key].split("\t");
-			sensor._d[key] = {x:row[0],y:row[1]};
-		}
+	$scope.parceSensorTable = function(sensor) {
+		Units.parceSensorTable(sensor);
 	}
 
+	$scope.saveItem = function() {
+		Units.saveUnit($scope.item, function() {
+			Units.getById(id,function(item) {
+				$scope.item = item;
+			});
+		});
+	}
 });

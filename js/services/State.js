@@ -5,8 +5,8 @@ Main.service('State', function($interval) {
     filter: {
     }
     ,custom_filter: {
-      mint:0
-      ,maxt:9261440000
+      // mint:0
+      // ,maxt:9261440000
     }
     ,orderby: ['crt','nm']
     ,limit: 25
