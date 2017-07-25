@@ -2,12 +2,13 @@ Main.service('Units', function(Wialon){
 	var _s = this;
 	_s.items = [];
 	_s.get = function() {
-        var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"sys_name"},"force":1,"flags":1439,"from":0,"to":10000};
-		//var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"sys_name"},"force":1,"flags":1439,"from":3300,"to":3400};
+        //var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":1500,"to":2000};
+		var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":3300,"to":3400};
     	Wialon.request('core/search_items', params, function(data) {
         	_s.items = data.items;
         	_s.index = {
-        		id: createIndex(data.items, 'id')
+                id: createIndex(data.items, 'id')
+        		,uid: createIndex(data.items, 'uid')
         	};
 			_s.addToSession();
     	});
@@ -18,15 +19,20 @@ Main.service('Units', function(Wialon){
     	Wialon.request('core/search_item', params, function(data) {
             for(var key in data.item.sens) {
                 var sensor = data.item.sens[key];
+                sensor._id = sensor.id;
                 if(sensor.d) {
-                    var tmp = sensor.d.substr(1);
-                    tmp = tmp.split(':');
-                    sensor._d = [];
-                    sensor._dsrc = '';
-                    for (var i = 0; i <= tmp.length; i = i + 2.0) {
-                        if(tmp[i+1]) {
-                            sensor._d.push({x:tmp[i],y:tmp[i+1]});
-                            sensor._dsrc += tmp[i]+"\t"+tmp[i+1]+"\n";
+                    var tmp = sensor.d.split('|'); // здесь хранится одновременно описание датчика и исходная таблица (x,y), разделённые символом "|", охуенно, не правда ли?
+                    sensor.d = tmp[0]; // оставляем здесь только описание
+                    if(tmp[1]) {
+                        sensor._dstr = tmp[1]; // , строку с таблицей переносим сюда
+                        tmp = tmp[1].split(':');
+                        sensor._d = [];
+                        sensor._dsrc = '';
+                        for (var i = 0; i <= tmp.length; i = i + 2.0) {
+                            if(tmp[i+1]) {
+                                sensor._d.push({x:tmp[i],y:tmp[i+1]});
+                                sensor._dsrc += tmp[i]+"\t"+tmp[i+1]+"\n";
+                            }
                         }
                     }
                }
@@ -89,6 +95,7 @@ Main.service('Units', function(Wialon){
           var sensor = sensors[key];
           sensor._changed = _s.isSensorChanged(sensor);
           sensor.c = angular.toJson(sensor.c);
+          if(sensor._dstr) sensor.d = sensor.d+'|'+sensor._dstr; // собираем обратно это гавно из описания|строковой таблицы 
           if(sensor.id===0) { // create sensor
             if(!sensor._deleted) {
               sensor.callMode = "create";
@@ -132,7 +139,7 @@ Main.service('Units', function(Wialon){
     _s.parceSensorTable = function(sensor) {
         if(!sensor._dsrc) {
             sensor._d = [];
-            sensor.d = '';
+            sensor._dstr = '';
             sensor.tbl = [];
             return;
         };
@@ -157,7 +164,7 @@ Main.service('Units', function(Wialon){
             }
         }
         if(darr.length>0) {
-            sensor.d = '|'+darr.join(':');
+            sensor._dstr = darr.join(':');
         }
         if(sensor._d[1]) {
             if(!isNaN(sensor._d[1].x) && !isNaN(sensor._d[1].y) && !sensor._d[0].error) {
@@ -181,5 +188,34 @@ Main.service('Units', function(Wialon){
         }
     }
 
+    _s.createSensor = function(item) {
+        var _id = 1;
+        for(var key in item.sens) {
+            var sensor = item.sens[key];
+            if(sensor._id >= _id) {
+                _id = sensor._id + 1;
+            }
+        }
+
+        item.sens[_id] ={
+            id:0
+            ,_id:_id
+            ,n:"ДУТ"
+            ,t:"fuel level"
+            ,d:""
+            ,m:"l"
+            ,p:""
+            ,f:0
+            ,c:{"act":0,"appear_in_popup":true,"ci":{},"cm":0,"mu":0,"show_time":false,"timeout":0,"uct":0}
+            ,vt:0
+            ,vs:0
+            ,tbl:[]
+            ,_d: []
+            ,_dsrc: ""
+            ,_dstr: ""
+        };
+
+        return _id;
+    }
 
 });

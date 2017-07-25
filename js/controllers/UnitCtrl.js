@@ -48,4 +48,11 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 			});
 		});
 	}
+
+	$scope.createSensor = function() {
+		var sensor_id = Units.createSensor($scope.item);
+		$location.url('/unit/'+$scope.id+'/sensor/'+sensor_id);
+		$scope.goto(sensor_id);
+	}
+
 });
