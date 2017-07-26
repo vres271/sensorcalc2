@@ -41,6 +41,11 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 		Units.parceSensorTable(sensor);
 	}
 
+	$scope.setAutoBounds = function(sensor) {
+		Units.setAutoBounds(sensor);
+		Units.parceSensorTable(sensor);
+	}
+
 	$scope.saveItem = function() {
 		Units.saveUnit($scope.item, function() {
 			Units.getById(id,function(item) {
@@ -54,5 +59,22 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 		$location.url('/unit/'+$scope.id+'/sensor/'+sensor_id);
 		$scope.goto(sensor_id);
 	}
+
+    $scope.sensor_chart_options = {
+      series: [
+        {
+          dataset: "_d",
+          key: "y",
+          label: "Sensor output value (Y):",
+          color: "#1f77b4",
+          type: ['line', 'dot'],
+          id: 'Sensor XY-Table'
+        }
+      ],
+      axes: {x: {key: "x"}},
+      grid: {x:true, y: true},
+      margin: {top: 5}
+    };
+
 
 });

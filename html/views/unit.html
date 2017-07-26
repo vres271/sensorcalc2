@@ -69,7 +69,7 @@
 					<td>{{sensor.m}}</td>
 					<td><a href="" ng-click="sensor._deleted = !sensor._deleted" title="Delete Sensor"><i class="fa fa-remove red"></i></a></td>
 				</tr>
-				<tr ng-hide="1*sensor._id !== 1*sensor_id" ng-repeat-end>
+				<tr ng-hide="1*sensor._id !== 1*sensor_id" class="anim" ng-repeat-end>
 					<td colspan="100" ng-include="'html/views/unit.sensor-form.html'" scope="" onload=""></td>
 				</tr>
 			</tbody>

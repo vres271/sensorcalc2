@@ -5,13 +5,13 @@
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'n_'+sensor.id}}">Name:</label>
 		      <div class="col-sm-9">
-		        <input ng-model="sensor.n" type="text" class="form-control"  placeholder="" name="{{'n_'+sensor.id}}" id="{{'n_'+sensor.id}}">
+		        <input ng-model="sensor.n" type="text" class="form-control"  name="{{'n_'+sensor.id}}" id="{{'n_'+sensor.id}}">
 		      </div>
 		    </div>
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'t_'+sensor.id}}">Type:</label>
 		      <div class="col-sm-9">
-				<select ng-model="sensor.t" class="form-control"  placeholder="" name="{{'t_'+sensor.id}}" id="{{'t_'+sensor.id}}" >
+				<select ng-model="sensor.t" class="form-control"  name="{{'t_'+sensor.id}}" id="{{'t_'+sensor.id}}" >
 					<optgroup label="Пробег">
 						<option value="mileage">Датчик пробега</option>
 						<option value="odometer">Относительный одометр</option>
@@ -65,66 +65,77 @@
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">Units</label>
 		      <div class="col-sm-9">
-		        <input ng-model="sensor.m" type="text" class="form-control"  placeholder="" name="{{'m_'+sensor.id}}" id="{{'m_'+sensor.id}}" >
+		        <input ng-model="sensor.m" type="text" class="form-control"  name="{{'m_'+sensor.id}}" id="{{'m_'+sensor.id}}" >
 		      </div>
+		    </div>
+		    <div class="form-group">
+		      <label class="control-label col-sm-3" for="{{'c-lower_bound_'+sensor.id}}">Bounds</label>
+		      <div class="col-sm-3">
+		        <input ng-model="sensor.c.lower_bound"  type="text" class="form-control"  name="{{'c-lower_bound_'+sensor.id}}" id="{{'c-lower_bound_'+sensor.id}}" >
+		      </div>
+		      <div class="col-sm-3">
+		        <input ng-model="sensor.c.upper_bound"  type="text" class="form-control"  name="{{'c-upper_bound_'+sensor.id}}" id="{{'c-upper_bound_'+sensor.id}}" >
+		      </div>
+			  <div class="col-sm-3">
+			      <button class="btn btn-default" type="button" ng-click="setAutoBounds(sensor);" name="{{'c-auto_bounds-btn_'+sensor.id}}" id="{{'c-auto_bounds-btn'+sensor.id}}">Auto</button>
+			  </div>
 		    </div>
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">Source Table</label>
 		      <div class="col-sm-9">
-		        <textarea ng-model="sensor._dsrc" type="text" class="form-control" rows="10" placeholder="" name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" ng-change="parceSensorTable(sensor);" ></textarea>
+		        <textarea ng-model="sensor._dsrc" type="text" class="form-control" rows="10" name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" ng-change="parceSensorTable(sensor);" ></textarea>
 		      </div>
 		    </div>
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'d_'+sensor.id}}">Decription</label>
 		      <div class="col-sm-9">
-		        <input ng-model="sensor.d" type="text" class="form-control"  placeholder="" name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" >
-		      </div>
-		    </div>
-		    <div class="form-group">
-		      <label class="control-label col-sm-3" for="{{'c-lower_bound_'+sensor.id}}">Lower Bound</label>
-		      <div class="col-sm-3">
-		        <input ng-model="sensor.c.lower_bound" type="text" class="form-control"  placeholder="" name="{{'c-lower_bound_'+sensor.id}}" id="{{'c-lower_bound_'+sensor.id}}" >
-		      </div>
-		      <label class="control-label col-sm-3" for="{{'c-upper_bound_'+sensor.id}}">Upper Bound</label>
-		      <div class="col-sm-3">
-		        <input ng-model="sensor.c.upper_bound" type="text" class="form-control"  placeholder="" name="{{'c-upper_bound_'+sensor.id}}" id="{{'c-upper_bound_'+sensor.id}}" >
+		        <input ng-model="sensor.d" type="text" class="form-control"  name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" >
 		      </div>
 		    </div>
 		</form>
 	</div>
-	<div class="col-sm-3">
-		<table class="table table-striped table-bordered" >
-			<thead>
-				<tr>
-					<th>x</th>
-					<th>y</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="row in sensor._d">
-					<td ng-if="row.error" colspan="2" class="danger">{{row.error}}</td>
-					<td ng-if="!row.error">{{row.x}}</td>
-					<td ng-if="!row.error">{{row.y}}</td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="col-sm-7">
+		<div ng-if="sensor._d.length>1" class="row">
+			<div class="col-sm-12" style="height: 420px;">
+			    <linechart data="sensor" options="sensor_chart_options"></linechart>
+			</div>
 		</div>
-	<div class="col-sm-3">
-		<table class="table table-striped table-bordered" >
-			<thead>
-				<tr>
-					<th>a</th>
-					<th>x</th>
-					<th>b</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="row in sensor.tbl">
-					<td>{{row.a}}</td>
-					<td>{{row.x}}</td>
-					<td>{{row.b}}</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="row">
+			<div class="col-sm-6">
+				<table class="table table-striped table-bordered" >
+					<thead>
+						<tr>
+							<th>x</th>
+							<th>y</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="row in sensor._d">
+							<td ng-if="row.error" colspan="2" class="danger">{{row.error}}</td>
+							<td ng-if="!row.error">{{row.x}}</td>
+							<td ng-if="!row.error">{{row.y}}</td>
+						</tr>
+					</tbody>
+				</table>
+				</div>
+			<div class="col-sm-6">
+				<table class="table table-striped table-bordered" >
+					<thead>
+						<tr>
+							<th>a</th>
+							<th>x</th>
+							<th>b</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="row in sensor.tbl">
+							<td>{{row.a}}</td>
+							<td>{{row.x}}</td>
+							<td>{{row.b}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </div>

@@ -1,4 +1,4 @@
-var Main = angular.module('Main', ['ui.router']);
+var Main = angular.module('Main', ['ui.router','n3-line-chart']);
 
 Main.filter('UnitsFilter',function(){
 	return function (items, criterion, now, hwtypes) {

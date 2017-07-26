@@ -5,6 +5,7 @@
 	height: 100%;
 	background: rgba(50,50,50,.5);
 	top: 0;
+	height: 1000%;
 }
 .wait-overlay>i{
 	z-index: 1100; 
@@ -52,4 +53,22 @@
 .lmsg-indicator.blink.green {
     border: 35px solid rgba(88, 208, 118, 0);
     background: rgba(88, 208, 118, 0);
+}
+
+.anim {
+  transition: all linear 0.5s;
+  background-color: lightblue;
+  height: 100px;
+  width: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+.anim.ng-hide {
+  height: 0;
+  width: 0;
+  background-color: transparent;
+  top:-200px;
+  left: 200px;
 }
