@@ -2,10 +2,16 @@
 <div class="container">
 	<h3>Main</h3>
 	<form class="form-horizontal" action="">
+	    <div ng-if="item.uid && units.index.uid[item.uid] && units.index.uid[item.uid].id !== item.id && item.hw && item.hw === units.index.uid[item.uid].hw" class="alert alert-danger">
+	    	<strong>Warning!</strong> Unit with the same UID and HW Type already exists: <a href="" ng-href="#/unit/{{units.index.uid[item.uid].id}}">{{units.index.uid[item.uid].nm}} : {{hwtypes.index.id[units.index.uid[item.uid].hw].name}}</a>
+	    </div>			      
+	    <div ng-if="item.ph && units.index.ph[item.ph] && units.index.ph[item.ph].id !== item.id " class="alert alert-danger">
+	    	<strong>Warning!</strong> Unit with the same Phone already exists: <a href="" ng-href="#/unit/{{units.index.ph[item.ph].id}}">{{units.index.ph[item.ph].nm}}</a>
+	    </div>			      
 		<div class="row">
 			<div class="col-sm-6">
 			    <div class="form-group">
-			      <label class="control-label col-sm-3" for="nm">Unit Name:</label>
+			      <label class="control-label col-sm-3" for="nm" required >Unit Name:</label>
 			      <div class="col-sm-9">
 			        <input ng-model="item.nm" type="text" class="form-control" id="nm" placeholder="" name="nm">
 			      </div>
@@ -65,12 +71,12 @@
 					<td>{{sensor.t}}</td>
 					<td>{{sensor.p}}</td>
 					<td>{{short_item.lmsg.p[sensor.p]}}</td>
-					<td>{{sensor | ParamToSensorValue : short_item.lmsg}}</td>
+					<td>{{sensor | ParamToSensorValue : short_item.lmsg : item}}</td>
 					<td>{{sensor.m}}</td>
 					<td><a href="" ng-click="sensor._deleted = !sensor._deleted" title="Delete Sensor"><i class="fa fa-remove red"></i></a></td>
 				</tr>
-				<tr ng-hide="1*sensor._id !== 1*sensor_id" class="anim" ng-repeat-end>
-					<td colspan="100" ng-include="'html/views/unit.sensor-form.html'" scope="" onload=""></td>
+				<tr ng-hide="1*sensor._id !== 1*sensor_id" ng-repeat-end class="trans-open-down">
+					<td colspan="100" ng-include="'html/views/unit.sensor-form.html'" scope=""   onload=""></td>
 				</tr>
 			</tbody>
 		</table>

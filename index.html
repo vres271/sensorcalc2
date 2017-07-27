@@ -32,7 +32,7 @@
     </nav>
     <br><br>
     <div class="container" ui-view ></div>
-	<div ng-if="!ready.parts.wialon" class="wait-overlay" ><i class="fa fa-circle-o-notch fa-spin" ></i></div>
+	<div ng-hide="ready.parts.wialon" class="wait-overlay" ><i class="fa fa-circle-o-notch fa-spin" ></i></div>
 	<!-- Library -->
 	<script src="lib/js/jquery.min.js"></script>
 	<script src="lib/js/bootstrap.js"></script>
@@ -60,5 +60,9 @@
 	<script src="js/controllers/UnitsListCtrl.js"></script>
 	<script src="js/controllers/LoginCtrl.js"></script>
 	<script src="js/controllers/UnitCtrl.js"></script>
+	<!-- Filters -->
+	<script src="js/filters/ParamToSensorValueFilter.js"></script>
+	<script src="js/filters/UnitsFilter.js"></script>
+	<script src="js/filters/UtoTimeFilter.js"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <br>
-<div class="row">
+<div class="row cnt">
 	<div class="col-sm-5">
 		<form class="form-horizontal" action="">
 		    <div class="form-group">
@@ -92,6 +92,14 @@
 		        <input ng-model="sensor.d" type="text" class="form-control"  name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" >
 		      </div>
 		    </div>
+		    <div class="form-group">
+		      <label class="control-label col-sm-3" >Extended</label>
+		      <div class="col-sm-9">
+				<div class="checkbox">
+				    <label><input ng-model="sensor.c.appear_in_popup" type="checkbox"  name="{{'c-appear_in_popup'+sensor.id}}" id="{{'c-appear_in_popup'+sensor.id}}"> Visible</label>
+				 </div>		      
+		      </div>
+		    </div>
 		</form>
 	</div>
 	<div class="col-sm-7">
@@ -102,7 +110,7 @@
 		</div>
 		<div class="row">
 			<div class="col-sm-6">
-				<table class="table table-striped table-bordered" >
+				<table ng-if="sensor._d.length" class="table table-striped table-bordered">
 					<thead>
 						<tr>
 							<th>x</th>
@@ -119,7 +127,7 @@
 				</table>
 				</div>
 			<div class="col-sm-6">
-				<table class="table table-striped table-bordered" >
+				<table ng-if="sensor.tbl.length" class="table table-striped table-bordered" >
 					<thead>
 						<tr>
 							<th>a</th>

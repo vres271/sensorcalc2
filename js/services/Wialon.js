@@ -86,7 +86,7 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
           _s.interval = $interval(function() { // запускаем интервал
             _s.next();
             _s.state.i++;
-          },5000);
+          },10000);
           if(success) success(data);
         } else { // если id не принят
           if(data.error===1) { // если сессия устарела

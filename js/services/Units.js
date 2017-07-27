@@ -3,12 +3,14 @@ Main.service('Units', function(Wialon){
 	_s.items = [];
 	_s.get = function() {
         var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":1500,"to":2000};
+        //var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":3000,"to":3500};
 		//var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":3300,"to":3400};
     	Wialon.request('core/search_items', params, function(data) {
         	_s.items = data.items;
         	_s.index = {
                 id: createIndex(data.items, 'id')
-        		,uid: createIndex(data.items, 'uid')
+                ,uid: createIndex(data.items, 'uid')
+                ,ph: createIndex(data.items, 'ph')
         	};
 			_s.addToSession();
     	});
@@ -17,6 +19,11 @@ Main.service('Units', function(Wialon){
 	_s.getById = function(id, callback) {
 		var params = {"id":1*id,"flags":"4294967295"}
     	Wialon.request('core/search_item', params, function(data) {
+            data.item._index = {
+                sens: {
+                    n: createIndex(data.item.sens, 'n')
+                }
+            };
             for(var key in data.item.sens) {
                 var sensor = data.item.sens[key];
                 sensor._id = sensor.id;
@@ -197,7 +204,7 @@ Main.service('Units', function(Wialon){
         var tbl = [];
         if(_d[1]) {
             if(!isNaN(_d[1].x) && !isNaN(_d[1].y) && !_d[0].error) {
-                tbl.push({x:_d[0].x-1 , a: 0 , b: -348201.3876,});
+                // tbl.push({x:_d[0].x-1 , a: 0 , b: -348201.3876,});
                 var x1=0;
                 var y1=0;
                 for(var key in _d) {

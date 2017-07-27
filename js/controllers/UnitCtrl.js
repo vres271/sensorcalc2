@@ -2,9 +2,11 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 	$scope.sensor_id = $stateParams.sensor_id;
+	$scope.units = Units;
 
 	$scope.hwtypes = HWTypes;
 
+	$scope.item = {};
 	$scope.item = {};
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		Units.getById(id,function(item) {
