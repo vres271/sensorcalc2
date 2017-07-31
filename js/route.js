@@ -36,6 +36,12 @@ Main.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
                 '': {templateUrl: 'html/views/units-list.html', controller: 'UnitsListCtrl'}
             }
         })
+        .state('messages', {
+            url: '/unit/:id/messages'
+            ,views: {
+                '': {templateUrl: 'html/views/messages.html', controller: 'MessagesCtrl'}
+            }
+        })
      //    .state('account', {
      //        url: '/account'
      //        ,views: {

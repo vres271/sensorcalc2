@@ -40,6 +40,11 @@
 			        <input ng-model="item.psw" type="text" class="form-control" id="psw" placeholder="" name="psw">
 			      </div>
 			    </div>
+			    <div class="form-group">
+			    	<div class="col-sm-9 col-md-offset-3">
+						<button class="btn btn-default btn-block" type="button" ng-click="saveItem();"><i class="fa fa-save"></i> Save changes</button>
+					</div>
+			    </div>
 			</div>
 			<div class="col-sm-6 text-center">
 				<p>Last Message: {{(now.ut-short_item.lmsg.t) | UTtoTime}}</p>
@@ -50,7 +55,7 @@
 					<span  ng-if="short_item.lmsg.pos.sc">({{short_item.lmsg.pos.sc}})</span>
 					<span  ng-if="short_item.lmsg.pos.sc===undefined || !short_item.lmsg.pos.y">No data</span>
 				</p>
-				<button class="btn btn-default" type="button" ng-click="saveItem();"><i class="fa fa-save"></i> Save changes</button>
+				<a class="btn btn-default" type="button" href="" ng-href="#/unit/{{id}}/messages"><i class="fa fa-map-marker"></i> Go to Mesages</a>
 			</div>
 		</div>
 	</form>

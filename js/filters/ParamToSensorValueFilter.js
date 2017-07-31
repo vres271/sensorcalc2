@@ -23,7 +23,7 @@ Main.filter('ParamToSensorValue',function($filter){
 		} else {
 			var val = msg.p[param_name];
 		}
-
+		
 		if(sensor.c.lower_bound) {
 			if(val < sensor.c.lower_bound) {
 				return '';
@@ -34,7 +34,7 @@ Main.filter('ParamToSensorValue',function($filter){
 				return '';
 			}
 		}
-
+		
 		var last_row = false;
 		for(var key in sensor.tbl) {
 			var row = sensor.tbl[key];

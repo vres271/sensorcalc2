@@ -1,6 +1,11 @@
 Main.service('State', function($interval) {
+  var _s = this;
 
-	var _s = this;
+  _s.now = {
+    utm: parseInt(new Date().getTime())
+    ,ut: parseInt(new Date().getTime()/1000)
+  };
+
   _s.units_list = {
     filter: {
     }
@@ -12,11 +17,15 @@ Main.service('State', function($interval) {
     ,limit: 25
   }
 
-  _s.now = {
-    ut:0
-  };
+  _s.messages = {
+    limit: 25
+    ,timeFrom: new Date(_s.now.ut - 86400)
+    ,timeTo: new Date(_s.now.ut)
+  }
+
   $interval(function() {
-    _s.now.ut = parseInt(new Date().getTime()/1000);
+    _s.now.utm = parseInt(new Date().getTime());
+    _s.now.ut = _s.now.utm/1000;
   },1000);
 
   _s.default = angular.copy(_s);
