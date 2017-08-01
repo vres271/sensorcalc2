@@ -1,4 +1,4 @@
-Main.service('State', function($interval) {
+Main.service('State', function($interval, $filter) {
   var _s = this;
 
   _s.now = {
@@ -19,18 +19,18 @@ Main.service('State', function($interval) {
 
   _s.messages = {
     limit: 25
-    ,timeFrom: new Date(_s.now.ut - 86400)
-    ,timeTo: new Date(_s.now.ut)
+    ,timeFrom: new Date(_s.now.utm - 86400000)
+    ,timeTo: new Date(_s.now.utm) 
+    ,filter: {
+    }
   }
 
   $interval(function() {
     _s.now.utm = parseInt(new Date().getTime());
-    _s.now.ut = _s.now.utm/1000;
+    _s.now.ut = parseInt(_s.now.utm/1000);
   },1000);
 
   _s.default = angular.copy(_s);
-
-
 
   _s.resetFilter = function(key) {
     if(!_s[key]) return;

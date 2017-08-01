@@ -2,37 +2,41 @@
 	<div class="container">
 		<form action="" class="navbar-form ">
 			<div class="form-group">
-				<input ng-model="s.timeFrom" class="form-control" type="datetime-local" name="" placeholder="From"  >
+				<input ng-model="s.timeFrom" class="form-control" type="datetime-local" name="" placeholder="yyyy-MM-ddTHH:mm:ss"  >
 			</div>
 			<div class="form-group">
-				<input ng-model="s.timeTo" class="form-control" type="datetime-local" name="" placeholder="To"  >
+				<input ng-model="s.timeTo" class="form-control" type="datetime-local" name="" placeholder="yyyy-MM-ddTHH:mm:ss"  >
 			</div>
-			<div class="form-group ">
+			<div class="form-group">
+				<button type="button" class=" btn btn-default" ng-click="getMessages()">Get Messages</button>
+			</div>
+			<div class="form-group">
+				<input ng-change="filterCols();" ng-model="s.filter.params" class="form-control" type="type" name="" placeholder="Param name"  >
+			</div>
+			<div class="form-group navbar-right ">
 				<select ng-model="s.limit" ng-options="value for value in [25,50,100,200,400,800,10000]" class="form-control" name="" placeholder="Limit" id="limit"></select>
-			</div>
-			<div class="form-group">
-				<button class=" btn btn-default" ng-click="getMessages()">Get Messages</button>
 			</div>
 		</form>
 	</div>
 </nav>
-<br>
+<br><br><br>
 <div class="container">
 	<div class="table-responsive">
 		<table class="table table-striped table-sm" id="items-table">
 			<thead>
                 <tr>
-                  <th width="50px">#</th>
-                  <th colspan="100"></th>
+                  <th width="200px">Datetime</th>
+                  <th width="30px">XY</th>
+                  <th  width="30px">V</th>
+                  <th ng-hide="hide_cols[key]"  ng-repeat="(key, value) in messages.items[0].p">{{key}}</th>
                 </tr>
           	</thead>
           	<tbody>
-				<tr ng-repeat="item in messages.items | orderBy: ['-t'] | limitTo: s.limit : 0  as items_result" class="item-row">
-					<td>{{$index+1}}</td>
-					<td>{{item.t*1000 | date : 'yy.MM.dd_HH:mm:ss'}}</td>
-					<td>{{item.pos.x}}</td>
-					<td>{{item.pos.y}}</td>
-					<td ng-repeat="(key, param) in item.p" >{{param}}</td>
+				<tr ng-repeat="item in messages.items | orderBy: ['-t']  | limitTo: s.limit : 0  as items_result" class="item-row">
+					<td >{{item.t*1000 | date : 'yy.MM.dd_HH:mm:ss'}}</td>
+					<td class="text-nowrap"><a href="" ng-if="item.pos.x && item.pos.y"><i class="fa fa-map-marker"></i></a> <sup>{{item.pos.sc}}</sup></td>
+					<td>{{item.pos.s}}</td>
+					<td ng-hide="hide_cols[key]" ng-repeat="(key, param) in item.p" >{{param}}</td>
 				</tr>
 			</tbody>
 		</table>
