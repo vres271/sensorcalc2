@@ -5,6 +5,8 @@ Main.controller('MessagesCtrl',function($scope, $filter, $stateParams, $rootScop
 	$scope.s = State.messages;
 
 	$scope.messages = Messages;
+	Messages.items = [];
+
 	$scope.werrors = Wialon.ErrorsDescription;
 
 	$scope.chart_keys = {};
@@ -22,7 +24,7 @@ Main.controller('MessagesCtrl',function($scope, $filter, $stateParams, $rootScop
 		});
 		Units.getById(id,function(item) {
 			$scope.unit = item;
-			log(item);
+			Messages.unit = item;
 		});
 	});
 
@@ -61,7 +63,7 @@ Main.controller('MessagesCtrl',function($scope, $filter, $stateParams, $rootScop
 				series.push({
 		          dataset: "items",
 		          key: key,
-		          label: key.substr(3, 50)+":",
+		          label: key.substr(3, 50),
 		          color: colors[i] ? colors[i] : '#60656E',
 		          type: ['line'],
 		          id: key

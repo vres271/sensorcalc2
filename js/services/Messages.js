@@ -1,4 +1,4 @@
-Main.service('Messages', function(Wialon, State){
+Main.service('Messages', function($filter, Wialon, State){
 	
     var _s = this;
     
@@ -7,14 +7,16 @@ Main.service('Messages', function(Wialon, State){
 	_s.unit_id = '';
     _s.chart_data = [];
     _s.error = false;
+    _s.limit = 5000;
+    _s.time_shift = 60*60*24;
     
     _s.get = function(id, timeFrom, timeTo, callback) {
         if(!timeTo) timeTo = State.now.ut;
-        if(!timeFrom) timeFrom = timeTo - 86400;
+        if(!timeFrom) timeFrom = timeTo - _s.time_shift;
         if(typeof timeFrom === 'object') timeFrom = parseInt(timeFrom.getTime()/1000);
         if(typeof timeTo === 'object') timeTo = parseInt(timeTo.getTime()/1000);
         _s.createLayer(id, timeFrom, timeTo, function() {
-            _s.getMessages(0,5000, callback);
+            _s.getMessages(0,_s.limit, callback);
         });
     }
 
@@ -90,6 +92,12 @@ Main.service('Messages', function(Wialon, State){
             }
             for(var pkey in item.p) {
                 l_item['_p_'+pkey] = item.p[pkey];
+            }
+            if(_s.unit) {
+                for(var key in _s.unit.sens) {
+                    var sensor = _s.unit.sens[key];
+                    l_item['_p_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
+                }
             }
             l_items.push(l_item);
         }
