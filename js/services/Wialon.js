@@ -3,6 +3,8 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
   _s.auth = false;
   _s.user = null;
   _s.testmode = false;
+  _s.refresh_interval = 10*1000;
+
   _s.EventsHandlers = {};
   if((typeof test_mode) !== 'undefined') _s.testmode = true;
   _s.state = {
@@ -86,7 +88,7 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
           _s.interval = $interval(function() { // запускаем интервал
             _s.next();
             _s.state.i++;
-          },10000);
+          },_s.refresh_interval);
           if(success) success(data);
         } else { // если id не принят
           if(data.error===1) { // если сессия устарела
@@ -170,6 +172,22 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
   		return search.access_token;
 	  };
 	  return false;
+  }
+
+  _s.ErrorsDescription={
+    0: 'Successful operation (for example for logout it will be success exit)',
+    1: 'Invalid session',
+    2: 'Invalid service name',
+    3: 'Invalid result',
+    4: 'Invalid input',
+    5: 'Error performing request',
+    6: 'Unknown error',
+    7: 'Access denied',
+    8: 'Invalid user name or password',
+    9: 'Authorization server is unavailable',
+    1001:  'No messages for selected interval',
+    1002:  'Item with such unique property already exists',
+    1003:  'Only one request is allowed at the moment'
   }
 
 });

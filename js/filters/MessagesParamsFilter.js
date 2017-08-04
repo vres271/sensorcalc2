@@ -6,12 +6,14 @@ Main.filter('MessagesParamsFilter',function(){
 		if(criterion.params === '') {return items};
     	var props_to_hide = {};
     	if(items[0]) {
-    		var row = items[0].p;
+    		var row = items[0];
 	    	for(var key in row){
-	    	    var elem = row[key];
+	    		if(key.substr(0,3)==='_p_') {
+		    	    var elem = row[key];
 					if(!RegExp(criterion,'g').test(key)){
 						props_to_hide[key] = true;
 					} 
+	    		}
 	    	}
     	}
     	return props_to_hide;

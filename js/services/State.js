@@ -18,7 +18,8 @@ Main.service('State', function($interval, $filter) {
   }
 
   _s.messages = {
-    limit: 25
+    limitfrom: 0
+    ,limitto: 25
     ,timeFrom: new Date(_s.now.utm - 86400000)
     ,timeTo: new Date(_s.now.utm) 
     ,filter: {
