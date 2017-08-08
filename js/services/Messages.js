@@ -56,7 +56,7 @@ Main.service('Messages', function($filter, Wialon, State){
             "unitId": String(_s.unit_id)
         }, function(data) {
             if(!data.error) {
-                _s.items = _s.linerase(data);    
+                _s.items = _s.linerase(data);
                 if(callback) callback(data);
             } else {
                 _s.error = data.error;
@@ -90,14 +90,14 @@ Main.service('Messages', function($filter, Wialon, State){
             for(var poskey in item.pos) {
                 l_item['_pos_'+poskey] = item.pos[poskey];
             }
-            for(var pkey in item.p) {
-                l_item['_p_'+pkey] = item.p[pkey];
-            }
             if(_s.unit) {
                 for(var key in _s.unit.sens) {
                     var sensor = _s.unit.sens[key];
                     l_item['_p_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
                 }
+            }
+            for(var pkey in item.p) {
+                l_item['_p_'+pkey] = item.p[pkey];
             }
             l_items.push(l_item);
         }

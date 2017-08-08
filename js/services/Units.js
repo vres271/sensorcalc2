@@ -22,6 +22,7 @@ Main.service('Units', function(Wialon){
             data.item._index = {
                 sens: {
                     n: createIndex(data.item.sens, 'n')
+                    ,id: createIndex(data.item.sens, 'id')
                 }
             };
             for(var key in data.item.sens) {

@@ -51,7 +51,7 @@
 					<td>{{item.ph}}</td>
 					<td>{{(now.ut-item.lmsg.t) | UTtoTime}}</td>
 					<td>{{item.lmsg.pos.s}}</td>
-					<td><i class="fa fa-circle {{['green','red'][1*((now.ut-item.lmsg.t)>300)]}}"></i></td>
+					<td><a  href="" ng-href="#/unit/{{item.id}}/messages" title="Go to messages"><i class="fa fa-circle {{['green','red'][1*((now.ut-item.lmsg.t)>300)]}}"></i></a></td>
 				</tr>
 			</tbody>
 		</table>

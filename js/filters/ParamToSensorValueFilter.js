@@ -16,7 +16,7 @@ Main.filter('ParamToSensorValue',function($filter){
 			}
 			exp = exp.replace(RegExp(parr.join('|'), 'gi'), function myFunction(x){return msg.p[x];});
 			try {
-				val = eval(exp);
+				val = Math.round(eval(exp)*100)/100;
 			} catch(e) {
 				return '';
 			}

@@ -1,6 +1,5 @@
-<br>
+<br><br>
 <div class="container">
-	<h3>Main</h3>
 	<form class="form-horizontal" action="">
 	    <div ng-if="item.uid && units.index.uid[item.uid] && units.index.uid[item.uid].id !== item.id && item.hw && item.hw === units.index.uid[item.uid].hw" class="alert alert-danger">
 	    	<strong>Warning!</strong> Unit with the same UID and HW Type already exists: <a href="" ng-href="#/unit/{{units.index.uid[item.uid].id}}">{{units.index.uid[item.uid].nm}} : {{hwtypes.index.id[units.index.uid[item.uid].hw].name}}</a>
@@ -51,7 +50,7 @@
 				<div class="lmsg-indicator {{blink ? 'blink' : ''}} {{['green','red'][1*((now.ut-short_item.lmsg.t)>420)]}}" ></div>
 				<p>Speed: {{short_item.lmsg.pos.s}} km/h</p>
 				<p>
-					<a ng-if="short_item.lmsg.pos.y" target="_blank" href="{{'https://yandex.ru/maps/11147/engels/?text='+short_item.lmsg.pos.y+','+short_item.lmsg.pos.x}}">{{short_item.lmsg.pos.y}},{{short_item.lmsg.pos.x}} </a>
+					<a ng-if="short_item.lmsg.pos.y" target="_blank" href="{{'https://yandex.ru/maps/?text='+short_item.lmsg.pos.y+','+short_item.lmsg.pos.x}}">{{short_item.lmsg.pos.y}},{{short_item.lmsg.pos.x}} </a>
 					<span  ng-if="short_item.lmsg.pos.sc">({{short_item.lmsg.pos.sc}})</span>
 					<span  ng-if="short_item.lmsg.pos.sc===undefined || !short_item.lmsg.pos.y">No data</span>
 				</p>
@@ -65,7 +64,7 @@
 		<h3>Sensors</h3>
 		<table class="table">
 			<tbody>
-				<tr ng-repeat-start="sensor in item.sens" class="{{sensor._deleted ? 'danger' : ''}} {{!sensor.id ? 'info' : ''}} ">
+				<tr ng-repeat-start="(key, sensor) in item.sens" class="{{sensor._deleted ? 'danger' : ''}} {{!sensor.id ? 'info' : ''}} ">
 					<td>{{$index+1}}</td>
 					<td>
 						<a ng-if="sensor_id !== sensor._id" href="" ng-href="#/unit/{{id}}/sensor/{{sensor._id}}" ng-click="goto(sensor._id)">{{sensor.n}}</a>
@@ -78,7 +77,7 @@
 					<td>{{short_item.lmsg.p[sensor.p]}}</td>
 					<td>{{sensor | ParamToSensorValue : short_item.lmsg : item}}</td>
 					<td>{{sensor.m}}</td>
-					<td><a href="" ng-click="sensor._deleted = !sensor._deleted" title="Delete Sensor"><i class="fa fa-remove red"></i></a></td>
+					<td><a href="" ng-click="deleteSensor(sensor, key)" title="Delete Sensor"><i class="fa fa-remove red"></i></a></td>
 				</tr>
 				<tr ng-hide="1*sensor._id !== 1*sensor_id" ng-repeat-end class="trans-open-down">
 					<td colspan="100" ng-include="'html/views/unit.sensor-form.html'" scope=""   onload=""></td>

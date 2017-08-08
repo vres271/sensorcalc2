@@ -5,6 +5,7 @@ Main.service('Ready', function() {
   _s.all = true;
   _s.parts = {
     wialon: true
+    ,test: true
   }
 
   _s.allParts = function() {

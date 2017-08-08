@@ -1,4 +1,4 @@
-Main.controller('MessagesCtrl',function($scope, $filter, $stateParams, $rootScope, WaitFor, State, Wialon, Messages, Units) {
+Main.controller('MessagesCtrl',function($scope, $filter, $stateParams, $rootScope, WaitFor, Ready, State, Wialon, Messages, Units) {
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 
@@ -18,8 +18,10 @@ Main.controller('MessagesCtrl',function($scope, $filter, $stateParams, $rootScop
     };
 
 	$scope.unit = {};
+	Ready.set('messages',false);
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		Messages.get(id, null, null, function() {
+			Ready.set('messages',true);
 			$scope.filterCols();
 		});
 		Units.getById(id,function(item) {

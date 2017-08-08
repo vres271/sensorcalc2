@@ -2,7 +2,7 @@
 	<div class="container">
 		<form action="" class="navbar-form ">
 			<div class="row">
-				<div class="col-sm-12"><h4>{{unit.nm}} : {{unit.uid}} : {{unit.ph}}</h4></div>
+				<div class="col-sm-12"><h4><a  href="" ng-href="#/unit/{{unit.id}}" title="Edit Unit">{{unit.nm}}</a> : {{unit.uid}} : {{unit.ph}}</h4></div>
 			</div>
 <!-- 			<div class="form-group">
 				<input ng-model="s.timeFrom" class="form-control" type="datetime-local" name="" placeholder="yyyy-MM-ddTHH:mm:ss"  >
@@ -70,7 +70,7 @@
 				<tr ng-repeat="item in messages.items | orderBy: ['-__t']  | limitTo: s.limitto : s.limitfrom  as items_result" class="item-row animate-repeat">
 					<td >{{item.__i}}</td>
 					<td >{{item.__t*1000 | date : 'yy.MM.dd_HH:mm:ss'}}</td>
-					<td class="text-nowrap"><a href="" ng-if="item._pos_x && item._pos_y"><i class="fa fa-map-marker"></i></a> <sup>{{item._pos_sc}}</sup></td>
+					<td class="text-nowrap"><a href="{{'https://yandex.ru/maps/?text='+item._pos_y+','+item._pos_x}}" target="_blank" ng-if="item._pos_x && item._pos_y"><i class="fa fa-map-marker"></i></a> <sup>{{item._pos_sc}}</sup></td>
 					<td>{{item._pos_s}}</td>
 					<td ng-hide="hide_cols[key] || $index<8" ng-repeat="(key, param) in item " >{{param}}</td>
 				</tr>

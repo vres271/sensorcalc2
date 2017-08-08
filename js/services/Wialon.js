@@ -45,16 +45,17 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
     }
     var req_params = {params: params};
     if(_s.sid) req_params.sid = _s.sid;
+    var mt = new Date().getTime();
     var apply_callback = function(data) {
     	callback(data);
     	if(!bg) {
-        Ready.parts.wialon = true;
+        Ready.set('wialon_'+svc+'_'+mt, true);
       }
     	if(!_s.testmode) {
         $rootScope.$digest();
       }
     };
-    if(!bg) {Ready.parts.wialon = false;}
+    if(!bg) {Ready.set('wialon_'+svc+'_'+mt,  false);}
     if(!_s.testmode) {
       _s._gurtam_W._request.send(path + svc, req_params, apply_callback, apply_callback);
     } else {

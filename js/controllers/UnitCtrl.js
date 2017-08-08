@@ -61,6 +61,14 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 		$scope.goto(sensor_id);
 	}
 
+	$scope.deleteSensor = function(sensor, i) {
+		if(sensor.id) {
+			sensor._deleted = !sensor._deleted	
+		} else {
+			delete $scope.item.sens[i];
+		}
+	}
+
     $scope.sensor_chart_options = {
       series: [
         {
