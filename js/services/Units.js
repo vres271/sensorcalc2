@@ -274,6 +274,8 @@ Main.service('Units', function(Wialon){
             ,_dstr: ""
         };
 
+        item._index.sens.id[_id] = item.sens[_id];
+        
         return _id;
     }
 
