@@ -40,8 +40,12 @@
 			    </div>
 			</div>
 			<div class="col-sm-6 text-center">
+				<p ng-if="crm_object">
+					<i class="fa fa-check green"></i> WIALONCRM Object connected
+					<br>Company: {{crm_object.kname}}
+				</p>
 				<p>Last Message: {{(now.ut-short_item.lmsg.t) | UTtoTime}}</p>
-				<div class="lmsg-indicator {{blink ? 'blink' : ''}} {{['green','red'][1*((now.ut-short_item.lmsg.t)>420)]}}" ></div>
+				<div class="lmsg-indicator {{blink ? 'blink' : ''}} {{['green','red'][1*((now.ut-short_item.lmsg.t)>opt.unit_online_max_interval)]}}" ></div>
 				<p>Speed: {{short_item.lmsg.pos.s}} km/h</p>
 				<p>
 					<a ng-if="short_item.lmsg.pos.y" target="_blank" href="{{'https://yandex.ru/maps/?text='+short_item.lmsg.pos.y+','+short_item.lmsg.pos.x}}">{{short_item.lmsg.pos.y}},{{short_item.lmsg.pos.x}} </a>
@@ -49,7 +53,7 @@
 					<span  ng-if="short_item.lmsg.pos.sc===undefined || !short_item.lmsg.pos.y">No data</span>
 				</p>
 				<a class="btn btn-default" type="button" href="" ng-href="#/unit/{{id}}/messages"><i class="fa fa-map-marker"></i> Go to Mesages</a>
-				<br><br><p>862631037728747 MIELTA M3 +79696925444</p>
+				<!-- <br><br><p>862631037728747 MIELTA M3 +79696925444</p> -->
 			</div>
 		</div>
 	</div>
@@ -61,7 +65,7 @@
     </div>
 	<div class="container">
 		<div >
-			<h3>Sensors</h3>
+			<h4>Sensors</h4>
 			<table class="table">
 				<tbody>
 					<tr ng-repeat-start="(key, sensor) in item.sens" class="{{sensor._deleted ? 'danger' : ''}} {{!sensor.id ? 'info' : ''}} ">
@@ -72,6 +76,12 @@
 							<a ng-if="sensor_id === sensor._id" href="" ng-href="#/unit/{{id}}" ng-click="goto()">{{sensor.n}}</a>
 							<small ng-if="!sensor.id">(will be created)</small>
 							<small ng-if="sensor._deleted">(will be removed)</small>
+						</td>
+						<td >
+							<a href="" ng-click="sensor.c.appear_in_popup = !sensor.c.appear_in_popup" >
+								<i class="fa fa-eye" aria-hidden="true" ng-if="sensor.c.appear_in_popup" ></i>
+								<i class="fa fa-eye grey" aria-hidden="true" ng-if="!sensor.c.appear_in_popup" ></i>
+							</a>
 						</td>
 						<td>{{sensor.t}}</td>
 						<td>{{sensor.p}}</td>

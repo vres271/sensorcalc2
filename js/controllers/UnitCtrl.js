@@ -1,4 +1,4 @@
-Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator) {
+Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator, GlomosCRM) {
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 	$scope.sensor_id = $stateParams.sensor_id;
@@ -14,6 +14,7 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 			$scope.validate = UnitFormValidator.validate;
 			$scope.errClass = UnitFormValidator.errClass;
 			$scope.sens_errClass = UnitFormValidator.sens_errClass;
+			GlomosCRM.getObject($scope.id, function(data) {$scope.crm_object = data;});
 		});
 	});
 
@@ -70,14 +71,12 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 		$scope.sensors_checked = (i>1);
 	}
 
-
-
 	$scope.saveItem = function() {
-
 		Units.saveUnit($scope.item, function() {
 			Units.getById(id,function(item) {
 				$scope.item = item;
 			});
+			GlomosCRM.saveObject($scope.item, $scope.crm_object);
 		});
 	}
 
@@ -88,23 +87,7 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 	}
 
 	$scope.mergeSensors = function() {
-		var sensor_names = [];
-		for(var key in $scope.item.sens) {
-			var sensor = $scope.item.sens[key];
-			if(sensor._checked) {
-				sensor_names.push('['+sensor.n+']');
-			}
-		}
-		$scope.createSensor();
-		var new_sensor = $scope.item._index.sens.id[$scope.sensor_id];
-		new_sensor.p = sensor_names.join('+');
-		for(var key in $scope.item.sens) {
-			var sensor = $scope.item.sens[key];
-			if(sensor._checked) {
-				sensor.t = 'custom';
-			}
-			sensor._checked = false;
-		}
+		Units.mergeSensors($scope.item);
 		$scope.onSensorCheck();
 	}
 
@@ -114,6 +97,10 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
 		} else {
 			delete $scope.item.sens[i];
 		}
+	}
+
+	$scope.inverseSrcTable = function(sensor) {
+		Units.inverseSrcTable(sensor);
 	}
 
     $scope.sensor_chart_options = {

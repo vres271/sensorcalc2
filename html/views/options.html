@@ -1,0 +1,44 @@
+<br>
+<div class="container">
+	<h1>Options</h1>
+	<form class="form-horizontal" action="" name="OptionsForm">
+		<div class="row">
+
+		    <div class="form-group {{errClass('nm')}}">
+		      <label class="control-label col-sm-3" for="wialon_crm_token" >Wialon CRM Token</label>
+		      <div class="col-sm-5">
+				<div class="input-group">
+				    <input  ng-model="options.item.wialon_crm_token" type="text" class="form-control" id="wialon_crm_token" placeholder="" name="wialon_crm_token"  ng-change="validate(); loginToCRM(); saveItem();">
+				    <div class="input-group-btn">
+				      <button class="btn btn-default" type="button">
+				        <i class="fa fa-check green" ng-if="gcrm.user"></i>
+				        <i class="fa fa-warning red" ng-if="!gcrm.user && options.item.wialon_crm_token"></i>
+				        <i class="fa fa-warning grey" ng-if="!options.item.wialon_crm_token"></i>
+				      </button>
+				    </div>
+				</div>
+				<div ng-if="gcrm.user">
+					<br><p><strong>WIALONCRM User:</strong></p>
+					<p>name: {{gcrm.user.name}}</p>
+					<p>start_dt: {{gcrm.user.start_dt}}</p>
+					<p>end_dt: {{gcrm.user.end_dt}}</p>
+					<p>dsc: {{gcrm.user.dsc}}</p>
+				</div>
+				<div ng-if="!gcrm.user && options.item.wialon_crm_token" class="alert alert-danger">{{gcrm.error}}</div>
+		      </div>
+		    </div>
+		    <div class="form-group {{errClass('nm')}}">
+		      <label class="control-label col-sm-3" for="unit_online_max_interval" >Max unit online interval, s</label>
+		      <div class="col-sm-5">
+		        <input ng-model="options.item.unit_online_max_interval" type="text" class="form-control" id="unit_online_max_interval" placeholder="" name="unit_online_max_interval"  ng-change="validate(); saveItem();">
+		      </div>
+		    </div>
+<!-- 		    <div class="form-group">
+		    	<div class="col-sm-5 col-md-offset-3">
+					<button class="btn btn-default" type="button" ng-click="saveItem();"><i class="fa fa-save"></i> Save</button>
+				</div>
+		    </div>
+ -->		
+ 		</div>
+	</form>
+</div>

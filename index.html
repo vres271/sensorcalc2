@@ -14,13 +14,17 @@
 	<body>
 	    <nav class="navbar navbar-inverse navbar-fluide navbar-fixed-top  navbar-custom" >
 		    <div class="container">
-		        <div class="navbar-header">
+		        <!-- <div class="navbar-header">
 		        	<a ng-href="#" href="#" class="navbar-brand">SC</a>
-		        </div>
+		        </div> -->
+				<ul ng-hide="!wialon.auth"  class="nav navbar-nav">
+					<li><a href="" ng-href="#options" ><i class="fa fa-bars" aria-hidden="true"></i></a></li>
+				</ul>
 				<ul ng-hide="!wialon.auth"  class="nav navbar-nav">
 					<li><a href="" ng-href="#units" >Units</a></li>
 				</ul>
 		        <ul ng-hide="!wialon.auth" class="nav navbar-nav navbar-right">
+		          <li ng-if="gcrm.user.sid"><a href="#">WialonCRM User: {{gcrm.user.name}}</a></li>	
 		          <li><a href="#">{{now.ut*1000|date:'yyyy-MM-dd HH:mm:ss'}}</a></li>	
 			      <li><a href="#" id="username"><span class="glyphicon glyphicon-user"></span> {{wialon.user.nm}}</a></li>
 			      <li><a ng-click="logout()" href="#" id="logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
@@ -58,12 +62,15 @@
 		<script src="js/services/Messages.js"></script>
 		<script src="js/services/Validator.js"></script>
 		<script src="js/services/UnitFormValidator.js"></script>
+		<script src="js/services/Options.js"></script>
+		<script src="js/services/GlomosCRM.js"></script>
 		<!-- Controlllers -->
 		<script src="js/controllers/MainCtrl.js"></script>
 		<script src="js/controllers/UnitsListCtrl.js"></script>
 		<script src="js/controllers/LoginCtrl.js"></script>
 		<script src="js/controllers/UnitCtrl.js"></script>
 		<script src="js/controllers/MessagesCtrl.js"></script>
+		<script src="js/controllers/OptionsCtrl.js"></script>
 		<!-- Filters -->
 		<script src="js/filters/ParamToSensorValueFilter.js"></script>
 		<script src="js/filters/UnitsFilter.js"></script>

@@ -3,7 +3,7 @@ Main.controller('LoginCtrl',function($scope, Wialon) {
 	if(token) {
 		Wialon.start(function(data) {
 			if(Wialon.sid) {
-				location.hash = '';
+				location.hash = 'units';
 			}
 		},{token: token});
 	} else {

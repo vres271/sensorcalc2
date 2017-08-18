@@ -20,22 +20,24 @@ Main.controller('MessagesCtrl',function($scope, $filter, $stateParams, $rootScop
 	$scope.unit = {};
 	Ready.set('messages',false);
 	WaitFor(function() {return Wialon.auth;} ,function() {
-		Messages.get(id, null, null, function() {
-			Ready.set('messages',true);
-			$scope.filterCols();
-		});
 		Units.getById(id,function(item) {
 			$scope.unit = item;
 			Messages.unit = item;
+			Messages.get(id, null, null, function() {
+				Ready.set('messages',true);
+				$scope.filterCols();
+			    Messages.startNewMessageListener(function() {
+			    	if($scope.items_result[0]) {
+						var i = $scope.items_result[0].__i;
+						WaitFor(function() {return i !== $scope.items_result[0].__i;} ,function() {
+							$scope.createChart();
+						});
+			    	}
+			    });
+			});
 		});
 	});
 
-    Messages.startNewMessageListener(function() {
-		var i = $scope.items_result[0].__i;
-		WaitFor(function() {return i !== $scope.items_result[0].__i;} ,function() {
-			$scope.createChart();
-		});
-    });
 
 	$scope.getMessages = function() {
 		Messages.get(id, $scope.s.timeFrom, $scope.s.timeTo, function(data) {

@@ -33,7 +33,7 @@ Main.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     	.state('options', {
             url: '/options'
             ,views: {
-                '': {templateUrl: 'html/views/units-list.html', controller: 'UnitsListCtrl'}
+                '': {templateUrl: 'html/views/options.html', controller: 'OptionsCtrl'}
             }
         })
         .state('messages', {

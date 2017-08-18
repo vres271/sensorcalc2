@@ -87,6 +87,12 @@
 		      </div>
 		    </div>
 		    <div class="form-group">
+		      <div class="col-sm-9 col-sm-offset-3">
+				 <button class="btn btn-default" type="button" ng-click="inverseSrcTable(sensor)"><i class="fa fa-exchange" aria-hidden="true"></i> Inverse Table</button>      
+		      </div>
+		    </div>
+
+		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'d_'+sensor.id}}">Decription</label>
 		      <div class="col-sm-9">
 		        <input  ng-change="validate();" ng-model="sensor.d" type="text" class="form-control"  name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" >

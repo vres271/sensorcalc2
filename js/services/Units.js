@@ -247,6 +247,16 @@ Main.service('Units', function(Wialon){
         sensor.tbl = _s.DtoTBL(sensor._d); // из таблицы XY получаем таблицу AXB
     }
 
+    _s.inverseSrcTable = function(sensor) {
+        for(var key in sensor._d) {
+            var row = sensor._d[key];
+            var new_row = {x:row.y, y:row.x};
+            sensor._d[key] = new_row
+        }
+        sensor._dsrc = _s.DtoDSRC(sensor._d);
+        _s.parceSensorTable(sensor);
+    }
+
     _s.createSensor = function(item) {
         var _id = 1;
         for(var key in item.sens) {
@@ -277,6 +287,57 @@ Main.service('Units', function(Wialon){
         item._index.sens.id[_id] = item.sens[_id];
         
         return _id;
+    }
+
+    _s.mergeSensors = function(item) {
+        _s.checkUniqSensorNames(item);
+        var sensor_names = [];
+        for(var key in item.sens) {
+            var sensor = item.sens[key];
+            if(sensor._checked) {
+                sensor_names.push('['+sensor.n+']');
+            }
+        }
+        var sensor_id = _s.createSensor(item);
+        var new_sensor = item._index.sens.id[sensor_id];
+        new_sensor.p = sensor_names.join('+');
+        for(var key in item.sens) {
+            var sensor = item.sens[key];
+            if(sensor._checked) {
+                sensor.t = 'custom';
+                sensor.c.appear_in_popup = false;
+            }
+            sensor._checked = false;
+        }
+        return sensor_id;
+    }
+
+    _s.checkUniqSensorNames = function(item) {
+        var names = {};
+        var need_renaming = false;
+        for(var key in item.sens) {
+            var sensor = item.sens[key];
+            if(sensor._checked) {
+                if(!names[sensor.n]) {
+                    names[sensor.n] = 0;
+                }
+                names[sensor.n]++;
+                if(names[sensor.n]>1) {
+                    need_renaming = true;
+                    break;
+                }
+            }
+        }
+        var i = 0;
+        if(need_renaming) {
+            for(var key in item.sens) {
+                var sensor = item.sens[key];
+                if(sensor._checked) {
+                    sensor.n = sensor.n+'_'+(1*i+1);
+                    i++;
+                }
+            }
+        }
     }
 
     _s.setAutoBounds = function(sensor) {

@@ -1,8 +1,14 @@
-Main.controller('MainCtrl', function($scope, Ready, $http, $interval, WaitFor, State, Wialon, Units, HWTypes) {
+Main.controller('MainCtrl', function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Options, GlomosCRM) {
 	
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
 	$scope.now = State.now;
+	Options.load();
+	$scope.opt = Options.item;
+
+	$scope.gcrm = GlomosCRM;
+	GlomosCRM.login();
+
 	
 	$scope.path = location.host+location.pathname;
 	
