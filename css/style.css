@@ -15,7 +15,7 @@
 .wait-overlay{
 	transition: all linear .4s;
 	z-index: 1099; 
-	position: absolute;
+	position: fixed; /* Sit on top of the page content */
 	width: 100%;
 	height: 100%;
 	background: rgba(50,50,50,.5);
@@ -29,7 +29,7 @@
 .wait-overlay>i{
 	z-index: 1100; 
 	color: white;  
-	position: relative; 
+	position: absolute; 
 	left: 50%; 
 	margin-left: -50px; 
 	margin-top: 200px;

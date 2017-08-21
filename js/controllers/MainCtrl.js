@@ -7,19 +7,27 @@ Main.controller('MainCtrl', function($scope, Ready,  WaitFor, State, Wialon, Uni
 	$scope.opt = Options.item;
 
 	$scope.gcrm = GlomosCRM;
-	GlomosCRM.login();
 
 	
 	$scope.path = location.host+location.pathname;
 	
-	var sid_from_storage = sessionStorage.getItem('sid');
-	if(sid_from_storage) {
-		Wialon.duplicate(false,sid_from_storage);
+	var sid_from_url = Wialon.checkURLForSID();
+	var sid_from_storage = Wialon.storage.getItem('sid');
+	if(sid_from_url) {
+		var sid = sid_from_url;
+	} else {
+		var sid = sid_from_storage;
 	}
+
+	Wialon.duplicate(sid,false,function() {
+		location.hash = '';
+		Ready.reset();
+	});
 	
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		if(Units.items.length===0) Units.get();
 		if(HWTypes.items.length===0) HWTypes.get();
+		GlomosCRM.login();
 	});
 
 	$scope.logout = function() {

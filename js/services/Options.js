@@ -1,16 +1,16 @@
 Main.service('Options', function() {
 
 	var _s = this;
-	var storage = localStorage;
+	_s.storage = localStorage;
 	var default_options = {
-		wialon_crm_token: 'notoken'
+		wialon_crm_token: ''
 		,unit_online_max_interval: 300
 	}
 	_s.item = {};
 
 
 	_s.load = function() {
-		var item_from_storage = storage.getItem('sc_options');
+		var item_from_storage = _s.storage.getItem('sc_options');
 		if(!item_from_storage) {
 			_s.item = default_options;
 			return;
@@ -23,7 +23,7 @@ Main.service('Options', function() {
 	}
 
 	_s.save = function() {
-		storage.setItem('sc_options', angular.toJson(_s.item));
+		_s.storage.setItem('sc_options', angular.toJson(_s.item));
 	}
 
 	_s.reset = function() {

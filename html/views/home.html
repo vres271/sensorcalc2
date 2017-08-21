@@ -1,5 +1,16 @@
-<h1>SensorCalc APP</h1>
-<i>Настраиваем датчики в Wialon</i>
-<h2 ng-if="wialon.auth">
-	Пользователь авторизован: <b>{{wialon.user.nm}}</b>
-</h2>
+<br>
+<br>
+<br>
+<div class="container text-center">
+	<h1><img src="img/logo.png" alt=""> SensorCalc APP</h1>
+	<i>Wialon management in two clicks</i>
+	<br>
+	<hr>
+	<div ng-if="!wialon.auth">
+		<a href="http://hosting.wialon.com/login.html?client_id=Sensorcalc&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://{{path}}%23login" class="btn btn-primary btn-lg"><i class="fa fa-sign-in" aria-hidden="true"></i> Sign in with your Wialon account</a>
+	</div>
+	<div ng-if="wialon.auth">
+		User name: <strong>{{wialon.user.nm}}</strong>
+	</div>
+
+</div>

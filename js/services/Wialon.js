@@ -4,6 +4,7 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
   _s.user = null;
   _s.testmode = false;
   _s.refresh_interval = 10*1000;
+  _s.storage = sessionStorage;
 
   _s.EventsHandlers = {};
   if((typeof test_mode) !== 'undefined') _s.testmode = true;
@@ -22,9 +23,9 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
   _s.setSID = function(sid) {
   	_s.sid = sid;
   	if(sid) {
-  		sessionStorage.setItem('sid',sid);
+  		_s.storage.setItem('sid',sid);
   	} else {
-  		sessionStorage.removeItem('sid');
+  		_s.storage.removeItem('sid');
   	}
   }
 
@@ -103,9 +104,9 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
     }
   }
 
-  _s.duplicate = function(callback, sid) { // дубликация сесии, если уж есть id
+  _s.duplicate = function(sid, callback, callback_fail) { // дубликация сесии, если уж есть id
   	_s.sid = sid;
-  	_s.request('core/duplicate', {"operateAs":"","continueCurrentSession":true,"checkService":"cms_manager"}, function(data) { // пытаемся дублировать сессию
+  	_s.request('core/duplicate', {"operateAs":"","continueCurrentSession":true,"checkService":""}, function(data) { // пытаемся дублировать сессию
         if(!data.error) { // если id принято 
           _s.setSID(data.eid); // запоминаем id сессии
           _s.auth = true;
@@ -115,6 +116,7 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
           _s.setSID(undefined);
           _s.auth = false;
           _s.user = null;
+          if (callback_fail) callback_fail(data);
         }
   	});
   }
@@ -168,9 +170,19 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
   }
 
   _s.checkURLForToken = function() {
+    var search = $location.search();
+    if(search.access_token) {
+      return search.access_token;
+    };
+    if(search.sid) {
+      return search.sid;
+    };
+    return false;
+  }
+  _s.checkURLForSID = function() {
   	var search = $location.search();
-  	if(search.access_token) {
-  		return search.access_token;
+  	if(search.sid) {
+  		return search.sid;
 	  };
 	  return false;
   }
