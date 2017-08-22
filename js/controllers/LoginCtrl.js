@@ -1,4 +1,4 @@
-Main.controller('LoginCtrl',function($scope, Wialon) {
+Main.controller('LoginCtrl',['$scope', 'Wialon', function($scope, Wialon) {
 	var token = Wialon.checkURLForToken();
 	if(token) {
 		Wialon.start(function(data) {
@@ -10,4 +10,4 @@ Main.controller('LoginCtrl',function($scope, Wialon) {
 		//location.hash = '';
 	}
 
-});
+}]);

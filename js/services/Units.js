@@ -1,10 +1,11 @@
-Main.service('Units', function(Wialon){
+Main.service('Units',  ['Wialon'
+    ,function(Wialon){
 	var _s = this;
 	_s.items = [];
+    _s.from = 0;
+    _s.to = 99999;
 	_s.get = function() {
-        var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":1500,"to":2000};
-        //var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":3000,"to":3500};
-		//var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":3300,"to":3400};
+        var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":_s.from,"to":_s.to};
     	Wialon.request('core/search_items', params, function(data) {
         	_s.items = data.items;
         	_s.index = {
@@ -367,4 +368,4 @@ Main.service('Units', function(Wialon){
         }
     }
 
-});
+}]);

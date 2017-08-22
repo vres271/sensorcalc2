@@ -1,5 +1,5 @@
-Main.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
-	$urlRouterProvider.otherwise('');
+Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
+	$urlRouterProvider.otherwise(''); 
 	//$locationProvider.html5Mode(false);
 	$locationProvider.hashPrefix('');
 	$stateProvider
@@ -57,4 +57,4 @@ Main.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
      //            '': {templateUrl: 'views/options.html', controller: function($scope) {log('this is options');}} // to ui-view
     	// 	}
     	// })
-  })
+  }])

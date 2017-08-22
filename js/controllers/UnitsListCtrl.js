@@ -1,4 +1,5 @@
-Main.controller('UnitsListCtrl',function($scope, State, Units, HWTypes) {
+Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes'
+	,function($scope, State, Units, HWTypes) {
 	$scope.units = Units;
 	$scope.hwtypes = HWTypes;
 
@@ -8,4 +9,4 @@ Main.controller('UnitsListCtrl',function($scope, State, Units, HWTypes) {
 		State.resetFilter('units_list'); log(HWTypes)
 	}
 
-});
+}]);

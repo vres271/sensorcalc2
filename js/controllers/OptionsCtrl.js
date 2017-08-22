@@ -1,4 +1,5 @@
-Main.controller('OptionsCtrl',function($scope, Options, GlomosCRM) {
+Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM'
+	,function($scope, Options, GlomosCRM) {
 
 	$scope.options = Options;
 
@@ -14,4 +15,4 @@ Main.controller('OptionsCtrl',function($scope, Options, GlomosCRM) {
 		GlomosCRM.login();
 	}
 
-});
+}]);

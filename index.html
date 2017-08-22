@@ -6,10 +6,10 @@
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <link rel="shortcut icon" href="favicon.ico" />
-	    <link href="lib/css/bootstrap.css" rel="stylesheet">
+	    <link href="lib/css/bootstrap.min.css" rel="stylesheet">
 	    <link href="lib/css/font-awesome.min.css" rel="stylesheet">
-	    <link href="lib/css/LineChart.css" rel="stylesheet">
-	    <link href="css/style.css" rel="stylesheet">
+	    <link href="lib/css/LineChart.min.css" rel="stylesheet">
+	    <link href="css/style.css?mt=<?=$my_css_mt?>" rel="stylesheet">
 	</head>
 	<body>
 	    <nav class="navbar navbar-inverse navbar-fluide navbar-fixed-top  navbar-custom" >
@@ -27,7 +27,7 @@
 			      <li><a ng-click="logout()" href="#" id="logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
 		    	</ul>
 		        <ul ng-hide="wialon.auth" class="nav navbar-nav navbar-right">
-			      <li><a href="http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://{{path}}%23login" id="login"><span class="glyphicon glyphicon-log-in"></span> Sign-In</a></li>
+			      <li><a href="{{oauth_link}}" id="login"><span class="glyphicon glyphicon-log-in"></span> Sign-In</a></li>
 		    	</ul>
 	    	</div>
 	    </nav>
@@ -36,44 +36,14 @@
 		<div ng-hide="ready.all" class="wait-overlay" ><i class="fa fa-circle-o-notch fa-spin" ></i></div>
 		<!-- Library -->
 		<script src="lib/js/jquery.min.js"></script>
-		<script src="lib/js/bootstrap.js"></script>
-		<script src="lib/js/angular.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.js"></script>
-		<script src="lib/js/angular-mocks.js"></script>
-	    <script src="lib/js/angular-ui-router.js" type="text/javascript"></script>  
-	    <script src="lib/js/angular-locale_ru.js" type="text/javascript"></script>
-	    <script src="lib/js/d3.js" type="text/javascript"></script>
-	    <script src="lib/js/LineChart.js" type="text/javascript"></script>
-	    <script src="lib/js/mywrappers.js" type="text/javascript"></script>
-	    <!-- APP Routing -->
-		<script src="js/app.js"></script>
-		<script src="js/route.js"></script>
-		<!-- Services -->
-		<script src="js/services/GurtamWialon.js"></script>
-		<script src="js/services/WaitFor.js"></script>
-		<script src="js/services/State.js"></script>
-		<script src="js/services/Wialon.js"></script>
-		<script src="js/services/Ready.js"></script>
-		<script src="js/services/Units.js"></script>
-		<script src="js/services/HWTypes.js"></script>
-		<script src="js/services/Messages.js"></script>
-		<script src="js/services/Validator.js"></script>
-		<script src="js/services/UnitFormValidator.js"></script>
-		<script src="js/services/Options.js"></script>
-		<script src="js/services/GlomosCRM.js"></script>
-		<!-- Controlllers -->
-		<script src="js/controllers/MainCtrl.js"></script>
-		<script src="js/controllers/UnitsListCtrl.js"></script>
-		<script src="js/controllers/LoginCtrl.js"></script>
-		<script src="js/controllers/UnitCtrl.js"></script>
-		<script src="js/controllers/MessagesCtrl.js"></script>
-		<script src="js/controllers/OptionsCtrl.js"></script>
-		<!-- Filters -->
-		<script src="js/filters/ParamToSensorValueFilter.js"></script>
-		<script src="js/filters/UnitsFilter.js"></script>
-		<script src="js/filters/UtoTimeFilter.js"></script>
-		<script src="js/filters/MessagesParamsFilter.js"></script>
-		<!-- Directives -->
-		<script src="js/directives/validateUIDDirective.js"></script>
+		<script src="lib/js/bootstrap.min.js"></script>
+		<script src="lib/js/angular.min.js"></script>
+		<script src="lib/js/angular-animate.min.js"></script>
+		<!-- <script src="lib/js/angular-mocks.js"></script> -->
+	    <script src="lib/js/angular-ui-router.min.js" type="text/javascript"></script>  
+	    <script src="lib/js/angular-locale_ru.min.js" type="text/javascript"></script>
+	    <script src="lib/js/d3.min.js" type="text/javascript"></script>
+	    <script src="lib/js/LineChart.min.js" type="text/javascript"></script>
+		<?=$my_js?>
 	</body>
 </html>

@@ -1,4 +1,4 @@
-Main.service('WaitFor', function($timeout){
+Main.service('WaitFor', ['$timeout', function($timeout){
   return function(if_func,then_func,t) {
     var _t = 30; if(t) _t = t;
     var waitfor = function() {
@@ -13,4 +13,4 @@ Main.service('WaitFor', function($timeout){
       }
     }; waitfor();
   }
-})
+}])

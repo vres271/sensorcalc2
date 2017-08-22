@@ -1,4 +1,5 @@
-Main.service('State', function($interval, $filter) {
+Main.service('State', ['$interval', '$filter'
+  ,function($interval, $filter) {
   var _s = this;
 
   _s.now = {
@@ -39,4 +40,4 @@ Main.service('State', function($interval, $filter) {
     _s[key].custom_filter = angular.copy(_s.default[key].custom_filter);
   }
 
-});
+}]);

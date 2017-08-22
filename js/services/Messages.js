@@ -1,4 +1,5 @@
-Main.service('Messages', function($filter, Wialon, State){
+Main.service('Messages', ['$filter', 'Wialon', 'State'
+    ,function($filter, Wialon, State){
 	
     var _s = this;
     
@@ -159,7 +160,7 @@ Main.service('Messages', function($filter, Wialon, State){
     }
 
 
-});
+}]);
 
 
 

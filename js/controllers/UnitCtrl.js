@@ -1,4 +1,5 @@
-Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator, GlomosCRM) {
+Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', 'WaitFor', 'Wialon', 'Units', 'HWTypes', 'UnitFormValidator', 'GlomosCRM'
+	,function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator, GlomosCRM) {
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 	$scope.sensor_id = $stateParams.sensor_id;
@@ -119,5 +120,5 @@ Main.controller('UnitCtrl',function($scope, $location, $stateParams, $timeout, W
       margin: {top: 5}
     };
 
-
-});
+ 
+}]);

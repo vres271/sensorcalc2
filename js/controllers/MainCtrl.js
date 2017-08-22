@@ -1,15 +1,20 @@
-Main.controller('MainCtrl', function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Options, GlomosCRM) {
-	
+Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Options', 'GlomosCRM'
+	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Options, GlomosCRM) {
+	 
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
 	$scope.now = State.now;
 	Options.load();
 	$scope.opt = Options.item;
-
 	$scope.gcrm = GlomosCRM;
 
-	
 	$scope.path = location.host+location.pathname;
+	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login';
+	if(location.host === 'sensorcalc2') {
+	    Units.from = 1500;
+	    Units.to = 2000;
+	}
+	
 	
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');
@@ -19,10 +24,13 @@ Main.controller('MainCtrl', function($scope, Ready,  WaitFor, State, Wialon, Uni
 		var sid = sid_from_storage;
 	}
 
-	Wialon.duplicate(sid,false,function() {
-		location.hash = '';
-		Ready.reset();
-	});
+	if(sid) {
+		Wialon.duplicate(sid,false,function() {
+			location.hash = '';
+			Ready.reset();
+		});
+		
+	}
 	
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		if(Units.items.length===0) Units.get();
@@ -37,4 +45,4 @@ Main.controller('MainCtrl', function($scope, Ready,  WaitFor, State, Wialon, Uni
 		});
 	}
 	
-});
+}]);

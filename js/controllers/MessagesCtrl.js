@@ -1,4 +1,5 @@
-Main.controller('MessagesCtrl',function($scope, $filter, $stateParams, $rootScope, WaitFor, Ready, State, Wialon, Messages, Units) {
+Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope', 'WaitFor', 'Ready', 'State', 'Wialon', 'Messages', 'Units'
+	,function($scope, $filter, $stateParams, $rootScope, WaitFor, Ready, State, Wialon, Messages, Units) {
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 
@@ -110,4 +111,4 @@ Main.controller('MessagesCtrl',function($scope, $filter, $stateParams, $rootScop
 
 	$scope.isEmptyObject = isEmptyObject;
 
-});
+}]);

@@ -1,4 +1,5 @@
-Main.service('HWTypes', function(Wialon){
+Main.service('HWTypes', ['Wialon'
+    ,function(Wialon){
 	var _s = this;
 	_s.items = [];
 	_s.get = function() {
@@ -9,4 +10,4 @@ Main.service('HWTypes', function(Wialon){
         	};
     	});
 	}
-});
+}]);

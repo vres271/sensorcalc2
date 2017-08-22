@@ -1,4 +1,5 @@
-Main.service('UnitFormValidator', function(Validator, Units) {
+Main.service('UnitFormValidator', ['Validator', 'Units'
+  ,function(Validator, Units) {
     var _s = this;
 
     _s.create = function(item) {
@@ -94,4 +95,4 @@ Main.service('UnitFormValidator', function(Validator, Units) {
       return _s.uv
     }
     return _s;
-});
+}]);

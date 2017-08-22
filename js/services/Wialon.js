@@ -1,4 +1,5 @@
-Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, GurtamWialon) {
+Main.service('Wialon', ['$http', '$location', '$interval', '$rootScope', 'Ready', 'GurtamWialon'
+  ,function($http, $location, $interval, $rootScope, Ready, GurtamWialon) {
   var _s = this;
   _s.auth = false;
   _s.user = null;
@@ -203,4 +204,4 @@ Main.service('Wialon', function($http, $location, $interval, $rootScope, Ready, 
     1003:  'Only one request is allowed at the moment'
   }
 
-});
+}]);

@@ -1,4 +1,4 @@
-Main.filter('ParamToSensorValue',function($filter){
+Main.filter('ParamToSensorValue',['$filter',function($filter){
 	return function (sensor,msg,item) {
 		if(!sensor || !msg) return '';
 		if(!msg.p) return '';
@@ -53,4 +53,4 @@ Main.filter('ParamToSensorValue',function($filter){
 		}
 		return val;
  	}
-})
+}])

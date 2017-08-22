@@ -1,4 +1,5 @@
-Main.service('GlomosCRM', function($http, Options) {
+Main.service('GlomosCRM', ['$http', 'Options'
+	,function($http, Options) {
 
 	var _s = this;
 	_s.url = 'http://62.76.187.239/crm/api/';
@@ -66,4 +67,4 @@ Main.service('GlomosCRM', function($http, Options) {
 	}
 
   
-});
+}]);
