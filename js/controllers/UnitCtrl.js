@@ -11,6 +11,7 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		Units.getById(id,function(item) {
 			$scope.item = item;
+			copyItem(item);
 			$scope.uv = UnitFormValidator.create($scope.item);
 			$scope.validate = UnitFormValidator.validate;
 			$scope.errClass = UnitFormValidator.errClass;
@@ -76,6 +77,8 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 		Units.saveUnit($scope.item, function() {
 			Units.getById(id,function(item) {
 				$scope.item = item;
+				copyItem(item);
+				$scope.checkChagnes();
 			});
 			GlomosCRM.saveObject($scope.item, $scope.crm_object);
 		});
@@ -102,6 +105,21 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 
 	$scope.inverseSrcTable = function(sensor) {
 		Units.inverseSrcTable(sensor);
+	}
+
+	$scope.onSensorTypeChange = function(sensor) {
+		sensor.m = Units.sensor_types[sensor.t].m;
+	}
+
+	$scope.checkChagnes = function() {
+		var copy = $scope.item_copy;
+		var item = angular.copy($scope.item);
+		$scope.item_changed = (copy !== angular.toJson(item));
+	}
+
+	var copyItem = function(item) {
+		var copy = angular.copy(item);
+		$scope.item_copy = angular.toJson(copy);
 	}
 
     $scope.sensor_chart_options = {

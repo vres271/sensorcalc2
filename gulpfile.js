@@ -4,7 +4,10 @@ var gulp = require('gulp'), // Сообственно Gulp JS
     js_obfuscator = require('gulp-js-obfuscator'),
     htmlmin = require('gulp-htmlmin'),
     csso = require('gulp-csso'),
-    imagemin = require('gulp-imagemin')
+    imagemin = require('gulp-imagemin'),
+    lr = require('tiny-lr'), // Минивебсервер для livereload
+    livereload = require('gulp-livereload') // Livereload для Gulp
+    server = lr();
 
 function wrapPipe(taskFn) {
   return function(done) {
@@ -20,6 +23,16 @@ function wrapPipe(taskFn) {
     }
   }
 }
+
+// Локальный сервер для разработки
+gulp.task('http-server', function() {
+    connect()
+        .use(require('connect-livereload')())
+        .use(connect.static('/'))
+        .listen('9000');
+
+    console.log('Server listening on http://localhost:9000');
+});
 
 gulp.task('js', wrapPipe(function(success, error) {
   return gulp.src([
@@ -78,31 +91,37 @@ gulp.task('watch', function() {
     gulp.run('css');
     gulp.run('img');
 
-    gulp.watch([
-        'js/*.js'
-        ,'js/services/*.js'
-        ,'js/controllers/*.js'
-        ,'js/filters/*.js'
-        ,'js/directives/*.js'
-    ],function() {
-        gulp.run('js');
-    });    
 
-    gulp.watch(['index.html'],function() {
-        gulp.run('htmlindex');
-    }); 
+    server.listen(35729, function(err) {
+        if (err) return console.log(err);
 
-    gulp.watch(['html/views/*.html'], function() {
-        gulp.run('html');
-    });  
+        gulp.watch([
+            'js/*.js'
+            ,'js/services/*.js'
+            ,'js/controllers/*.js'
+            ,'js/filters/*.js'
+            ,'js/directives/*.js'
+        ],function() {
+            gulp.run('js');
+        });    
 
-    gulp.watch(['css/*.css'],  function() {
-        gulp.run('css');
+        gulp.watch(['index.html'],function() {
+            gulp.run('htmlindex');
+        }); 
+
+        gulp.watch(['html/views/*.html'], function() {
+            gulp.run('html');
+        });  
+
+        gulp.watch(['css/*.css'],  function() {
+            gulp.run('css');
+        });
+
+        gulp.watch(['img/*'],  function() {
+            gulp.run('img');
+        });
+
     });
-
-    gulp.watch(['img/*'],  function() {
-        gulp.run('img');
-    });
-
+    gulp.run('http-server');
 
 });

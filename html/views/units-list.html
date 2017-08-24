@@ -10,8 +10,8 @@
 			<div class="form-group">
 				<input ng-model="s.filter.uid" class="form-control" type="text" name="" placeholder="UID"  size="14">
 			</div>
-			<div class="form-group">
-				<input ng-model="s.filter.ph" class="form-control" type="text" name="" placeholder="Ph"  size="10">
+			<div class="form-group"> 
+				<input ng-model="s.filter.ph" class="form-control" type="text" name="" placeholder="Phone"  size="10">
 			</div>
 			<div class="form-group">
 				<input ng-model="s.custom_filter.hw" class="form-control" type="text" name="" placeholder="HW Type"  size="7">
@@ -34,17 +34,20 @@
 			<thead>
                 <tr>
                   <th width="50px">#</th>
+                  <th></th>
                   <th>Name</th>
                   <th>UID</th>
                   <th>HW</th>
                   <th>Phone</th>
                   <th >Msg time</th>
-                  <th colspan="100">Speed</th>
+                  <th >Speed</th>
+                  <th colspan="100">Online</th>
                 </tr>
           	</thead>
           	<tbody>
 				<tr ng-repeat="item in units.items | filter: s.filter | UnitsFilter: s.custom_filter : now.ut : hwtypes | orderBy : s.orderby | limitTo : s.limit : 0 as items_result" class="item-row">
 					<td>{{$index+1}}</td>
+					<td><img width="16px" src="https://hst-api.wialon.com{{item.uri}}" alt=""></td>
 					<td><a href="" ng-href="#unit/{{item.id}}">{{item.nm}}</a></td>
 					<td>{{item.uid}}</td>
 					<td>{{hwtypes.index.id[item.hw].name}}</td>

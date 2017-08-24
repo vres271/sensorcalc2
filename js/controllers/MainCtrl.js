@@ -1,5 +1,5 @@
-Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Options', 'GlomosCRM'
-	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Options, GlomosCRM) {
+Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Options', 'GlomosCRM', 'Statistics'
+	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Options, GlomosCRM, Statistics) {
 	 
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
@@ -15,21 +15,25 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 	    Units.to = 2000;
 	}
 	
-	
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');
 	if(sid_from_url) {
 		var sid = sid_from_url;
+		var sid_src = 'from_url';
 	} else {
 		var sid = sid_from_storage;
+		if(sid) {
+			var sid_src = 'from_storage';
+		}
 	}
 
 	if(sid) {
-		Wialon.duplicate(sid,false,function() {
+		Wialon.duplicate(sid,function(data) {
+			Statistics.send(sid_src);
+		},function() {
 			location.hash = '';
 			Ready.reset();
 		});
-		
 	}
 	
 	WaitFor(function() {return Wialon.auth;} ,function() {

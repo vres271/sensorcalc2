@@ -1,0 +1,4 @@
+*.stackdump
+/build/*
+/node_modules/*
+

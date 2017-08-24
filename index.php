@@ -21,6 +21,7 @@ $my_js = '
 		<script src="js/services/UnitFormValidator.js"></script>
 		<script src="js/services/Options.js"></script>
 		<script src="js/services/GlomosCRM.js"></script>
+		<script src="js/services/Statistics.js"></script>
 		<!-- Controlllers -->
 		<script src="js/controllers/MainCtrl.js"></script>
 		<script src="js/controllers/UnitsListCtrl.js"></script>

@@ -368,4 +368,34 @@ Main.service('Units',  ['Wialon'
         }
     }
 
+    _s.sensor_types = {
+        'mileage': {m: 'km', title: 'км', fixed: true}
+        ,'odometer': {m: 'km', title: 'км', fixed: true}
+        ,'engine operation': {m: 'On/Off', title: 'Вкл/Выкл', fixed: false}
+        ,'alarm trigger': {m: '', title: '', fixed: true}
+        ,'private mode':  {m: 'On/Off', title: 'Вкл/Выкл', fixed: false}
+        ,'real-time motion sensor': {m: 'On/Off', title: 'Вкл/Выкл', fixed: false}
+        ,'digital': {m: 'On/Off', title: 'Вкл/Выкл', fixed: false}
+        ,'voltage': {m: 'V', title: 'В', fixed: true}
+        ,'weight': {m: 't', title: 'т', fixed: true}
+        ,'accelerometer': {m: 'g', title: 'g', fixed: true}
+        ,'temperature': {m: '°C', title: '°C', fixed: true}
+        ,'temperature coefficient': {m: '', title: '', fixed: true}
+        ,'engine rpm': {m: 'rpm', title: 'об/мин', fixed: true}
+        ,'engine efficiency': {m: '', title: '', fixed: false}
+        ,'engine hours': {m: 'hours', title: 'ч.', fixed: true}
+        ,'relative engine hours': {m: 'hours', title: 'ч.', fixed: true} 
+        ,'impulse fuel consumption': {m: 'l', title: 'л', fixed: true} 
+        ,'absolute fuel consumption': {m: 'l', title: 'л', fixed: true} 
+        ,'instant fuel consumption': {m: 'l', title: 'л', fixed: true} 
+        ,'fuel level': {m: 'l', title: 'л', fixed: true}
+        ,'fuel level impulse sensor': {m: 'l', title: 'л', fixed: true}
+        ,'counter': {m: '', title: '', fixed: false}
+        ,'custom': {m: '', title: '', fixed: false}
+        ,'driver': {m: '', title: '', fixed: true}
+        ,'trailer': {m: '', title: '', fixed: true}
+    }
+
+
+
 }]);

@@ -5,13 +5,13 @@
 		    <div class="form-group {{sens_errClass('sens_n',sensor.id)}}">
 		      <label class="control-label col-sm-3" for="{{'n_'+sensor.id}}">Name:</label>
 		      <div class="col-sm-9">
-		        <input  ng-change=" validate();" ng-model="sensor.n" type="text" class="form-control"  name="{{'n_'+sensor.id}}" id="{{'n_'+sensor.id}}">
+		        <input  ng-change=" validate(); checkChagnes();" ng-model="sensor.n" type="text" class="form-control"  name="{{'n_'+sensor.id}}" id="{{'n_'+sensor.id}}">
 		      </div>
 		    </div>
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'t_'+sensor.id}}">Type:</label>
 		      <div class="col-sm-9">
-				<select  ng-change="validate();" ng-model="sensor.t" class="form-control"  name="{{'t_'+sensor.id}}" id="{{'t_'+sensor.id}}" >
+				<select  ng-change="validate(); onSensorTypeChange(sensor); checkChagnes();" ng-model="sensor.t" class="form-control"  name="{{'t_'+sensor.id}}" id="{{'t_'+sensor.id}}" >
 					<optgroup label="Пробег">
 						<option value="mileage">Датчик пробега</option>
 						<option value="odometer">Относительный одометр</option>
@@ -53,10 +53,10 @@
 		      </div>
 		    </div>
 		    <div class="form-group">
-		      <label class="control-label col-sm-3" for="{{'p_'+sensor.id}}">Param</label>
+		      <label class="control-label col-sm-3" for="{{'p_'+sensor.id}}" >Param</label>
 		      <div class="col-sm-9">
 		        <!-- <select  ng-options="key as key+': '+value for (key, value) in short_item.lmsg.p" class="form-control"   name="{{'p_'+sensor.id}}" id="{{'p_'+sensor.id}}"></select> -->
-				<input  ng-change="validate();" ng-model="sensor.p" class="form-control"   name="{{'p_'+sensor.id}}" id="{{'p_'+sensor.id}}" list="sensor-p-list" >
+				<input  ng-change="validate(); checkChagnes();" ng-model="sensor.p" class="form-control"   name="{{'p_'+sensor.id}}" id="{{'p_'+sensor.id}}" list="sensor-p-list" >
 				<datalist id="sensor-p-list">
 					<option ng-repeat="(key, value) in short_item.lmsg.p" value="{{key}}" label="{{value}}">
 				</datalist> 									      
@@ -65,44 +65,44 @@
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">Units</label>
 		      <div class="col-sm-9">
-		        <input  ng-change="validate();" ng-model="sensor.m" type="text" class="form-control"  name="{{'m_'+sensor.id}}" id="{{'m_'+sensor.id}}" >
+		        <input ng-readonly="units.sensor_types[sensor.t].fixed" ng-change="validate(); checkChagnes();" ng-model="sensor.m" type="text" class="form-control"  name="{{'m_'+sensor.id}}" id="{{'m_'+sensor.id}}" >
 		      </div>
 		    </div>
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'c-lower_bound_'+sensor.id}}">Bounds</label>
 		      <div class="col-sm-3">
-		        <input  ng-change="validate();" ng-model="sensor.c.lower_bound"  type="text" class="form-control"  name="{{'c-lower_bound_'+sensor.id}}" id="{{'c-lower_bound_'+sensor.id}}" >
+		        <input  ng-change="validate(); checkChagnes();" ng-model="sensor.c.lower_bound"  type="text" class="form-control"  name="{{'c-lower_bound_'+sensor.id}}" id="{{'c-lower_bound_'+sensor.id}}" >
 		      </div>
 		      <div class="col-sm-3">
-		        <input  ng-change="validate();" ng-model="sensor.c.upper_bound"  type="text" class="form-control"  name="{{'c-upper_bound_'+sensor.id}}" id="{{'c-upper_bound_'+sensor.id}}" >
+		        <input  ng-change="validate(); checkChagnes();" ng-model="sensor.c.upper_bound"  type="text" class="form-control"  name="{{'c-upper_bound_'+sensor.id}}" id="{{'c-upper_bound_'+sensor.id}}" >
 		      </div>
 			  <div class="col-sm-3">
-			      <button class="btn btn-default" type="button" ng-click="setAutoBounds(sensor);" name="{{'c-auto_bounds-btn_'+sensor.id}}" id="{{'c-auto_bounds-btn'+sensor.id}}">Auto</button>
+			      <button class="btn btn-default" type="button" ng-click="setAutoBounds(sensor); checkChagnes();" name="{{'c-auto_bounds-btn_'+sensor.id}}" id="{{'c-auto_bounds-btn'+sensor.id}}">Auto</button>
 			  </div>
 		    </div>
 		    <div class="form-group {{sens_errClass('sens_d',sensor.id)}}">
 		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">Source Table</label>
 		      <div class="col-sm-9">
-		        <textarea   ng-model="sensor._dsrc" type="text" class="form-control" rows="10" name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" ng-change="parceSensorTable(sensor); validate();" ></textarea>
+		        <textarea   ng-model="sensor._dsrc" type="text" class="form-control" rows="10" name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" ng-change="parceSensorTable(sensor); validate(); checkChagnes();" ></textarea>
 		      </div>
 		    </div>
 		    <div class="form-group">
 		      <div class="col-sm-9 col-sm-offset-3">
-				 <button class="btn btn-default" type="button" ng-click="inverseSrcTable(sensor)"><i class="fa fa-exchange" aria-hidden="true"></i> Inverse Table</button>      
+				 <button class="btn btn-default" type="button" ng-click="inverseSrcTable(sensor); checkChagnes();"><i class="fa fa-exchange" aria-hidden="true"></i> Inverse Table</button>      
 		      </div>
 		    </div>
 
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'d_'+sensor.id}}">Decription</label>
 		      <div class="col-sm-9">
-		        <input  ng-change="validate();" ng-model="sensor.d" type="text" class="form-control"  name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" >
+		        <input  ng-change="validate(); checkChagnes();" ng-model="sensor.d" type="text" class="form-control"  name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" >
 		      </div>
 		    </div>
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" >Extended</label>
 		      <div class="col-sm-9">
 				<div class="checkbox">
-				    <label ><input  ng-change="validate();" ng-model="sensor.c.appear_in_popup" type="checkbox"  name="{{'c-appear_in_popup'+sensor.id}}" id="{{'c-appear_in_popup'+sensor.id}}"> Visible</label>
+				    <label ><input  ng-change="validate(); checkChagnes();" ng-model="sensor.c.appear_in_popup" type="checkbox"  name="{{'c-appear_in_popup'+sensor.id}}" id="{{'c-appear_in_popup'+sensor.id}}"> Visible</label>
 				 </div>		      
 		      </div>
 		    </div>
