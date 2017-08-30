@@ -1,7 +1,7 @@
 Main.controller('LoginCtrl',['$scope', 'Wialon','Statistics' 
 	,function($scope, Wialon, Statistics) {
 	var token = Wialon.checkURLForToken();
-	if(token) {
+	if(token) { 
 		Wialon.start(function(data) {
 			if(Wialon.sid) {
 				Statistics.send('oauth');
@@ -11,5 +11,5 @@ Main.controller('LoginCtrl',['$scope', 'Wialon','Statistics'
 	} else {
 		//location.hash = '';
 	}
-
+	// 1
 }]);

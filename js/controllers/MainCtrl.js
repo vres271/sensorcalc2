@@ -10,11 +10,10 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 
 	$scope.path = location.host+location.pathname;
 	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login';
-	if(location.host === 'sensorcalc2') {
+	if(location.host === 'sensorcalc2' || location.host === 'localhost:3000') {
 	    Units.from = 1500;
 	    Units.to = 2000;
 	}
-	
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');
 	if(sid_from_url) {
@@ -48,5 +47,6 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 			location.hash = '';
 		});
 	}
+
 	
 }]);

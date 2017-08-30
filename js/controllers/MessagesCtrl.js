@@ -9,7 +9,7 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 	Messages.items = [];
 
 	$scope.werrors = Wialon.ErrorsDescription;
-
+	
 	$scope.chart_keys = {};
     $scope.chart_messages_options = {
       series: [],

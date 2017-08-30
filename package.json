@@ -1,0 +1,38 @@
+{
+  "name": "wialoncrm",
+  "version": "1.0.0",
+  "description": "app for Wialon",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-angular-gettext-export-html": "0.0.2"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp-angular-gettext": "^2.2.0",
+    "gulp-angular-translate": "^0.1.4",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "^3.0.0",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-i18n": "^1.0.5",
+    "gulp-imagemin": "^3.3.0",
+    "gulp-js-obfuscator": "^1.0.0",
+    "gulp-uglify": "^3.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vres271/sensorcalc2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vres271/sensorcalc2/issues"
+  },
+  "homepage": "https://github.com/vres271/sensorcalc2#readme"
+}

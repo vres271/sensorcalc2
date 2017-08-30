@@ -29,6 +29,7 @@ $my_js = '
 		<script src="js/controllers/UnitCtrl.js"></script>
 		<script src="js/controllers/MessagesCtrl.js"></script>
 		<script src="js/controllers/OptionsCtrl.js"></script>
+		<script src="js/controllers/AboutCtrl.js"></script>
 		<!-- Filters -->
 		<script src="js/filters/ParamToSensorValueFilter.js"></script>
 		<script src="js/filters/UnitsFilter.js"></script>

@@ -6,7 +6,6 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 	$scope.units = Units;
 	$scope.hwtypes = HWTypes;
 	$scope.errors = {};
-
 	$scope.item = {};
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		Units.getById(id,function(item) {
