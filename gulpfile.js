@@ -7,8 +7,8 @@ var js_obfuscator = require('gulp-js-obfuscator');
 var htmlmin = require('gulp-htmlmin');
 var csso = require('gulp-csso');
 var imagemin = require('gulp-imagemin');
-var gettext     = require('gulp-angular-gettext');
-var gettext_export_html = require('gulp-angular-gettext-export-html');
+// var gettext     = require('gulp-angular-gettext');
+// var gettext_export_html = require('gulp-angular-gettext-export-html');
 //var gettext = require('gulp-angular-gettext');
 //var poConnector = require('gulp-po'); // f7f7ee778a99fbd074ded94c31c4af2d
 //var lr = require('tiny-lr'); // Минивебсервер для livereload
@@ -38,25 +38,6 @@ function wrapPipe(taskFn) {
 gulp.task('default', ['serve']);
 
 
-gulp.task('L10n',  ['pot','translations','gettext-compile-html']);
-
-gulp.task('pot', function() {
-    return gulp.src(['html/views/*.html','index.html'])
-        .pipe(gettext.extract('template.pot'))
-        .pipe(gulp.dest('localization/'));
-}); 
-
-gulp.task('translations', function() {
-   return gulp.src('localization/**/*.po')
-        .pipe(gettext.compile({format: 'json'}))
-        .pipe(gulp.dest('translations/'));
-});
-
-gulp.task('gettext-compile-html', function () {
-    return gulp.src('html/views/*.html')
-                   .pipe(gettext_export_html('localization/**/*.po'))
-                   .pipe(gulp.dest('html/views/'))
-});
 
 
 // Server + watching
@@ -67,7 +48,8 @@ gulp.task('serve',  function() {
     gulp.run('htmlindex');
     gulp.run('css');
     gulp.run('img');
-    gulp.run('L10n');
+    gulp.run('i18n');
+    gulp.run('lib');
 
     browserSync.init({
         proxy: "wialoncrm"
@@ -86,8 +68,6 @@ gulp.task('serve',  function() {
 
     gulp.watch(['html/views/*.html'], function() {
         gulp.run('html');
-        gulp.run('L10n');
-
     });  
 
     gulp.watch(['css/*.css'],  function() {
@@ -98,6 +78,14 @@ gulp.task('serve',  function() {
         gulp.run('img');
     });
 
+    // gulp.watch(['i18n/**/*.json'],  function() {
+    //     gulp.run('i18n');
+    // });
+
+    // gulp.watch(['lib/**/*.*'],  function() {
+    //     gulp.run('lib');
+    // });
+
     gulp.watch([
         "html/views/*.html"
         ,'index.html'
@@ -105,6 +93,8 @@ gulp.task('serve',  function() {
         ,'img/*'
         ,'js/*.js'
         ,'js/**/*.js'
+        ,'i18n/**/*.json'
+        ,'lib/**/*.*'
     ]).on('change', browserSync.reload);
 
 });
@@ -132,7 +122,7 @@ gulp.task('js', wrapPipe(function(success, error) {
     ])
     .pipe(concat('build/js/scripts.js').on('error', error))
     .pipe(uglify().on('error', error))
-    .pipe(js_obfuscator({}).on('error', error))
+    //.pipe(js_obfuscator({}).on('error', error))
     .pipe(gulp.dest(''));
 }));
 
@@ -169,7 +159,18 @@ gulp.task('img', wrapPipe(function(success, error) {
     gulp.src('img/*')
         .pipe(imagemin())
         .pipe(gulp.dest('build/img/'))
+}));
 
+gulp.task('i18n', wrapPipe(function(success, error) {
+    gulp
+        .src('i18n/**/*.json')
+        .pipe(gulp.dest('build/i18n/'));
+}));
+
+gulp.task('lib', wrapPipe(function(success, error) {
+    gulp
+        .src('lib/**/*.*')
+        .pipe(gulp.dest('build/lib/'));
 }));
 
 
@@ -221,4 +222,25 @@ gulp.task('img', wrapPipe(function(success, error) {
 //         .pipe(pipes.createTranslatesPlumber())
 //         .pipe(poConnector('push', options))
 //         .pipe(gulp.dest('./translates/'))
+// });
+
+
+// gulp.task('L10n',  ['pot','translations','gettext-compile-html']);
+
+// gulp.task('pot', function() {
+//     return gulp.src(['html/views/*.html','index.html'])
+//         .pipe(gettext.extract('template.pot'))
+//         .pipe(gulp.dest('localization/'));
+// }); 
+
+// gulp.task('translations', function() {
+//    return gulp.src('localization/**/*.po')
+//         .pipe(gettext.compile({format: 'json'}))
+//         .pipe(gulp.dest('translations/'));
+// });
+
+// gulp.task('gettext-compile-html', function () {
+//     return gulp.src('html/views/*.html')
+//                    .pipe(gettext_export_html('localization/**/*.po'))
+//                    .pipe(gulp.dest('html/views/'))
 // });

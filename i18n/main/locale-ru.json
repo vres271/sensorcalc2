@@ -1,0 +1,13 @@
+{
+	"Less clicks - more results" : "Меньше кликов - больше результатов"
+    ,"UNITS": "Объекты"
+	,"UNIT_NAME":"Имя"
+	,"UID":"Уникальный ID"
+	,"HW":"Тип устройства"
+	,"PHONE":"№ SIM"
+	,"MSG_TIME":"Посл. сообщ."
+	,"SPEED":"Скорость"
+	,"ONLINE":"Online"
+	,"Show more n rows" : "Ещё {{n}} строк"
+
+}

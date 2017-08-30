@@ -1,0 +1,11 @@
+{
+    "WIALON_CRM_TOKEN":"Wialon CRM Token"
+    ,"LANGUAGE":"Language"
+    ,"WIALONCRM_USER": "WialonCRM User"
+    ,"USERNAME": "Name"
+    ,"START_DATE":"Start date"
+    ,"END_DATE": "End date"
+    ,"DESCRIPTION": "Description"
+    ,"MAX UNIT ONLINE INTERVAL, S":"Max unit online interval, s"
+    ,"Wrong token": "Wrong token"
+}

@@ -1,0 +1,12 @@
+{
+	"Less clicks - more results" : "Less clicks - more results"
+    ,"UNITS": "Units"
+	,"UNIT_NAME":"Name"
+	,"UID":"Uniq ID"
+	,"HW":"HW Type"
+	,"PHONE":"Phone"
+	,"MSG_TIME":"Msg time"
+	,"SPEED":"Speed"
+	,"ONLINE":"Online"
+	,"Show more n rows" : "Show more {{n}} rows"
+}

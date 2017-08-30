@@ -1,6 +1,8 @@
-Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM'
-	,function($scope, Options, GlomosCRM) {
-
+Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , '$translatePartialLoader'
+	,function($scope, Options, GlomosCRM, $translate, $translatePartialLoader) {
+	$translatePartialLoader.addPart('options');
+	$translate.refresh();
+	
 	$scope.options = Options;
 	$scope.languages = {
 		en:  'English'
@@ -10,7 +12,10 @@ Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM'
 	var copy_language = Options.item.language;
 	$scope.saveItem = function() {
 		Options.save();
-		if(copy_language !== Options.item.language) location.reload();
+		if(copy_language !== Options.item.language) {
+			$translate.use(Options.item.language);
+			copy_language = Options.item.language;
+		}
 	}
 
 	$scope.resetItem = function() {

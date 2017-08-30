@@ -2,13 +2,13 @@
 	<form class="form-horizontal" action="" name="OptionsForm">
 		<div class="row">
 		    <div class="form-group {{errClass('nm')}}">
-		      <label class="control-label col-sm-3" for="unit_online_max_interval" translate>Language</label>
+		      <label class="control-label col-sm-3" for="unit_online_max_interval" translate>LANGUAGE</label>
 		      <div class="col-sm-5">
 	    		<select ng-model="options.item.language" ng-options="key as value for (key,value) in languages " class="form-control"  id="hw" name="hw"  ng-change="validate(); saveItem();"></select>
 		      </div>
 		    </div>
 		    <div class="form-group {{errClass('nm')}}">
-		      <label class="control-label col-sm-3" for="wialon_crm_token" translate>Wialon CRM Token</label>
+		      <label class="control-label col-sm-3" for="wialon_crm_token" translate>WIALON_CRM_TOKEN</label>
 		      <div class="col-sm-5">
 				<div class="input-group">
 				    <input  ng-model="options.item.wialon_crm_token" type="text" class="form-control" id="wialon_crm_token" placeholder="" name="wialon_crm_token"  ng-change="validate(); loginToCRM(); saveItem();">
@@ -21,17 +21,17 @@
 				    </div>
 				</div>
 				<div ng-if="gcrm.user">
-					<br><p><strong><span translate>WialonCRM User</span>:</strong></p>
-					<p><span translate translate-context="user">Name</span>: {{gcrm.user.name}}</p>
-					<p><span translate>Start date</span>: {{gcrm.user.start_dt}}</p>
-					<p><span translate>End date</span>: {{gcrm.user.end_dt}}</p>
-					<p><span translate>Description</span>: {{gcrm.user.dsc}}</p>
+					<br><p><strong>{{'WIALONCRM_USER'|translate}}:</strong></p>
+					<p>{{'USERNAME'|translate}}: {{gcrm.user.name}}</p>
+					<p>{{'START_DATE'|translate}}: {{gcrm.user.start_dt}}</p>
+					<p>{{'END_DATE'|translate}}: {{gcrm.user.end_dt}}</p>
+					<p>{{'DESCRIPTION'|translate}}: {{gcrm.user.dsc}}</p>
 				</div>
-				<div ng-if="!gcrm.user && options.item.wialon_crm_token" class="alert alert-danger">{{gcrm.error}}</div>
+				<div ng-if="!gcrm.user && options.item.wialon_crm_token" class="alert alert-danger" translate>{{gcrm.error}}</div>
 		      </div>
 		    </div>
 		    <div class="form-group {{errClass('nm')}}">
-		      <label class="control-label col-sm-3" for="unit_online_max_interval" translate>Max unit online interval, s</label>
+		      <label class="control-label col-sm-3" for="unit_online_max_interval" translate>MAX UNIT ONLINE INTERVAL, S</label>
 		      <div class="col-sm-5">
 		        <input ng-model="options.item.unit_online_max_interval" type="text" class="form-control" id="unit_online_max_interval" placeholder="" name="unit_online_max_interval"  ng-change="validate(); saveItem();">
 		      </div>

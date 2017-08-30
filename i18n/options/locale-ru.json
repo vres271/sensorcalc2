@@ -1,0 +1,11 @@
+{
+    "WIALON_CRM_TOKEN":"Wialon CRM токен"
+    ,"LANGUAGE":"Язык"
+    ,"WIALONCRM_USER": "WialonCRM пользователь"
+    ,"USERNAME": "Имя"
+    ,"START_DATE":"Начало действия"
+    ,"END_DATE": "Окончание действия"
+    ,"DESCRIPTION": "Описание"
+    ,"MAX UNIT ONLINE INTERVAL, S":"Макс. продолжительность онлайна, с"
+    ,"Wrong token": "Неправильный токен"
+}

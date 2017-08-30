@@ -1,5 +1,8 @@
-Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'WaitFor'
-	,function($scope, State, Units, HWTypes,WaitFor) {
+Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'WaitFor', '$translate' ,'$translatePartialLoader'
+	,function($scope, State, Units, HWTypes,WaitFor,$translate,  $translatePartialLoader) {
+	$translatePartialLoader.addPart('units-list');
+	$translate.refresh();
+
 	$scope.units = Units;
 	$scope.hwtypes = HWTypes;
 
