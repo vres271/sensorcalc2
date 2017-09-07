@@ -1,11 +1,13 @@
-Main.service('Wialon', ['$http', '$location', '$interval', '$rootScope', 'Ready', 'GurtamWialon'
-  ,function($http, $location, $interval, $rootScope, Ready, GurtamWialon) {
+Main.service('Wialon', ['$http', '$location', '$timeout', '$rootScope', 'Ready', 'GurtamWialon'
+  ,function($http, $location, $timeout, $rootScope, Ready, GurtamWialon) {
   var _s = this;
   _s.auth = false;
   _s.user = null;
   _s.testmode = false;
-  _s.refresh_interval = 10*1000;
+  _s.default_refresh_interval = 10*1000;
+  _s.refresh_interval = _s.default_refresh_interval;
   _s.storage = sessionStorage;
+  _s.avl_stack = [];
 
   _s.EventsHandlers = {};
   if((typeof test_mode) !== 'undefined') _s.testmode = true;
@@ -88,10 +90,13 @@ Main.service('Wialon', ['$http', '$location', '$interval', '$rootScope', 'Ready'
         if(!data.error) { // если запрос принят (сессия не протухла)
           _s.state.started = 1;
           _s.auth = true;
-          _s.interval = $interval(function() { // запускаем интервал
+          var cycle = function() {
             _s.next();
             _s.state.i++;
-          },_s.refresh_interval);
+            $timeout(function() { // запускаем интервал
+              cycle();
+            },_s.refresh_interval);
+          }; cycle();
           if(success) success(data);
         } else { // если id не принят
           if(data.error===1) { // если сессия устарела
@@ -105,6 +110,22 @@ Main.service('Wialon', ['$http', '$location', '$interval', '$rootScope', 'Ready'
     }
   }
 
+  var calcDelay = function() {
+    var Maxt = 0;
+    for(var key in _s.avl_stack) {
+      var r = _s.avl_stack[key];
+      if(r.t > Maxt) {
+        Maxt = r.t;
+      }
+    }
+    if(Maxt <= _s.default_refresh_interval/10) {
+      _s.refresh_interval = _s.default_refresh_interval;
+    } else if ((_s.default_refresh_interval/10 < Maxt) && (Maxt <= _s.default_refresh_interval)) {
+      _s.refresh_interval = _s.default_refresh_interval*3;
+    } else {
+      _s.refresh_interval = _s.default_refresh_interval*10;
+    }
+  }
   _s.duplicate = function(sid, callback, callback_fail) { // дубликация сесии, если уж есть id
   	_s.sid = sid;
   	_s.request('core/duplicate', {"operateAs":"","continueCurrentSession":true,"checkService":""}, function(data) { // пытаемся дублировать сессию
@@ -139,7 +160,17 @@ Main.service('Wialon', ['$http', '$location', '$interval', '$rootScope', 'Ready'
   }
 
   _s.next = function() {
+    var ut = new Date().getTime();
+    _s.avl_stack.push({t: 0});
+    if(_s.avl_stack.length>3) {
+      _s.avl_stack.splice(0, 1);
+    }
+    var stack_link = _s.avl_stack[_s.avl_stack.length-1];
     _s.request('',{}, function(data) {
+      var cur_ut = new Date().getTime();  
+      stack_link.t = cur_ut - ut;
+      ut = cur_ut;
+      calcDelay();
       if(data.error) {
         if(data.error===1) { // если сессия устарела
           _s.relogin(); // пытаемся получить новый sid по токену
@@ -164,7 +195,7 @@ Main.service('Wialon', ['$http', '$location', '$interval', '$rootScope', 'Ready'
   			_s.auth = false;
         _s.user = null;
   			_s.setSID(undefined);
-  			$interval.cancel(_s.interval);
+  			//$interval.cancel(_s.interval);
   			if(callback) {callback();};
   		}
     });

@@ -1,5 +1,5 @@
 Main.filter('UnitsFilter',function(){
-	return function (items, criterion, now, hwtypes) {
+	return function (items, criterion, now, hwtypes, accounts) {
 		if(!items) return items;
 		if(items.length===0) { return items};
 		if(!criterion) {return items};
@@ -19,6 +19,26 @@ Main.filter('UnitsFilter',function(){
     	//     }
     	// }
     	//var items = tmp;
+
+    	var tmp = [];
+    	if(accounts) {
+    		if(accounts.index) {
+	    		if(accounts.index.crt) {
+			    	for(var key in items){
+			    	    var item = items[key];
+			    	    if(item.crt) {
+			    	    	if(accounts.index.crt[item.crt]) {
+					    	    if(RegExp(criterion.account_name,'gi').test(accounts.index.crt[item.crt].nm)){
+					    	        tmp.push(item);
+					    	    } 
+			    	    	}
+			    	    }
+			    	}
+	    		}
+    		}
+    	}
+    	var items = tmp;
+
     	var tmp = [];
     	if(hwtypes) {
     		if(hwtypes.index) {

@@ -60,22 +60,27 @@ gulp.task('serve',  function() {
         ,'js/**/*.js'
     ],function() {
         gulp.run('js');
+        browserSync.reload();
     });    
 
     gulp.watch(['index.html'],function() {
         gulp.run('htmlindex');
+        browserSync.reload();
     }); 
 
     gulp.watch(['html/views/*.html'], function() {
         gulp.run('html');
+        browserSync.reload();
     });  
 
     gulp.watch(['css/*.css'],  function() {
         gulp.run('css');
+        browserSync.reload();
     });
 
     gulp.watch(['img/*'],  function() {
         gulp.run('img');
+        browserSync.reload();
     });
 
     // gulp.watch(['i18n/**/*.json'],  function() {
@@ -86,16 +91,16 @@ gulp.task('serve',  function() {
     //     gulp.run('lib');
     // });
 
-    gulp.watch([
-        "html/views/*.html"
-        ,'index.html'
-        ,'css/*.css'
-        ,'img/*'
-        ,'js/*.js'
-        ,'js/**/*.js'
-        ,'i18n/**/*.json'
-        ,'lib/**/*.*'
-    ]).on('change', browserSync.reload);
+    // gulp.watch([
+    //     "html/views/*.html"
+    //     ,'index.html'
+    //     ,'css/*.css'
+    //     ,'img/*'
+    //     ,'js/*.js'
+    //     ,'js/**/*.js'
+    //     ,'i18n/**/*.json'
+    //     ,'lib/**/*.*'
+    // ]).on('change', browserSync.reload);
 
 });
 
@@ -107,10 +112,9 @@ gulp.task('html', wrapPipe(function(success, error) {
     return gulp.src([
           'html/views/*.html'
       ])
-      .pipe(htmlmin({collapseWhitespace: true}))
+      .pipe(htmlmin())
       .pipe(gulp.dest('build/html/views'))
-      //.pipe(browserSync.stream())
-}));
+  }));
 
 gulp.task('js', wrapPipe(function(success, error) {
   return gulp.src([
@@ -120,9 +124,11 @@ gulp.task('js', wrapPipe(function(success, error) {
         ,'js/filters/*.js'
         ,'js/directives/*.js'
     ])
+    .pipe(concat('scripts.js').on('error', error))
+    .pipe(gulp.dest(''))
     .pipe(concat('build/js/scripts.js').on('error', error))
     .pipe(uglify().on('error', error))
-    //.pipe(js_obfuscator({}).on('error', error))
+    .pipe(js_obfuscator({}).on('error', error))
     .pipe(gulp.dest(''));
 }));
 
@@ -130,9 +136,8 @@ gulp.task('html', wrapPipe(function(success, error) {
   return gulp.src([
         'html/views/*.html'
     ])
-    .pipe(htmlmin({collapseWhitespace: true}))
+    .pipe(htmlmin())
     .pipe(gulp.dest('build/html/views'))
-    //.pipe(browserSync.stream())
 }));
 
 gulp.task('htmlindex', wrapPipe(function(success, error) {
@@ -141,7 +146,6 @@ gulp.task('htmlindex', wrapPipe(function(success, error) {
     ])
     .pipe(htmlmin({collapseWhitespace: true}))
     .pipe(gulp.dest('build/html'))
-    //.pipe(browserSync.stream())
 }));
 
 gulp.task('css', wrapPipe(function(success, error) {
@@ -171,6 +175,22 @@ gulp.task('lib', wrapPipe(function(success, error) {
     gulp
         .src('lib/**/*.*')
         .pipe(gulp.dest('build/lib/'));
+    gulp
+        .src([
+            'lib/js/jquery.min.js'
+            ,'lib/js/bootstrap.min.js'
+            ,'lib/js/angular.min.js'
+            ,'lib/js/angular-animate.min.js'
+            ,'lib/js/angular-ui-router.min.js  '
+            ,'lib/js/angular-locale_ru.min.js'
+            ,'lib/js/d3.min.js'
+            ,'lib/js/LineChart.min.js'
+            ,'lib/js/angular-translate.min.js'
+            ,'lib/js/angular-translate-loader-partial.min.js'
+        ])
+        .pipe(concat('build/lib/js/lib.js').on('error', error))
+        .pipe(concat('lib/js/lib.js').on('error', error))
+        .pipe(gulp.dest(''));
 }));
 
 

@@ -1,5 +1,8 @@
-Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope', 'WaitFor', 'Ready', 'State', 'Wialon', 'Messages', 'Units'
-	,function($scope, $filter, $stateParams, $rootScope, WaitFor, Ready, State, Wialon, Messages, Units) {
+Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope', 'WaitFor', 'Ready', 'State', 'Wialon', 'Messages', 'Units', '$translate' , '$translatePartialLoader'
+	,function($scope, $filter, $stateParams, $rootScope, WaitFor, Ready, State, Wialon, Messages, Units, $translate, $translatePartialLoader) {
+	$translatePartialLoader.addPart('messages');
+	$translate.refresh();
+	
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 

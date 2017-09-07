@@ -15,7 +15,18 @@ Main.service('State', ['$interval', '$filter'
       // ,maxt:9261440000
     }
     ,orderby: ['crt','nm']
+    ,orderby_reverse: false
     ,limit: 25
+    ,show: {
+      accounts_nm: true
+      ,nm: true
+      ,uid: true
+      ,hw: true
+      ,ph: true
+      ,lmsg_t: true
+      ,lmsg_v: true
+      ,online: true
+    }
   }
 
   _s.messages = {
@@ -26,6 +37,14 @@ Main.service('State', ['$interval', '$filter'
     ,filter: {
     }
   }
+
+  _s.accounts_list = {
+    filter: {
+    }
+    ,orderby: ['crt','nm']
+    ,limit: 25
+  }
+
 
   $interval(function() {
     _s.now.utm = parseInt(new Date().getTime());

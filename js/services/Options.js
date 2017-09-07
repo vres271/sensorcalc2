@@ -5,7 +5,7 @@ Main.service('Options', function() {
 	var default_options = {
 		wialon_crm_token: ''
 		,unit_online_max_interval: 300
-		,language: 'en'
+		,language: 'ru'
 	}
 	_s.item = {};
 

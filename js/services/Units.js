@@ -4,6 +4,7 @@ Main.service('Units',  ['Wialon'
 	_s.items = [];
     _s.from = 0;
     _s.to = 99999;
+    _s.autorefresh = true;
 	_s.get = function() {
         var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":_s.from,"to":_s.to};
     	Wialon.request('core/search_items', params, function(data) {
@@ -13,7 +14,7 @@ Main.service('Units',  ['Wialon'
                 ,uid: createIndex(data.items, 'uid')
                 ,ph: createIndex(data.items, 'ph')
         	};
-			_s.addToSession();
+			if(_s.autorefresh) _s.addToSession();
     	});
 	}
 
@@ -29,6 +30,7 @@ Main.service('Units',  ['Wialon'
             for(var key in data.item.sens) {
                 var sensor = data.item.sens[key];
                 sensor._id = sensor.id;
+                sensor._parser = 'standart';
                 if(sensor.d) {
                     var tmp = sensor.d.split('|'); // здесь хранится одновременно описание датчика и исходная таблица (x,y), разделённые символом "|", охуенно, не правда ли?
                     sensor.d = tmp[0]; // оставляем здесь только описание
@@ -172,34 +174,68 @@ Main.service('Units',  ['Wialon'
         return ret;
     }
 
-    _s.DSRCtoDandDSTR = function(_dsrc) {
+    _s.DSRCtoDandDSTR = function(_dsrc, parser) {
         var _d = [];
         var darr = [];
-        _dsrc = _dsrc.split("\n");
-        for(var key in _dsrc) {
-              var row = _dsrc[key].replace(/;+/g, '\t');
-              row = row.replace(/\s+/g, '\t');
-              row = row.replace(/\,+/g, '.');
-              row = row.replace(/\t{2,}/g,'\t');
-              if(row) {
-                  row = row.split("\t");
-                  var x = parseFloat(row[0], 10);
-                  var y = parseFloat(row[1], 10);
-                  if(!isNaN(x) && !isNaN(y)) {
-                      _d.push({x:1*x,y:1*y});
-                      darr.push(x);
-                      darr.push(y);
-                  } else {
-                      _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
+
+        return {
+            standart: function() {
+                _dsrc = _dsrc.split("\n");
+                for(var key in _dsrc) {
+                      var row = _dsrc[key].replace(/;+/g, '\t');
+                      row = row.replace(/\s+/g, '\t');
+                      row = row.replace(/\,+/g, '.');
+                      row = row.replace(/\t{2,}/g,'\t');
+                      if(row) {
+                          row = row.split("\t");
+                          var x = parseFloat(row[0], 10);
+                          var y = parseFloat(row[1], 10);
+                          if(!isNaN(x) && !isNaN(y)) {
+                              _d.push({x:1*x,y:1*y});
+                              darr.push(x);
+                              darr.push(y);
+                          } else {
+                              _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
+                          }
+                      }
                   }
-              }
-          }
-        if(darr.length>0) {
-            darr = darr.join(':');
-        } else {
-            darr = '';
-        }
-        return {_d: _d, _dstr: darr};
+                if(darr.length>0) {
+                    darr = darr.join(':');
+                } else {
+                    darr = '';
+                }
+                return {_d: _d, _dstr: darr};
+            }
+            ,italon: function() {
+                _dsrc = _dsrc.split("\n");
+                for(var key in _dsrc) {
+                      var row = _dsrc[key].replace(/;+/g, '');
+                      row = row.replace(/^[0-9]*\./g, '');
+                      row = row.replace(/\s+/g, '\t');
+                      row = row.replace(/\,+/g, '.');
+                      row = row.replace(/\t{2,}/g,'\t');
+                      row = row.replace(/\-/g,'\t');
+                      if(row) {
+                          row = row.split("\t");
+                          var x = parseFloat(row[0], 10);
+                          var y = parseFloat(row[1], 10);
+                          if(!isNaN(x) && !isNaN(y)) {
+                              _d.push({x:1*x,y:1*y});
+                              darr.push(x);
+                              darr.push(y);
+                          } else {
+                              _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
+                          }
+                      }
+                  }
+                if(darr.length>0) {
+                    darr = darr.join(':');
+                } else {
+                    darr = '';
+                }
+                return {_d: _d, _dstr: darr};
+            }
+        }[parser]();
     }
 
     _s.DtoTBL = function(_d) {
@@ -242,7 +278,7 @@ Main.service('Units',  ['Wialon'
             sensor.tbl = [];
             return;
         };
-        var d_dstr = _s.DSRCtoDandDSTR(sensor._dsrc); // из содержимого текстареа получаем... 
+        var d_dstr = _s.DSRCtoDandDSTR(sensor._dsrc, sensor._parser); // из содержимого текстареа получаем... 
         sensor._d = d_dstr._d; // таблицу XY...
         sensor._dstr = d_dstr._dstr; //  и строку X:Y,..
         sensor.tbl = _s.DtoTBL(sensor._d); // из таблицы XY получаем таблицу AXB
@@ -283,6 +319,7 @@ Main.service('Units',  ['Wialon'
             ,_d: []
             ,_dsrc: ""
             ,_dstr: ""
+            ,_parser: "standart"
         };
 
         item._index.sens.id[_id] = item.sens[_id];

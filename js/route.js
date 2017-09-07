@@ -7,7 +7,7 @@ Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functi
         .state('home', {
             url: ''
             ,views: {
-                '': {templateUrl: 'html/views/home.html'}
+                '': {templateUrl: 'html/views/home.html', controller: 'AboutCtrl'}
             }
         })
     	.state('about', {
@@ -49,7 +49,19 @@ Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functi
                 '': {templateUrl: 'html/views/messages.html', controller: 'MessagesCtrl'}
             }
         })
-     //    .state('account', {
+        .state('accounts-list', {
+            url: '/accounts-list'
+            ,views: {
+                '': {templateUrl: 'html/views/accounts-list.html', controller: 'AccountsListCtrl'}
+            }
+        })
+         .state('account', {
+            url: '/account/:id'
+            ,views: {
+                '': {templateUrl: 'html/views/account.html', controller: 'AccountCtrl'}
+            }
+        })
+    //    .state('account', {
      //        url: '/account'
      //        ,views: {
      //            '': {templateUrl: 'views/account.html'}

@@ -55,6 +55,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	_s.saveObject = function(item, crm_object, callback) {
 		if(!_s.user) return;
 		if(!_s.user.sid) return;
+		if(!crm_object) return;
 		_s.request('Objects', 'save', {
 			name: item.nm
 			,uid: item.uid

@@ -2,57 +2,57 @@
 	<div class="col-sm-5">
 		<form class="form-horizontal" action="">
 		    <div class="form-group {{sens_errClass('sens_n',sensor.id)}}">
-		      <label class="control-label col-sm-3" for="{{'n_'+sensor.id}}">Name:</label>
+		      <label class="control-label col-sm-3" for="{{'n_'+sensor.id}}">{{'Sensor Name:'|translate}}</label>
 		      <div class="col-sm-9">
 		        <input  ng-change=" validate(); checkChagnes();" ng-model="sensor.n" type="text" class="form-control"  name="{{'n_'+sensor.id}}" id="{{'n_'+sensor.id}}">
 		      </div>
 		    </div>
 		    <div class="form-group">
-		      <label class="control-label col-sm-3" for="{{'t_'+sensor.id}}">Type:</label>
+		      <label class="control-label col-sm-3" for="{{'t_'+sensor.id}}">{{'Sensor Type:'|translate}}</label>
 		      <div class="col-sm-9">
 				<select  ng-change="validate(); onSensorTypeChange(sensor); checkChagnes();" ng-model="sensor.t" class="form-control"  name="{{'t_'+sensor.id}}" id="{{'t_'+sensor.id}}" >
-					<optgroup label="Пробег">
-						<option value="mileage">Датчик пробега</option>
-						<option value="odometer">Относительный одометр</option>
+					<optgroup label="{{'Mileage'|translate}}">
+						<option value="mileage">{{'st_mileage'|translate}}</option>
+						<option value="odometer">{{'st_odometer'|translate}}</option>
 					</optgroup>
-					<optgroup label="Цифровые">
-						<option value="engine operation">Датчик зажигания</option>
-						<option value="alarm trigger">Тревожная кнопка</option>
-						<option value="private mode">Частный режим</option>
-						<option value="real-time motion sensor">Датчик мгновенного определения движения</option>
-						<option value="digital">Произвольный цифровой датчик</option>
+					<optgroup label="{{'Digital'|translate}}">
+						<option value="engine operation">{{'st_engine operation'|translate}}</option>
+						<option value="alarm trigger">{{'st_alarm trigger'|translate}}</option>
+						<option value="private mode">{{'st_private mode'|translate}}</option>
+						<option value="real-time motion sensor">{{'st_real-time motion sensor'|translate}}</option>
+						<option value="digital">{{'st_digital'|translate}}</option>
 					</optgroup>
-					<optgroup label="Показатели">
-						<option value="voltage">Датчик напряжения</option>
-						<option value="weight">Датчик веса</option>
-						<option value="accelerometer">Акселерометр</option>
-						<option value="temperature">Датчик температуры</option>
-						<option value="temperature coefficient">Коэффициент температуры</option>
+					<optgroup label="{{'Gauges'|translate}}">
+						<option value="voltage">{{'st_voltage'|translate}}</option>
+						<option value="weight">{{'st_weight'|translate}}</option>
+						<option value="accelerometer">{{'st_accelerometer'|translate}}</option>
+						<option value="temperature">{{'st_temperature'|translate}}</option>
+						<option value="temperature coefficient">{{'st_temperature coefficient'|translate}}</option>
 					</optgroup>
-					<optgroup label="Двигатель">
-						<option value="engine rpm">Датчик оборотов двигателя</option>
-						<option value="engine efficiency">Датчик полезной работы двигателя</option>
-						<option value="engine hours">Абсолютные моточасы</option>
-						<option value="relative engine hours">Относительные моточасы</option>
+					<optgroup label="{{'Engine'|translate}}">
+						<option value="engine rpm">{{'st_engine rpm'|translate}}</option>
+						<option value="engine efficiency">{{'st_engine efficiency'|translate}}</option>
+						<option value="engine hours">{{'st_engine hours'|translate}}</option>
+						<option value="relative engine hours">{{'st_relative engine hours'|translate}}</option>
 					</optgroup>
-					<optgroup label="Топливо">
-						<option value="impulse fuel consumption">Импульсный датчик расхода топлива</option>
-						<option value="absolute fuel consumption">Датчик абсолютного расхода топлива</option>
-						<option value="instant fuel consumption">Датчик мгновенного расхода топлива</option>
-						<option value="fuel level" selected="">Датчик уровня топлива</option>
-						<option value="fuel level impulse sensor">Импульсный датчик уровня топлива</option>
+					<optgroup label="{{'Fuel'|translate}}">
+						<option value="impulse fuel consumption">{{'st_impulse fuel consumption'|translate}}</option>
+						<option value="absolute fuel consumption">{{'st_absolute fuel consumption'|translate}}</option>
+						<option value="instant fuel consumption">{{'st_instant fuel consumption'|translate}}</option>
+						<option value="fuel level">{{'st_fuel level'|translate}}</option>
+						<option value="fuel level impulse sensor">{{'st_fuel level impulse sensor'|translate}}</option>
 					</optgroup>
-					<optgroup label="Другие">
-						<option value="counter">Счетчик</option>
-						<option value="custom">Произвольный датчик</option>
-						<option value="driver">Привязка водителя</option>
-						<option value="trailer">Привязка прицепа</option>
+					<optgroup label="{{'Other'|translate}}">
+						<option value="counter">{{'st_counter'|translate}}</option>
+						<option value="custom">{{'st_custom'|translate}}</option>
+						<option value="driver">{{'st_driver'|translate}}</option>
+						<option value="trailer">{{'st_trailer'|translate}}</option>
 					</optgroup>
 				</select>									        
 		      </div>
 		    </div>
 		    <div class="form-group">
-		      <label class="control-label col-sm-3" for="{{'p_'+sensor.id}}" >Param</label>
+		      <label class="control-label col-sm-3" for="{{'p_'+sensor.id}}" >{{'Sensor Param'|translate}}</label>
 		      <div class="col-sm-9">
 		        <!-- <select  ng-options="key as key+': '+value for (key, value) in short_item.lmsg.p" class="form-control"   name="{{'p_'+sensor.id}}" id="{{'p_'+sensor.id}}"></select> -->
 				<input  ng-change="validate(); checkChagnes();" ng-model="sensor.p" class="form-control"   name="{{'p_'+sensor.id}}" id="{{'p_'+sensor.id}}" list="sensor-p-list" >
@@ -62,13 +62,13 @@
 		      </div>
 		    </div>
 		    <div class="form-group">
-		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">Units</label>
+		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">{{'Sensor Units'|translate}}</label>
 		      <div class="col-sm-9">
 		        <input ng-readonly="units.sensor_types[sensor.t].fixed" ng-change="validate(); checkChagnes();" ng-model="sensor.m" type="text" class="form-control"  name="{{'m_'+sensor.id}}" id="{{'m_'+sensor.id}}" >
 		      </div>
 		    </div>
 		    <div class="form-group">
-		      <label class="control-label col-sm-3" for="{{'c-lower_bound_'+sensor.id}}">Bounds</label>
+		      <label class="control-label col-sm-3" for="{{'c-lower_bound_'+sensor.id}}">{{'Bounds'|translate}}</label>
 		      <div class="col-sm-3">
 		        <input  ng-change="validate(); checkChagnes();" ng-model="sensor.c.lower_bound"  type="text" class="form-control"  name="{{'c-lower_bound_'+sensor.id}}" id="{{'c-lower_bound_'+sensor.id}}" >
 		      </div>
@@ -76,32 +76,35 @@
 		        <input  ng-change="validate(); checkChagnes();" ng-model="sensor.c.upper_bound"  type="text" class="form-control"  name="{{'c-upper_bound_'+sensor.id}}" id="{{'c-upper_bound_'+sensor.id}}" >
 		      </div>
 			  <div class="col-sm-3">
-			      <button class="btn btn-default" type="button" ng-click="setAutoBounds(sensor); checkChagnes();" name="{{'c-auto_bounds-btn_'+sensor.id}}" id="{{'c-auto_bounds-btn'+sensor.id}}">Auto</button>
+			      <button class="btn btn-default" type="button" ng-click="setAutoBounds(sensor); checkChagnes();" name="{{'c-auto_bounds-btn_'+sensor.id}}" id="{{'c-auto_bounds-btn'+sensor.id}}">{{'Auto'|translate}}</button>
 			  </div>
 		    </div>
 		    <div class="form-group {{sens_errClass('sens_d',sensor.id)}}">
-		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">Source Table</label>
+		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">{{'Source Table'|translate}}</label>
 		      <div class="col-sm-9">
-		        <textarea   ng-model="sensor._dsrc" type="text" class="form-control" rows="10" name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" ng-change="parceSensorTable(sensor); validate(); checkChagnes();" ></textarea>
+		        <textarea   ng-model="sensor._dsrc" data-ng-model-options="{debounce: 150}"  my-dropzone   class="form-control dropzone" rows="10" name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" ng-change="parceSensorTable(sensor); validate(); checkChagnes();" ></textarea>
 		      </div>
 		    </div>
 		    <div class="form-group">
-		      <div class="col-sm-9 col-sm-offset-3">
-				 <button class="btn btn-default" type="button" ng-click="inverseSrcTable(sensor); checkChagnes();"><i class="fa fa-exchange" aria-hidden="true"></i> Inverse Table</button>      
+		      <div class="col-sm-4 col-md-offset-3">
+				<button class="btn btn-default" type="button" ng-click="inverseSrcTable(sensor); checkChagnes();"><i class="fa fa-exchange" aria-hidden="true"></i> {{'Inverse Table'|translate}}</button>      
+		      </div>
+		      <div class="col-sm-4  col-md-offset-1">
+		        <select ng-model="sensor._parser" ng-change="parceSensorTable(sensor); validate();" ng-options="value for value in tbl_parsers" class="form-control"></select>
 		      </div>
 		    </div>
 
 		    <div class="form-group">
-		      <label class="control-label col-sm-3" for="{{'d_'+sensor.id}}">Decription</label>
+		      <label class="control-label col-sm-3" for="{{'d_'+sensor.id}}">{{'Decription'|translate}}</label>
 		      <div class="col-sm-9">
 		        <input  ng-change="validate(); checkChagnes();" ng-model="sensor.d" type="text" class="form-control"  name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" >
 		      </div>
 		    </div>
 		    <div class="form-group">
-		      <label class="control-label col-sm-3" >Extended</label>
+		      <label class="control-label col-sm-3" >{{'Extended'|translate}}</label>
 		      <div class="col-sm-9">
 				<div class="checkbox">
-				    <label ><input  ng-change="validate(); checkChagnes();" ng-model="sensor.c.appear_in_popup" type="checkbox"  name="{{'c-appear_in_popup'+sensor.id}}" id="{{'c-appear_in_popup'+sensor.id}}"> Visible</label>
+				    <label ><input  ng-change="validate(); checkChagnes();" ng-model="sensor.c.appear_in_popup" type="checkbox"  name="{{'c-appear_in_popup'+sensor.id}}" id="{{'c-appear_in_popup'+sensor.id}}"> {{'Visible'|translate}}</label>
 				 </div>		      
 		      </div>
 		    </div>

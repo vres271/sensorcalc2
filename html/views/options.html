@@ -8,7 +8,7 @@
 		      </div>
 		    </div>
 		    <div class="form-group {{errClass('nm')}}">
-		      <label class="control-label col-sm-3" for="wialon_crm_token" translate>WIALON_CRM_TOKEN</label>
+		      <label class="control-label col-sm-3" for="wialon_crm_token">{{'WIALON_CRM_TOKEN'|translate}} <sup><span class="label label-primary">CRM</span></sup></label>
 		      <div class="col-sm-5">
 				<div class="input-group">
 				    <input  ng-model="options.item.wialon_crm_token" type="text" class="form-control" id="wialon_crm_token" placeholder="" name="wialon_crm_token"  ng-change="validate(); loginToCRM(); saveItem();">

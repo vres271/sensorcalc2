@@ -1,0 +1,64 @@
+<form class="form-horizontal" action="" name="UnitForm">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6">
+			    <div class="form-group {{errClass('nm')}}">
+			      <label class="control-label col-sm-3" for="nm" required >{{'UNIT_NAME'|translate}}:</label>
+			      <div class="col-sm-9">
+			        <input ng-model="acc.item.nm" type="text" class="form-control" id="nm" placeholder="" name="nm" required ng-change="validate(); checkChagnes();">
+			      </div>
+			    </div>
+			    <div class="form-group">
+					<div class="col-md-6 col-md-offset-3">User-creator</div>
+				</div>
+			    <div class="form-group {{errClass('nm')}}">
+			      <label class="control-label col-sm-3" for="nm" required >{{'USER_NAME'|translate}}:</label>
+			      <div class="col-sm-9">
+			        <input ng-model="crt_user.nm" type="text" class="form-control" id="nm" placeholder="" name="nm" required ng-change="validate(); checkChagnes();">
+			      </div>
+			    </div>
+			    <div class="form-group {{errClass('nm')}}">
+			      <label class="control-label col-sm-3" for="nm" required >{{'PASSWORD'|translate}}:</label>
+			      <div class="col-sm-9">
+			        <input ng-model="crt_user._password" type="text" class="form-control" id="nm" placeholder="" name="nm" required ng-change="validate(); checkChagnes();">
+			      </div>
+			    </div>
+				<div class="form-group">
+			    	<div class="col-sm-9 col-md-offset-3">
+						<button class="btn btn-{{item_changed ? 'primary' : 'default'}} btn-block " type="button" ng-disabled="!uv.valid" ng-click="saveItem();"><i class="fa fa-save"></i> {{'Save changes'|translate}}</button>
+					</div>
+			    </div>
+			</div>
+			<div class="col-sm-6">
+				<ul class="list-group">
+					<li class="list-group-item">balance: {{acc.data.balance}}</li>
+					<li class="list-group-item">created: {{acc.data.created*1000 | date : 'dd.MM.yyyy HH:mm:ss'}}</li>
+					<li class="list-group-item">daysCounter: {{acc.data.daysCounter}}</li>
+					<li class="list-group-item">dealerRights: {{acc.data.dealerRights}}</li>
+					<li class="list-group-item">enabled: {{acc.data.enabled}}</li>
+					<li class="list-group-item">managable: {{acc.data.managable}}</li>
+					<li class="list-group-item">parentAccountId: {{acc.data.parentAccountId}}</li>
+					<li class="list-group-item">parentAccountName: {{acc.data.parentAccountName}}</li>
+					<li class="list-group-item">parentEnabled: {{acc.data.parentEnabled}}</li>
+					<li class="list-group-item">plan: {{acc.data.plan}}</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div ng-hide="!(crt_user.id && users.items && users_result.length)" class="table-responsive">
+		<h4>Other users in this Account</h4>
+		<table class="table table-striped" id="items-table">
+			<tr ng-repeat="user in users.items | filter : {crt: crt_user.id} as users_result">
+				<td>{{$index+1}}</td>
+				<td>{{user.nm}}</td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+<!--     <div ng-if="!uv.valid" class="alert alert-danger">
+    	<strong>{{'Warning'|translate}}!</strong>
+    	<ul>
+    		<li ng-repeat="(key, error) in uv.errors">{{error.msg}} <a ng-if="error.link" ng-href="{{error.link}}" href="" >{{error.title}}</a></li>
+    	</ul>
+    </div>
+ --></form>

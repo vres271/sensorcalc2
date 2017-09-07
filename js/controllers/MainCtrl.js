@@ -1,5 +1,5 @@
-Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Options', 'GlomosCRM', 'Statistics'
-	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Options, GlomosCRM, Statistics) {
+Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Options', 'GlomosCRM', 'Statistics'
+	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Options, GlomosCRM, Statistics) {
 	 
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
@@ -10,9 +10,10 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 
 	$scope.path = location.host+location.pathname;
 	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login';
-	if(location.host === 'sensorcalc2' || location.host === 'localhost:3000') {
-	    Units.from = 1500;
-	    Units.to = 2000;
+	if(location.host === 'wialoncrm' || location.host === 'localhost:3000') {
+		Units.from = 1500;
+		Units.to = 2000;
+		//Units.autorefresh = false;
 	}
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');
@@ -25,7 +26,6 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 			var sid_src = 'from_storage';
 		}
 	}
-
 	if(sid) {
 		Wialon.duplicate(sid,function(data) {
 			Statistics.send(sid_src);
@@ -38,6 +38,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		if(Units.items.length===0) Units.get();
 		if(HWTypes.items.length===0) HWTypes.get();
+		if(Accounts.items.length===0) Accounts.get();
 		GlomosCRM.login();
 	});
 

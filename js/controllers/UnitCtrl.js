@@ -1,5 +1,8 @@
-Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', 'WaitFor', 'Wialon', 'Units', 'HWTypes', 'UnitFormValidator', 'GlomosCRM'
-	,function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator, GlomosCRM) {
+Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', 'WaitFor', 'Wialon', 'Units', 'HWTypes', 'UnitFormValidator', 'GlomosCRM', '$translate' ,'$translatePartialLoader'
+	,function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator, GlomosCRM, $translate,  $translatePartialLoader) {
+	$translatePartialLoader.addPart('unit');
+	$translatePartialLoader.addPart('sensors');
+	$translate.refresh();
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 	$scope.sensor_id = $stateParams.sensor_id;
@@ -136,6 +139,8 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
       grid: {x:true, y: true},
       margin: {top: 5}
     };
+
+    $scope.tbl_parsers = ['standart','italon'];
 
  
 }]);

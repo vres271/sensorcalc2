@@ -1,13 +1,25 @@
-<div class="container text-center">
-	<h1><img src="img/logo.png" alt=""> Wialon CRM</h1>
-	<i translate>Less clicks - more results</i>
-	<br><br>
-	<div ng-if="!wialon.auth">
-		<a href="{{oauth_link}}" class="btn btn-primary btn-lg"><i class="fa fa-sign-in" aria-hidden="true"></i> Sign in with your Wialon account</a>
+<div class="container text-center " >
+	<div class="home-logo">
+		<object class="logo" type="image/svg+xml" data="img/logowcrm.svg" ></object>
+		<h1>Wialon CRM</h1>
+		<i translate>Less clicks - more results</i>
+		</div>
+</div>
+<hr>
+<div class="container text-center home">
+	<div ng-if="!wialon.auth" class="">
+		<br>
+		<a href="{{oauth_link}}" class="btn btn-primary btn-lg"><i class="fa fa-sign-in" aria-hidden="true"></i> {{'Sign in with your Wialon account'|translate}}</a><br><br><br>
 	</div>
-	<div ng-if="wialon.auth">
+	<div ng-if="wialon.auth" class="">
 		User name: <strong>{{wialon.user.nm}}</strong>
 	</div>
-	<hr>
-	<div ng-if="item_name" ng-include="'html/views/about.'+item_name+'.html'"></div>
+	<!-- <div ng-if="item_name" ng-include="'html/views/about.'+item_name+'.html'"></div> -->
+<br>
+	<div ng-include="'html/views/about.support.html'"></div>
+<br>
+<br>
+	<div ng-include="'html/views/about.admin.html'"></div>
 </div>
+<br>
+<br>
