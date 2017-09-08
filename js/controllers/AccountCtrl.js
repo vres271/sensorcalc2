@@ -21,7 +21,6 @@ Main.controller('AccountCtrl',['$scope','$stateParams','$translate' ,'$translate
 				});
 			}
 		});
-		Users.get();
 	});
 
 

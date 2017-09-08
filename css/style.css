@@ -91,14 +91,28 @@ body{
     border: 35px solid rgba(88, 208, 118, 0);
     background: rgba(88, 208, 118, 0);
 }
+/*  overflow-y: hidden;
+  max-height: 0;
+*/
+.trans-open-down.ng-move,
+.trans-open-down.ng-enter,
+.trans-open-down.ng-leave {
+	-webkit-transition:all linear .3s;
+	transition:all linear .3s;
+}
 
-.trans-open-down {
-	transition: all linear .3s;
-	opacity: 1;
+.trans-open-down.ng-leave.ng-leave-active,
+.trans-open-down.ng-move,
+.trans-open-down.ng-enter {
+	opacity:0;
 }
-.trans-open-down.ng-hide {
-	opacity: 0;
+
+.trans-open-down.ng-leave,
+.trans-open-down.ng-move.ng-move-active,
+.trans-open-down.ng-enter.ng-enter-active {
+	opacity:1;
 }
+
 
 
 
@@ -195,4 +209,18 @@ button.ng-hide,.form-group.ng-hide {
 .dropzone.error{
 	border: 1px dashed rgba(200,20,0,0.3);
 	background-color: rgba(200,20,0,0.05);
+}
+
+
+.my-chekbox-menu li{
+	display: list-item;
+    text-align: -webkit-match-parent;
+}
+.my-chekbox-menu .checkbox{
+	display: block;
+    padding: 3px 20px;
+    clear: both;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;	
 }

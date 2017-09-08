@@ -119,7 +119,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
         for(var key in items) {
             var item = items[key];
             var l_item = {
-                __i: key
+                __i: 1*key
                ,__t: item.t
             }
             for(var poskey in item.pos) {
@@ -148,7 +148,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
                     if(1*event.i === 1*_s.unit_id) {
                         if(event.t === 'm') {
                             var line_item = _s.linerase([event.d])[0];
-                            line_item.__i = _s.items.length;
+                            line_item.__i = 1*_s.items.length;
                             _s.items.push(line_item);
                             _s.error = false;
                             if(callback) callback(line_item);

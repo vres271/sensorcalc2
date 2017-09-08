@@ -54,13 +54,13 @@
 				<a class="btn btn-default" type="button" href="" ng-href="#/unit/{{id}}/messages"><i class="fa fa-map-marker"></i> {{'Go to Mesages'|translate}}</a>
 			</div>
 		</div>
+	    <div ng-if="!uv.valid && item.id && short_item.id" class="alert alert-danger ">
+	    	<strong>{{'Warning'|translate}}!</strong>
+	    	<ul>
+	    		<li ng-repeat="(key, error) in uv.errors">{{error.msg}} <a ng-if="error.link" ng-href="{{error.link}}" href="" >{{error.title}}</a></li>
+	    	</ul>
+	    </div>
 	</div>
-    <div ng-if="!uv.valid && item.id && short_item.id" class="alert alert-danger">
-    	<strong>{{'Warning'|translate}}!</strong>
-    	<ul>
-    		<li ng-repeat="(key, error) in uv.errors">{{error.msg}} <a ng-if="error.link" ng-href="{{error.link}}" href="" >{{error.title}}</a></li>
-    	</ul>
-    </div>
 	<div ng-if="item.id && short_item.id" class="container">
 		<div >
 			<h4>{{'Sensors'|translate}}</h4>
@@ -88,7 +88,7 @@
 						<td>{{sensor.m}}</td>
 						<td><a href="" ng-click=" deleteSensor(sensor, key); validate(); checkChagnes();" title="{{'Delete Sensor'|translate}}"><i class="fa fa-remove red"></i></a></td>
 					</tr>
-					<tr ng-hide="1*sensor._id !== 1*sensor_id" ng-repeat-end class="trans-open-down">
+					<tr ng-if="1*sensor._id === 1*sensor_id" ng-repeat-end class="trans-open-down">
 						<td colspan="100" ng-include="'html/views/unit.sensor-form.html'" scope=""   onload=""></td>
 					</tr>
 				</tbody>

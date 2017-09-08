@@ -45,15 +45,17 @@
 			</div>
 		</div>
 	</div>
-	<div ng-hide="!(crt_user.id && users.items && users_result.length)" class="table-responsive">
-		<h4>Other users in this Account</h4>
-		<table class="table table-striped" id="items-table">
-			<tr ng-repeat="user in users.items | filter : {crt: crt_user.id} as users_result">
-				<td>{{$index+1}}</td>
-				<td>{{user.nm}}</td>
-				<td></td>
-			</tr>
-		</table>
+	<div class="container">
+		<div ng-hide="!(crt_user.id && users.items && users_result.length)" class="table-responsive">
+			<h4>Other users in this Account</h4>
+			<table class="table table-striped" id="items-table">
+				<tr ng-repeat="user in users.items | filter : {crt: crt_user.id} as users_result">
+					<td>{{$index+1}}</td>
+					<td>{{user.nm}}</td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 <!--     <div ng-if="!uv.valid" class="alert alert-danger">
     	<strong>{{'Warning'|translate}}!</strong>

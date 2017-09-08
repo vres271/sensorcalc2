@@ -46,6 +46,8 @@ var isEmptyObject =  function(obj) {
     if(obj === undefined) return true;
     return !Object.keys(obj).length;
 }
+
+
 Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
 	$urlRouterProvider.otherwise(''); 
 	//$locationProvider.html5Mode(false);
@@ -1237,7 +1239,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
         for(var key in items) {
             var item = items[key];
             var l_item = {
-                __i: key
+                __i: 1*key
                ,__t: item.t
             }
             for(var poskey in item.pos) {
@@ -1266,7 +1268,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
                     if(1*event.i === 1*_s.unit_id) {
                         if(event.t === 'm') {
                             var line_item = _s.linerase([event.d])[0];
-                            line_item.__i = _s.items.length;
+                            line_item.__i = 1*_s.items.length;
                             _s.items.push(line_item);
                             _s.error = false;
                             if(callback) callback(line_item);
@@ -1378,8 +1380,10 @@ Main.service('State', ['$interval', '$filter'
       ,hw: true
       ,ph: true
       ,lmsg_t: true
-      ,lmsg_v: true
+      ,lmsg_v: false
       ,online: true
+      ,p_accounts_nm: false
+      ,ct: false
     }
   }
 
@@ -2330,19 +2334,19 @@ Main.controller('AccountCtrl',['$scope','$stateParams','$translate' ,'$translate
 				});
 			}
 		});
-		Users.get();
 	});
 
 
 }]);
-Main.controller('AccountsListCtrl',['$scope','$translate' ,'$translatePartialLoader', 'WaitFor', 'State', 'Accounts', 'Wialon'
-	,function($scope,$translate,  $translatePartialLoader, WaitFor, State, Accounts,Wialon) {
+Main.controller('AccountsListCtrl',['$scope','$translate' ,'$translatePartialLoader', 'WaitFor', 'State', 'Accounts', 'Users', 'Wialon'
+	,function($scope,$translate,  $translatePartialLoader, WaitFor, State, Accounts, Users, Wialon) {
 	$translatePartialLoader.addPart('accounts-list');
 	$translate.refresh();
 
 
 	$scope.s = State.accounts_list;
 	$scope.accounts = Accounts;
+	$scope.users = Users;
 
 	$scope.resetFilter = function() {
 		State.resetFilter('accounts_list');
@@ -2385,8 +2389,8 @@ Main.controller('LoginCtrl',['$scope', 'Wialon','Statistics'
 	// 1
 }]);
 
-Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Options', 'GlomosCRM', 'Statistics'
-	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Options, GlomosCRM, Statistics) {
+Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM', 'Statistics'
+	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM, Statistics) {
 	 
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
@@ -2426,6 +2430,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		if(Units.items.length===0) Units.get();
 		if(HWTypes.items.length===0) HWTypes.get();
 		if(Accounts.items.length===0) Accounts.get();
+		if(Users.items.length===0) Users.get();
 		GlomosCRM.login();
 	});
 
@@ -2776,29 +2781,53 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 
 }]);
 Main.filter('AccountsFilter',function(){
-	return function (items, criterion, accounts) {
+	return function (items, criterion, accounts, users) {
 		if(!items) return items;
 		if(items.length===0) { return items};
 		if(!criterion) {return items};
-		if(!criterion.parent_account_nm) {return items};
-    	var tmp = [];
-    	if(items) {
-    		if(accounts.index) {
-	    		if(accounts.index.id) {
-			    	for(var key in items){
-			    	    var item = items[key];
-			    	    if(item.bpact) {
-			    	    	if(accounts.index.id[item.bpact]) {
-					    	    if(RegExp(criterion.parent_account_nm,'gi').test(accounts.index.id[item.bpact].nm)){
-					    	        tmp.push(item);
-					    	    } 
-			    	    	}
-			    	    }
-			    	}
+
+    	if(criterion.parent_account_nm) {
+	    	var tmp = [];
+	    	if(items) {
+	    		if(accounts.index) {
+		    		if(accounts.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.bpact) {
+				    	    	if(accounts.index.id[item.bpact]) {
+						    	    if(RegExp(criterion.parent_account_nm,'gi').test(accounts.index.id[item.bpact].nm)){
+						    	        tmp.push(item);
+						    	    } 
+				    	    	}
+				    	    }
+				    	}
+		    		}
 	    		}
-    		}
+	    	}
+	    	var items = tmp;
     	}
-    	var items = tmp;
+
+    	if(criterion.crt_user_nm) {
+	    	var tmp = [];
+	    	if(items) {
+	    		if(users.index) {
+		    		if(users.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.crt) {
+				    	    	if(users.index.id[item.crt]) {
+						    	    if(RegExp(criterion.crt_user_nm,'gi').test(users.index.id[item.crt].nm)){
+						    	        tmp.push(item);
+						    	    } 
+				    	    	}
+				    	    }
+				    	}
+		    		}
+	    		}
+	    	}
+	    	var items = tmp;
+    	}
+
     	return items;
  	}
 })
@@ -2904,43 +2933,72 @@ Main.filter('UnitsFilter',function(){
     	// }
     	//var items = tmp;
 
-    	var tmp = [];
-    	if(accounts) {
-    		if(accounts.index) {
-	    		if(accounts.index.crt) {
-			    	for(var key in items){
-			    	    var item = items[key];
-			    	    if(item.crt) {
-			    	    	if(accounts.index.crt[item.crt]) {
-					    	    if(RegExp(criterion.account_name,'gi').test(accounts.index.crt[item.crt].nm)){
-					    	        tmp.push(item);
-					    	    } 
-			    	    	}
-			    	    }
-			    	}
+    	if(criterion.account_name) {
+	    	var tmp = [];
+	    	if(accounts) {
+	    		if(accounts.index) {
+		    		if(accounts.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.bact) {
+				    	    	if(accounts.index.id[item.bact]) {
+						    	    if(RegExp(criterion.account_name,'gi').test(accounts.index.id[item.bact].nm)){
+						    	        tmp.push(item);
+						    	    } 
+				    	    	}
+				    	    }
+				    	}
+		    		}
 	    		}
-    		}
+	    	}
+	    	var items = tmp;
     	}
-    	var items = tmp;
 
-    	var tmp = [];
-    	if(hwtypes) {
-    		if(hwtypes.index) {
-	    		if(hwtypes.index.id) {
-			    	for(var key in items){
-			    	    var item = items[key];
-			    	    if(item.hw) {
-			    	    	if(hwtypes.index.id[item.hw]) {
-					    	    if(RegExp(criterion.hw,'gi').test(hwtypes.index.id[item.hw].name)){
-					    	        tmp.push(item);
-					    	    } 
-			    	    	}
-			    	    }
-			    	}
+    	if(criterion.hw) {
+	    	var tmp = [];
+	    	if(hwtypes) {
+	    		if(hwtypes.index) {
+		    		if(hwtypes.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.hw) {
+				    	    	if(hwtypes.index.id[item.hw]) {
+						    	    if(RegExp(criterion.hw,'gi').test(hwtypes.index.id[item.hw].name)){
+						    	        tmp.push(item);
+						    	    } 
+				    	    	}
+				    	    }
+				    	}
+		    		}
 	    		}
-    		}
+	    	}
+	    	var items = tmp;
     	}
-    	var items = tmp;
+
+    	if(criterion.p_accounts_nm) {
+	    	var tmp = [];		//accounts.index.id[accounts.index.id[item.bact].bpact].nm
+	    	if(accounts) {
+	    		if(accounts.index) {
+		    		if(accounts.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.bact) {
+				    	    	if(accounts.index.id[item.bact]) {
+				    	    		var account_crt = accounts.index.id[item.bact];
+					    	    	if(accounts.index.id[account_crt.bpact]) {
+							    	    if(RegExp(criterion.p_accounts_nm,'gi').test(accounts.index.id[account_crt.bpact].nm)){
+							    	        tmp.push(item);
+							    	    } 
+					    	    	}
+				    	    	}
+				    	    }
+				    	}
+		    		}
+	    		}
+	    	}
+	    	var items = tmp;
+   		}
+
     	return items;
  	}
 })

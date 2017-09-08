@@ -1,5 +1,5 @@
-Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Options', 'GlomosCRM', 'Statistics'
-	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Options, GlomosCRM, Statistics) {
+Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM', 'Statistics'
+	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM, Statistics) {
 	 
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
@@ -39,6 +39,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		if(Units.items.length===0) Units.get();
 		if(HWTypes.items.length===0) HWTypes.get();
 		if(Accounts.items.length===0) Accounts.get();
+		if(Users.items.length===0) Users.get();
 		GlomosCRM.login();
 	});
 

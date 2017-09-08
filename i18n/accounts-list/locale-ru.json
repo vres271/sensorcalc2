@@ -1,7 +1,8 @@
 {
 	"PARENT_ACCOUNT_NAME":"Родительская у/з"
-	,"by Parent Account":"по родительской у/з"
-	,"by Name":"по имени"
+	,"by Parent Account":"Родительская у/з"
+	,"by Name":"Имя"
+	,"by Creator":"@:CRT_USER_NAME"
 	,"Create Account":"Создать учётную запись"
 	,"Sync with CRM":"Подключить к CRM"
 	,"Show events history":"История заявок"

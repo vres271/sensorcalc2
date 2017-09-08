@@ -24,8 +24,10 @@ Main.service('State', ['$interval', '$filter'
       ,hw: true
       ,ph: true
       ,lmsg_t: true
-      ,lmsg_v: true
+      ,lmsg_v: false
       ,online: true
+      ,p_accounts_nm: false
+      ,ct: false
     }
   }
 

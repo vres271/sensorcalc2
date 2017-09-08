@@ -1,11 +1,12 @@
-Main.controller('AccountsListCtrl',['$scope','$translate' ,'$translatePartialLoader', 'WaitFor', 'State', 'Accounts', 'Wialon'
-	,function($scope,$translate,  $translatePartialLoader, WaitFor, State, Accounts,Wialon) {
+Main.controller('AccountsListCtrl',['$scope','$translate' ,'$translatePartialLoader', 'WaitFor', 'State', 'Accounts', 'Users', 'Wialon'
+	,function($scope,$translate,  $translatePartialLoader, WaitFor, State, Accounts, Users, Wialon) {
 	$translatePartialLoader.addPart('accounts-list');
 	$translate.refresh();
 
 
 	$scope.s = State.accounts_list;
 	$scope.accounts = Accounts;
+	$scope.users = Users;
 
 	$scope.resetFilter = function() {
 		State.resetFilter('accounts_list');

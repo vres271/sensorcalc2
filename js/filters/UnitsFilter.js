@@ -20,43 +20,72 @@ Main.filter('UnitsFilter',function(){
     	// }
     	//var items = tmp;
 
-    	var tmp = [];
-    	if(accounts) {
-    		if(accounts.index) {
-	    		if(accounts.index.crt) {
-			    	for(var key in items){
-			    	    var item = items[key];
-			    	    if(item.crt) {
-			    	    	if(accounts.index.crt[item.crt]) {
-					    	    if(RegExp(criterion.account_name,'gi').test(accounts.index.crt[item.crt].nm)){
-					    	        tmp.push(item);
-					    	    } 
-			    	    	}
-			    	    }
-			    	}
+    	if(criterion.account_name) {
+	    	var tmp = [];
+	    	if(accounts) {
+	    		if(accounts.index) {
+		    		if(accounts.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.bact) {
+				    	    	if(accounts.index.id[item.bact]) {
+						    	    if(RegExp(criterion.account_name,'gi').test(accounts.index.id[item.bact].nm)){
+						    	        tmp.push(item);
+						    	    } 
+				    	    	}
+				    	    }
+				    	}
+		    		}
 	    		}
-    		}
+	    	}
+	    	var items = tmp;
     	}
-    	var items = tmp;
 
-    	var tmp = [];
-    	if(hwtypes) {
-    		if(hwtypes.index) {
-	    		if(hwtypes.index.id) {
-			    	for(var key in items){
-			    	    var item = items[key];
-			    	    if(item.hw) {
-			    	    	if(hwtypes.index.id[item.hw]) {
-					    	    if(RegExp(criterion.hw,'gi').test(hwtypes.index.id[item.hw].name)){
-					    	        tmp.push(item);
-					    	    } 
-			    	    	}
-			    	    }
-			    	}
+    	if(criterion.hw) {
+	    	var tmp = [];
+	    	if(hwtypes) {
+	    		if(hwtypes.index) {
+		    		if(hwtypes.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.hw) {
+				    	    	if(hwtypes.index.id[item.hw]) {
+						    	    if(RegExp(criterion.hw,'gi').test(hwtypes.index.id[item.hw].name)){
+						    	        tmp.push(item);
+						    	    } 
+				    	    	}
+				    	    }
+				    	}
+		    		}
 	    		}
-    		}
+	    	}
+	    	var items = tmp;
     	}
-    	var items = tmp;
+
+    	if(criterion.p_accounts_nm) {
+	    	var tmp = [];		//accounts.index.id[accounts.index.id[item.bact].bpact].nm
+	    	if(accounts) {
+	    		if(accounts.index) {
+		    		if(accounts.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.bact) {
+				    	    	if(accounts.index.id[item.bact]) {
+				    	    		var account_crt = accounts.index.id[item.bact];
+					    	    	if(accounts.index.id[account_crt.bpact]) {
+							    	    if(RegExp(criterion.p_accounts_nm,'gi').test(accounts.index.id[account_crt.bpact].nm)){
+							    	        tmp.push(item);
+							    	    } 
+					    	    	}
+				    	    	}
+				    	    }
+				    	}
+		    		}
+	    		}
+	    	}
+	    	var items = tmp;
+   		}
+
     	return items;
  	}
 })

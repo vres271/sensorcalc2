@@ -2,6 +2,7 @@
 	"PARENT_ACCOUNT_NAME":"Parent Account"
 	,"by Parent Account":"Parent Account"
 	,"by Name":"Name"
+	,"by Creator":"@:CRT_USER_NAME"
 	,"Create Account":"Create Account"
 	,"Sync with CRM":"Connect to CRM"
 	,"Show events history":"Show events history"

@@ -38,7 +38,7 @@
 		</p>
 	</div>
 </div>
-<div class="container-fluide" ng-hide="isEmptyObject(chart_keys)" >
+<div class="container-fluide trans-open-down" ng-if="!isEmptyObject(chart_keys)" >
 	<div  style="height: 300px;">
 	    <linechart data="mdata" options="chart_messages_options"></linechart>
 	</div>
@@ -67,7 +67,7 @@
                 </tr>
           	</thead>
           	<tbody>
-				<tr ng-repeat="item in messages.items  | orderBy: ['-__t']  | limitTo: s.limitto : s.limitfrom  as items_result track by $index" class="item-row animate-repeat">
+				<tr ng-repeat="item in messages.items  | orderBy: ['-__t']  | limitTo: s.limitto : s.limitfrom  as items_result" class="item-row animate-repeat">
 					<td ng-bind="item.__i"></td>
 					<td ng-bind="item.__t*1000 | date : 'yy.MM.dd_HH:mm:ss'"></td>
 					<td class="text-nowrap"><a href="{{'https://yandex.ru/maps/?text='+item._pos_y+','+item._pos_x}}" target="_blank" ng-if="item._pos_x && item._pos_y"><i class="fa fa-map-marker"></i></a> <sup ng-bind="::item._pos_sc"></sup></td>

@@ -23,6 +23,9 @@
 				<input ng-model="s.filter.nm" data-ng-model-options="{debounce: 150}"  class="form-control" type="text" name="" placeholder="{{'by Name'|translate}}"  size="15">
 			</div>
 			<div class="form-group">
+				<input ng-model="s.custom_filter.crt_user_nm" data-ng-model-options="{debounce: 150}"  class="form-control" type="text" name="" placeholder="{{'by Creator'|translate}}"  size="20">
+			</div>
+			<div class="form-group">
 				<input ng-model="s.custom_filter.parent_account_nm" data-ng-model-options="{debounce: 150}"  class="form-control" type="text" name="" placeholder="{{'by Parent Account'|translate}}"  size="20">
 			</div>
 			<div class="form-group ">
@@ -40,16 +43,18 @@
                   <th width="50px"><input type="checkbox" ng-model="all_checked" ng-click="checkAll()"></th> 
                   <th width="50px">#</th>
                   <th translate>ACCOUNT_NAME</th>
+                  <th translate>CRT_USER_NAME</th>
                   <th translate>PARENT_ACCOUNT_NAME</th>
                   <th colspan="100" translate></th>
                 </tr>
           	</thead>
           	<tbody>
-				<tr ng-repeat="item in accounts.items| filter: s.filter | AccountsFilter: s.custom_filter : accounts | orderBy : s.orderby | limitTo : s.limit : 0 as items_result track by $index" class="item-row {{item._checked?'info':''}}">
+				<tr ng-repeat="item in accounts.items| filter: s.filter | AccountsFilter: s.custom_filter : accounts : users | orderBy : s.orderby | limitTo : s.limit : 0 as items_result track by $index" class="item-row {{item._checked?'info':''}}">
 					<td><input type="checkbox" ng-model="item._checked" ng-change="onItemSelect();"></td>
 					<td ng-bind="$index+1"></td>
 					<td><a href="" ng-href="#account/{{item.id}}" ng-bind="item.nm"></a></td>
-					<td ng-bind="accounts.index.id[item.bpact].nm"></td>
+					<td><a href="" ng-href="#user/{{item.crt}}" ng-bind="users.index.id[item.crt].nm"></a></td>
+					<td><a href="" ng-href="#account/{{item.bpact}}"  ng-bind="accounts.index.id[item.bpact].nm"></a></td>
 				</tr>
 			</tbody>
 		</table>
