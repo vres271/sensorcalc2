@@ -10,10 +10,12 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 
 	$scope.path = location.host+location.pathname;
 	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login';
-	if(location.host === 'wialoncrm' || location.host === 'localhost:3000') {
+	$scope.testmode = (location.host === 'wialoncrm' || location.host === 'localhost:3000');
+	
+	if($scope.testmode) {
 		Units.from = 1500;
 		Units.to = 2000;
-		//Units.autorefresh = false;
+		Units.autorefresh = false;
 	}
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');

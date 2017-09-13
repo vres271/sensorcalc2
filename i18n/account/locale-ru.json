@@ -1,0 +1,13 @@
+{
+	"Users in this Account":"Пользователи в этой учетной записи"
+	,"balance":"Баланс"
+	,"created":"Создан"
+	,"daysCounter":"Счетчик дней"
+	,"dealerRights":"Права дилера"
+	,"enabled":"Статус"
+	,"managable":"Managable"
+	,"parentAccountId":"ID родительской у/з"
+	,"parentAccountName":"Имя родительской у/з"
+	,"parentEnabled":"Статус родительской у/з"
+	,"plan":"Тарифный план"
+}

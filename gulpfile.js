@@ -5,6 +5,7 @@ var uglify = require('gulp-uglify'); // Минификация JS
 var concat = require('gulp-concat'); // Склейка файлов
 var js_obfuscator = require('gulp-js-obfuscator');
 var htmlmin = require('gulp-htmlmin');
+var removeHtmlComments = require('gulp-remove-html-comments');
 var csso = require('gulp-csso');
 var imagemin = require('gulp-imagemin');
 // var gettext     = require('gulp-angular-gettext');
@@ -104,18 +105,6 @@ gulp.task('serve',  function() {
 
 });
 
-
-
-
-
-gulp.task('html', wrapPipe(function(success, error) {
-    return gulp.src([
-          'html/views/*.html'
-      ])
-      .pipe(htmlmin())
-      .pipe(gulp.dest('build/html/views'))
-  }));
-
 gulp.task('js', wrapPipe(function(success, error) {
   return gulp.src([
         'js/*.js'
@@ -132,11 +121,17 @@ gulp.task('js', wrapPipe(function(success, error) {
     .pipe(gulp.dest(''));
 }));
 
+var html_options = {
+    collapseWhitespace: true
+    ,conservativeCollapse: true
+};
+
 gulp.task('html', wrapPipe(function(success, error) {
   return gulp.src([
         'html/views/*.html'
     ])
-    .pipe(htmlmin())
+    .pipe(htmlmin(html_options))
+    .pipe(removeHtmlComments())
     .pipe(gulp.dest('build/html/views'))
 }));
 
@@ -144,7 +139,8 @@ gulp.task('htmlindex', wrapPipe(function(success, error) {
   return gulp.src([
         'index.html'
     ])
-    .pipe(htmlmin({collapseWhitespace: true}))
+    .pipe(htmlmin(html_options))
+    .pipe(removeHtmlComments())
     .pipe(gulp.dest('build/html'))
 }));
 

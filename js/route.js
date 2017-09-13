@@ -61,6 +61,18 @@ Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functi
                 '': {templateUrl: 'html/views/account.html', controller: 'AccountCtrl'}
             }
         })
+        .state('users-list', {
+            url: '/users-list'
+            ,views: {
+                '': {templateUrl: 'html/views/users-list.html', controller: 'UsersListCtrl'}
+            }
+        })
+         .state('user', {
+            url: '/user/:id'
+            ,views: {
+                '': {templateUrl: 'html/views/user.html', controller: 'UserCtrl'}
+            }
+        })
     //    .state('account', {
      //        url: '/account'
      //        ,views: {

@@ -124,6 +124,17 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 		$scope.item_copy = angular.toJson(copy);
 	}
 
+	$scope.readyForChart = function(sensor) {
+		if(sensor._d) {
+			if(sensor._d.length>1) {
+				if(sensor._d[0].x!==undefined && sensor._d[0].y!==undefined &&  sensor._d[1].x!==undefined &&  sensor._d[1].y!==undefined) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
     $scope.sensor_chart_options = {
       series: [
         {

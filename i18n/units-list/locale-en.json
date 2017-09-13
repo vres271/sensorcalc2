@@ -11,6 +11,7 @@
 	,"by Phone":"Phone"
 	,"by HW Type":"HW Type"
 	,"by Parent Account Name":"Parent Account Name"
+	,"by Creator":"@:CRT_USER_NAME"
 	,"col_show_accounts_nm":"@:ACCOUNT"
 	,"col_show_nm":"@:UNIT_NAME"
 	,"col_show_uid":"@:UID"
@@ -21,4 +22,5 @@
 	,"col_show_online":"@:ONLINE"
 	,"col_show_p_accounts_nm":"Parent Acc"
 	,"col_show_ct":"@:CT"
+	,"col_show_crt_nm":"@:CRT_USER_NAME"
 }

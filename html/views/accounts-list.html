@@ -1,7 +1,7 @@
 <nav class="navbar navbar-fluide navbar-fixed-top marg-1 bg-white" >
 	<div class="container">
 		<form action="" class="navbar-form ">
-			<div ng-hide="!items_checked" class="form-group">
+<!-- 			<div ng-hide="!items_checked" class="form-group">
 			    <div class="btn-group">
 			      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 			      <i class="fa fa-check" data-toggle="dropdown"></i> <span  translate>with selected</span>... <span class="caret"></span></button>
@@ -12,9 +12,10 @@
 			      </ul>
 			    </div>
 			</div>
-			<div class="form-group">
+ -->			
+			<!-- <div class="form-group">
 				<a href="" ng-href="#about/admin" class="btn btn-default" ><i class="fa fa-plus grey"></i> {{'Create Account'|translate}} <sup><span class="label label-primary">CRM</span></sup></a>
-			</div>
+			</div> -->
 			<span  translate>Filters</span>:
 			<div class="form-group">
 				<a href="" ng-click="resetFilter()" class="btn btn-default" title="{{'Reset all filters'|translate}}"><i class="fa fa-ban grey"></i></a>
@@ -40,7 +41,7 @@
 		<table class="table table-striped" id="items-table">
 			<thead>
                 <tr>
-                  <th width="50px"><input type="checkbox" ng-model="all_checked" ng-click="checkAll()"></th> 
+                  <!-- <th width="50px"><input type="checkbox" ng-model="all_checked" ng-click="checkAll()"></th>  -->
                   <th width="50px">#</th>
                   <th translate>ACCOUNT_NAME</th>
                   <th translate>CRT_USER_NAME</th>
@@ -50,7 +51,7 @@
           	</thead>
           	<tbody>
 				<tr ng-repeat="item in accounts.items| filter: s.filter | AccountsFilter: s.custom_filter : accounts : users | orderBy : s.orderby | limitTo : s.limit : 0 as items_result track by $index" class="item-row {{item._checked?'info':''}}">
-					<td><input type="checkbox" ng-model="item._checked" ng-change="onItemSelect();"></td>
+					<!-- <td><input type="checkbox" ng-model="item._checked" ng-change="onItemSelect();"></td> -->
 					<td ng-bind="$index+1"></td>
 					<td><a href="" ng-href="#account/{{item.id}}" ng-bind="item.nm"></a></td>
 					<td><a href="" ng-href="#user/{{item.crt}}" ng-bind="users.index.id[item.crt].nm"></a></td>

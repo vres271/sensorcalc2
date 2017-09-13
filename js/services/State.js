@@ -27,6 +27,7 @@ Main.service('State', ['$interval', '$filter'
       ,lmsg_v: false
       ,online: true
       ,p_accounts_nm: false
+      ,crt_nm: false
       ,ct: false
     }
   }
@@ -45,6 +46,19 @@ Main.service('State', ['$interval', '$filter'
     }
     ,orderby: ['crt','nm']
     ,limit: 25
+  }
+
+  _s.users_list = {
+    filter: {
+    }
+    ,orderby: ['crt','-id']
+    ,limit: 25
+    ,show: {
+      nm: true
+      ,crt_nm: true
+      ,accounts_nm: true
+      ,p_accounts_nm: true
+    }
   }
 
 

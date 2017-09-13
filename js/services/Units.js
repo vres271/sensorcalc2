@@ -14,6 +14,11 @@ Main.service('Units',  ['Wialon'
                 ,uid: createIndex(data.items, 'uid')
                 ,ph: createIndex(data.items, 'ph')
         	};
+            _s.index.key_id = {};
+            for(var key in _s.items) {
+                var item = _s.items[key];
+                _s.index.key_id[item.id] = key;
+            }
 			if(_s.autorefresh) _s.addToSession();
     	});
 	}
@@ -47,6 +52,20 @@ Main.service('Units',  ['Wialon'
     		callback(data.item);
     	});
 	}
+
+    _s.refreshUnit = function(id, callback) {
+        var params = {"id":1*id,"flags":1439}
+        Wialon.request('core/search_item', params, function(data) {
+            if(data.item) {
+                _s.items[_s.index.key_id[id]] = data.item;
+                _s.index.id[id] = data.item;
+                _s.index.uid[data.item.uid]  = data.item;
+                _s.index.ph[data.item.ph]  = data.item;
+                if (callback) callback(data.item);
+            }
+        });
+
+    }
 
 	_s.addToSession = function() {
 		var params = {"spec":[{"type":"type","data":'avl_unit',"flags":1025,"mode":0}]};
@@ -89,6 +108,7 @@ Main.service('Units',  ['Wialon'
         };
         params.params = params.params.concat(_s.prepareSensors(item));
         Wialon.request('core/batch', params, function(data) {
+            _s.refreshUnit(item.id);
             if(callback) callback(data);
         });        
     }

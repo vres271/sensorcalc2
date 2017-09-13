@@ -111,7 +111,7 @@
 		</form>
 	</div>
 	<div class="col-sm-7">
-		<div ng-if="sensor._d.length>1" class="row">
+		<div ng-if="readyForChart(sensor)" class="row">
 			<div class="col-sm-12" style="height: 420px;">
 			    <linechart data="sensor" options="sensor_chart_options"></linechart>
 			</div>

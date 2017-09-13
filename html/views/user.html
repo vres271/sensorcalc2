@@ -1,0 +1,53 @@
+<form class="form-horizontal" action="" name="UnitForm">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6">
+			    <div class="form-group">
+					<div class="col-md-6 col-md-offset-3"><h4>{{'USER'|translate}}</h4></div>
+				</div>
+			    <div class="form-group {{errClass('nm')}}">
+			      <label class="control-label col-sm-3" for="nm" required >{{'USER_NAME'|translate}}:</label>
+			      <div class="col-sm-9">
+			        <input ng-model="item.nm" type="text" class="form-control" id="nm" placeholder="" name="nm" required ng-change="validate(); checkChagnes();">
+			      </div>
+			    </div>
+			    <div class="form-group {{errClass('password')}}">
+			      <label class="control-label col-sm-3" for="password" required >{{'PASSWORD'|translate}}:</label>
+			      <div class="col-sm-9">
+					<div class="input-group">
+					    <input  ng-model="item._password"  type="{{user_password_visible ? 'text':'password'}}" class="form-control" id="password"  placeholder="{{'Remains the same'|translate}}" name="password" required ng-change="validate(); checkChagnes();">
+					    <div class="input-group-btn">
+					      <button class="btn btn-default " type="button" ng-click="setVisible()">
+					        <i class="fa fa-eye {{item._password ? '' : 'grey'}}" aria-hidden="true"></i>
+					      </button>
+					      <button class="btn btn-default" type="button" ng-click="generatePassword(); validate(); checkChagnes();">
+					        <i class="fa fa-random" aria-hidden="true"></i>
+					      </button>
+					    </div>
+					</div>
+			      </div>
+			    </div>
+				<div class="form-group">
+			    	<div class="col-sm-9 col-md-offset-3">
+						<button class="btn btn-{{item_changed ? 'primary' : 'default'}} btn-block " type="button" ng-disabled="!v.valid" ng-click="saveItem();"><i class="fa fa-save"></i> {{'Save changes'|translate}}</button>
+					</div>
+			    </div>
+			</div>
+			<div class="col-sm-6">
+				<ul class="list-group">
+					<!-- <li class="list-group-item">Creator: <a href="" ng-href="#user/{{item.crt}}" ng-bind="users.index.id[item.crt].nm"></a></li> -->
+					<li class="list-group-item">{{'ACCOUNT'|translate}}: <a href="" ng-href="#account/{{item.bact}}" ng-bind="accounts.index.id[item.bact].nm"></a></li>
+					<li class="list-group-item">{{'Parent Account'|translate}}: <a href="" ng-href="#account/{{accounts.index.id[item.bact].bpact}}"  ng-bind="accounts.index.id[accounts.index.id[item.bact].bpact].nm"></a></li>
+					<li class="list-group-item">{{'created'|translate}}: {{item.ct*1000 | date : 'dd.MM.yyyy HH:mm:ss'}}</li>
+				</ul>
+			</div>
+		</div>
+	    <div ng-if="!v.valid && item.id" class="alert alert-danger ">
+	    	<strong>{{'Warning'|translate}}!</strong>
+	    	<ul>
+	    		<li ng-repeat="(key, error) in v.errors">{{error.msg}} <a ng-if="error.link" ng-href="{{error.link}}" href="" >{{error.title}}</a></li>
+	    	</ul>
+	    </div>
+
+	</div>
+</form>

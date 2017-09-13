@@ -1,11 +1,12 @@
-Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', '$translate' ,'$translatePartialLoader'
-	,function($scope, State, Units, HWTypes, Accounts, $translate,  $translatePartialLoader) {
+Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', 'Users', '$translate' ,'$translatePartialLoader'
+	,function($scope, State, Units, HWTypes, Accounts, Users, $translate,  $translatePartialLoader) {
 	$translatePartialLoader.addPart('units-list');
 	$translate.refresh();
 
 	$scope.units = Units;
 	$scope.hwtypes = HWTypes;
 	$scope.accounts = Accounts;
+	$scope.users = Users;
 
 	$scope.s = State.units_list;
 

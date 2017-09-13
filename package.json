@@ -20,6 +20,7 @@
     "gulp-i18n": "^1.0.5",
     "gulp-imagemin": "^3.3.0",
     "gulp-js-obfuscator": "^1.0.0",
+    "gulp-remove-html-comments": "^1.0.1",
     "gulp-uglify": "^3.0.0"
   },
   "scripts": {

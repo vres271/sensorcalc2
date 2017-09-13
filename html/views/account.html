@@ -2,57 +2,81 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-6">
+			    <div class="form-group">
+					<div class="col-md-6 col-md-offset-2"><h4>{{'ACCOUNT'|translate}}</h4></div>
+				</div>
 			    <div class="form-group {{errClass('nm')}}">
-			      <label class="control-label col-sm-3" for="nm" required >{{'UNIT_NAME'|translate}}:</label>
-			      <div class="col-sm-9">
+			      <label class="control-label col-sm-2" for="nm" required >{{'UNIT_NAME'|translate}}:</label>
+			      <div class="col-sm-10">
 			        <input ng-model="acc.item.nm" type="text" class="form-control" id="nm" placeholder="" name="nm" required ng-change="validate(); checkChagnes();">
 			      </div>
 			    </div>
 			    <div class="form-group">
-					<div class="col-md-6 col-md-offset-3">User-creator</div>
+					<div class="col-md-6 col-md-offset-2"><h4>{{'USER_CREATOR'|translate}}</h4></div>
 				</div>
-			    <div class="form-group {{errClass('nm')}}">
-			      <label class="control-label col-sm-3" for="nm" required >{{'USER_NAME'|translate}}:</label>
-			      <div class="col-sm-9">
-			        <input ng-model="crt_user.nm" type="text" class="form-control" id="nm" placeholder="" name="nm" required ng-change="validate(); checkChagnes();">
+			    <div class="form-group {{errClass('crt_user_nm')}}">
+			      <label class="control-label col-sm-2" for="crt_user_nm" required >{{'USER_NAME'|translate}}:</label>
+			      <div class="col-sm-10">
+			        <input ng-model="acc.crt_user.nm" type="text" class="form-control" id="crt_user_nm" placeholder="" name="crt_user_nm" required ng-change="validate(); checkChagnes();">
 			      </div>
 			    </div>
-			    <div class="form-group {{errClass('nm')}}">
-			      <label class="control-label col-sm-3" for="nm" required >{{'PASSWORD'|translate}}:</label>
-			      <div class="col-sm-9">
-			        <input ng-model="crt_user._password" type="text" class="form-control" id="nm" placeholder="" name="nm" required ng-change="validate(); checkChagnes();">
+			    <div class="form-group {{errClass('crt_user_password')}}">
+			      <label class="control-label col-sm-2" for="crt_user_password" required >{{'PASSWORD'|translate}}:</label>
+			      <div class="col-sm-10">
+					<div class="input-group">
+					    <input  ng-model="acc.crt_user._password"  type="{{crt_user_password_visible ? 'text':'password'}}" class="form-control" id="crt_user_password" placeholder="{{'Remains the same'|translate}}" name="crt_user_password" required ng-change="validate(); checkChagnes();">
+					    <div class="input-group-btn">
+					      <button class="btn btn-default " type="button" ng-click="setVisible()">
+					        <i class="fa fa-eye {{acc.crt_user._password ? '' : 'grey'}}" aria-hidden="true"></i>
+					      </button>
+					      <button class="btn btn-default" type="button" ng-click="generatePassword(); validate(); checkChagnes();">
+					        <i class="fa fa-random" aria-hidden="true"></i>
+					      </button>
+					    </div>
+					</div>
 			      </div>
 			    </div>
 				<div class="form-group">
-			    	<div class="col-sm-9 col-md-offset-3">
-						<button class="btn btn-{{item_changed ? 'primary' : 'default'}} btn-block " type="button" ng-disabled="!uv.valid" ng-click="saveItem();"><i class="fa fa-save"></i> {{'Save changes'|translate}}</button>
+			    	<div class="col-sm-10 col-md-offset-2">
+						<button class="btn btn-{{item_changed ? 'primary' : 'default'}} btn-block " type="button" ng-disabled="!v.valid" ng-click="saveItem();"><i class="fa fa-save"></i> {{'Save changes'|translate}}</button>
 					</div>
 			    </div>
 			</div>
 			<div class="col-sm-6">
 				<ul class="list-group">
-					<li class="list-group-item">balance: {{acc.data.balance}}</li>
-					<li class="list-group-item">created: {{acc.data.created*1000 | date : 'dd.MM.yyyy HH:mm:ss'}}</li>
-					<li class="list-group-item">daysCounter: {{acc.data.daysCounter}}</li>
-					<li class="list-group-item">dealerRights: {{acc.data.dealerRights}}</li>
-					<li class="list-group-item">enabled: {{acc.data.enabled}}</li>
-					<li class="list-group-item">managable: {{acc.data.managable}}</li>
-					<li class="list-group-item">parentAccountId: {{acc.data.parentAccountId}}</li>
-					<li class="list-group-item">parentAccountName: {{acc.data.parentAccountName}}</li>
-					<li class="list-group-item">parentEnabled: {{acc.data.parentEnabled}}</li>
-					<li class="list-group-item">plan: {{acc.data.plan}}</li>
+					<li class="list-group-item">{{'balance'|translate}}: {{acc.data.balance}}</li>
+					<li class="list-group-item">{{'enabled'|translate}}: <i class="fa fa-check green" ng-if="acc.data.enabled"></i><i class="fa fa-minus red" ng-if="!acc.data.enabled"></i></li>
+					<li class="list-group-item">{{'parentEnabled'|translate}}:  <i class="fa fa-check green" ng-if="acc.data.parentEnabled"></i><i class="fa fa-minus red" ng-if="!acc.data.parentEnabled"></i></li>
+					<li class="list-group-item">{{'daysCounter'|translate}}: {{acc.data.daysCounter}}</li>
+					<li class="list-group-item">{{'created'|translate}}: {{acc.data.created*1000 | date : 'dd.MM.yyyy HH:mm:ss'}}</li>
+					<li class="list-group-item">{{'dealerRights'|translate}}: {{acc.data.dealerRights ? 'Да' : 'Нет'}}</li>
+					<li class="list-group-item">{{'managable'|translate}}: {{acc.data.managable ? 'Да' : 'Нет'}}</li>
+					<li class="list-group-item">{{'plan'|translate}}: {{acc.data.plan}}</li>
+					<li class="list-group-item">{{'parentAccountId'|translate}}: {{acc.data.parentAccountId}}</li>
+					<li class="list-group-item">{{'parentAccountName'|translate}}: <a href="" ng-href="#account/{{accounts.index.id[acc.item.bact].bpact}}">{{acc.data.parentAccountName}}</a></li>
 				</ul>
 			</div>
 		</div>
+	    <div ng-if="!v.valid && acc.item.id && acc.crt_user.id" class="alert alert-danger ">
+	    	<strong>{{'Warning'|translate}}!</strong>
+	    	<ul>
+	    		<li ng-repeat="(key, error) in v.errors">{{error.msg}} <a ng-if="error.link" ng-href="{{error.link}}" href="" >{{error.title}}</a></li>
+	    	</ul>
+	    </div>
 	</div>
 	<div class="container">
-		<div ng-hide="!(crt_user.id && users.items && users_result.length)" class="table-responsive">
-			<h4>Other users in this Account</h4>
+		<div ng-hide="!(acc.item.id && users.items && users_result.length)" class="table-responsive">
+			<h4>{{'Users in this Account'|translate}}</h4>
 			<table class="table table-striped" id="items-table">
-				<tr ng-repeat="user in users.items | filter : {crt: crt_user.id} as users_result">
+				<tr>
+					<th width="32px">#</th>
+					<th width="320px" translate>USER_NAME</th>
+					<th></th>
+				</tr>
+				<tr ng-repeat="user in users.items | filter : {bact: acc.item.id} | orderBy: ['id','nm'] as users_result">
 					<td>{{$index+1}}</td>
-					<td>{{user.nm}}</td>
-					<td></td>
+					<td><a href="" ng-href="#user/{{user.id}}">{{user.nm}}</a></td>
+					<td ng-bind="user.id === acc.crt_user.id ? ('CRT_USER_NAME'|translate) : ''"></td>
 				</tr>
 			</table>
 		</div>
@@ -63,4 +87,5 @@
     		<li ng-repeat="(key, error) in uv.errors">{{error.msg}} <a ng-if="error.link" ng-href="{{error.link}}" href="" >{{error.title}}</a></li>
     	</ul>
     </div>
- --></form>
+ -->
+ </form>

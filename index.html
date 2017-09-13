@@ -14,24 +14,25 @@
 	<body>
 		<div class="navbar navbar-inverse navbar-fluide navbar-fixed-top navbar-custom">
 		    <nav class="container-fluide">
-					<ul ng-hide="!wialon.auth"  class="nav navbar-nav">
-						<li><a href="" ng-href="#options" ><i class="fa fa-bars" aria-hidden="true"></i></a></li>
-					</ul>
-					<ul ng-hide="!wialon.auth"  class="nav navbar-nav">
-						<li><a href="" ng-href="#units" translate>UNITS</a></li>
-						<li><a href="" ng-href="#accounts-list" translate>ACCOUNTS</a></li>
-						<li><a href="" ng-href="#about/support" >{{'SUPPORT'|translate}} <sup><span class="label label-primary">CRM</span></sup></a></li>
-					</ul>
-			        <ul ng-hide="!wialon.auth" class="nav navbar-nav navbar-right">
-			          <li ng-if="gcrm.user.sid"><a href="#">{{'WialonCRM User'|translate}}: {{gcrm.user.name}}</a></li>	
-			          <li><a href="#">{{now.ut*1000|date:'yyyy-MM-dd HH:mm:ss'}}</a></li>	
-			          <li ng-if="wialon.refresh_interval > wialon.default_refresh_interval"><a href="#" title="{{'Slow internet connection'|translate}}"><i class="fa fa-exclamation-triangle"></i></a></li>	
-				      <li><a href="#" id="username"><span class="glyphicon glyphicon-user"></span> {{wialon.user.nm}}</a></li>
-				      <li><a ng-click="logout()" href="#" id="logout" title="{{'Sign-Out'|translate}}"><span class="glyphicon glyphicon-log-out"></span></a></li>
-			    	</ul>
-			        <ul ng-hide="wialon.auth" class="nav navbar-nav navbar-right">
-				      <li><a href="{{oauth_link}}" id="login"><span class="glyphicon glyphicon-log-in"></span> {{'Sign-In'|translate}}</a></li>
-			    	</ul>
+				<ul ng-hide="!wialon.auth"  class="nav navbar-nav">
+					<li><a href="" ng-href="#options" ><i class="fa fa-bars" aria-hidden="true"></i></a></li>
+				</ul>
+				<ul ng-hide="!wialon.auth"  class="nav navbar-nav">
+					<li><a href="" ng-href="#units" translate>UNITS</a></li>
+					<li><a href="" ng-href="#users-list" translate>USERS</a></li>
+					<li><a href="" ng-href="#accounts-list" translate>ACCOUNTS</a></li>
+					<!-- <li><a href="" ng-href="#about/support" >{{'SUPPORT'|translate}} <sup><span class="label label-primary">CRM</span></sup></a></li> -->
+				</ul>
+		        <ul ng-hide="!wialon.auth" class="nav navbar-nav navbar-right">
+		          <li ng-if="gcrm.user.sid"><a href="#">{{'WialonCRM User'|translate}}: {{gcrm.user.name}}</a></li>	
+		          <li><a href="#">{{now.ut*1000|date:'yyyy-MM-dd HH:mm:ss'}}</a></li>	
+		          <li ng-if="wialon.refresh_interval > wialon.default_refresh_interval"><a href="#" title="{{'Slow internet connection'|translate}}"><i class="fa fa-exclamation-triangle"></i></a></li>	
+			      <li><a href="#" id="username"><span class="glyphicon glyphicon-user"></span> {{wialon.user.nm}}</a></li>
+			      <li><a ng-click="logout()" href="#" id="logout" title="{{'Sign-Out'|translate}}"  style="margin-right: 15px;"><span class="glyphicon glyphicon-log-out"></span></a></li>
+		    	</ul>
+		        <ul ng-hide="wialon.auth" class="nav navbar-nav navbar-right" >
+			      <li><a href="{{oauth_link}}" id="login"><span class="glyphicon glyphicon-log-in"></span> {{'Sign-In'|translate}}</a></li>
+		    	</ul>
 		    </nav>
 		</div>
 	    <div class="container-fluide marg-2" ui-view ></div>

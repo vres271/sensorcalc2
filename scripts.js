@@ -111,6 +111,18 @@ Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functi
                 '': {templateUrl: 'html/views/account.html', controller: 'AccountCtrl'}
             }
         })
+        .state('users-list', {
+            url: '/users-list'
+            ,views: {
+                '': {templateUrl: 'html/views/users-list.html', controller: 'UsersListCtrl'}
+            }
+        })
+         .state('user', {
+            url: '/user/:id'
+            ,views: {
+                '': {templateUrl: 'html/views/user.html', controller: 'UserCtrl'}
+            }
+        })
     //    .state('account', {
      //        url: '/account'
      //        ,views: {
@@ -128,6 +140,61 @@ Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functi
     	// })
   }])
 
+Main.service('AccountFormValidator', ['Validator', 'Accounts', 'Users'
+  ,function(Validator, Accounts, Users) {
+    var _s = this;
+    _s.create = function(acc, crt_user) {
+      _s.v = new Validator(acc);
+      _s.validate = _s.v.validate;
+      _s.errClass = function(key) {
+        return _s.v.errors[key] ? 'has-error' : '';
+      }
+      _s.v.setPart('nm', function(acc) {
+        var ret = {valid: true};
+        if(acc.item) {
+          if(acc.item.nm === undefined) {
+            ret.valid = false;
+            ret.msg = 'Name is empty!';
+          } else {
+            if(Accounts.index.nm[acc.item.nm]) {
+              if(Accounts.index.nm[acc.item.nm].id !== acc.item.id) {
+                ret.valid = false;
+                ret.msg = 'Account with the same Name already exists';
+                ret.link = '#/account/'+Accounts.index.nm[acc.item.nm].id;
+                ret.title = Accounts.index.nm[acc.item.nm].nm;
+              }
+            }
+          }
+        }
+        return ret;
+      });
+      _s.v.setPart('crt_user_nm', function(acc) {
+        var ret = {valid: true};
+        if(acc.crt_user) {
+          if(acc.crt_user.nm === undefined) {
+            ret.valid = false;
+            ret.msg = 'User Name is empty!';
+          } else {
+            if(acc.crt_user.nm.length<4 || acc.crt_user.nm.length>50) {
+              ret.valid = false;
+              ret.msg = 'User name length must be from 4 to 50';
+            }
+            if(Users.index.nm[acc.crt_user.nm]) {
+              if(Users.index.nm[acc.crt_user.nm].id !== acc.crt_user.id) {
+                ret.valid = false;
+                ret.msg = 'User with the same Name already exists';
+                ret.link = '#/user/'+Users.index.nm[acc.crt_user.nm].id;
+                ret.title = Users.index.nm[acc.crt_user.nm].nm;
+              }
+            }
+          }
+        }
+        return ret;
+      });
+      return _s.v
+    }
+    return _s;
+}]);
 Main.service('Accounts',  ['Wialon'
     ,function(Wialon){
 
@@ -142,7 +209,13 @@ Main.service('Accounts',  ['Wialon'
         	_s.index = {
                 id: createIndex(data.items, 'id')
                 ,crt: createIndex(data.items, 'crt')
+                ,nm: createIndex(data.items, 'nm')
         	};
+            _s.index.key_id = {};
+            for(var key in _s.items) {
+                var item = _s.items[key];
+                _s.index.key_id[item.id] = key;
+            }
     	});
 	}
 
@@ -159,6 +232,32 @@ Main.service('Accounts',  ['Wialon'
     		callback(resp);
     	});
 	}
+
+    _s.saveAccount = function(acc, callback) {
+        var acc = angular.copy(acc);
+        var params_arr = [];
+        params_arr.push({"svc":"item/update_name","params":{"itemId":acc.item.id,"name":acc.item.nm}});
+        Wialon.request('core/batch', {"params":params_arr,"flags":0}, function(data) {
+            _s.refreshAccount(acc.item.id);
+            if(callback) callback(data);
+        });
+    }
+
+    _s.refreshAccount = function(id, callback) {
+        var params = {"id":1*id,"flags":5}
+        Wialon.request('core/search_item', params, function(data) {
+            if(data.item) {
+                _s.items[_s.index.key_id[id]] = data.item;
+                _s.index.id[id] = data.item;
+                _s.index.crt[data.item.crt]  = data.item;
+                _s.index.nm[data.item.nm]  = data.item;
+                if (callback) callback(data.item);
+            }
+        });
+
+    }
+
+
 
 }]);
 Main.service('GlomosCRM', ['$http', 'Options'
@@ -1383,6 +1482,7 @@ Main.service('State', ['$interval', '$filter'
       ,lmsg_v: false
       ,online: true
       ,p_accounts_nm: false
+      ,crt_nm: false
       ,ct: false
     }
   }
@@ -1401,6 +1501,19 @@ Main.service('State', ['$interval', '$filter'
     }
     ,orderby: ['crt','nm']
     ,limit: 25
+  }
+
+  _s.users_list = {
+    filter: {
+    }
+    ,orderby: ['crt','-id']
+    ,limit: 25
+    ,show: {
+      nm: true
+      ,crt_nm: true
+      ,accounts_nm: true
+      ,p_accounts_nm: true
+    }
   }
 
 
@@ -1497,7 +1610,7 @@ Main.service('UnitFormValidator', ['Validator', 'Units'
             if(item.ph) {
               if(Units.index.ph[item.ph]) {
                 if(Units.index.ph[item.ph].id !== item.id ) {
-            ret.valid = false;
+                    ret.valid = false;
                     ret.msg = 'Unit with the same Phone already exists';
                     ret.link = '#/unit/'+Units.index.ph[item.ph].id; 
                     ret.title = Units.index.ph[item.ph].nm;
@@ -1563,6 +1676,11 @@ Main.service('Units',  ['Wialon'
                 ,uid: createIndex(data.items, 'uid')
                 ,ph: createIndex(data.items, 'ph')
         	};
+            _s.index.key_id = {};
+            for(var key in _s.items) {
+                var item = _s.items[key];
+                _s.index.key_id[item.id] = key;
+            }
 			if(_s.autorefresh) _s.addToSession();
     	});
 	}
@@ -1596,6 +1714,20 @@ Main.service('Units',  ['Wialon'
     		callback(data.item);
     	});
 	}
+
+    _s.refreshUnit = function(id, callback) {
+        var params = {"id":1*id,"flags":1439}
+        Wialon.request('core/search_item', params, function(data) {
+            if(data.item) {
+                _s.items[_s.index.key_id[id]] = data.item;
+                _s.index.id[id] = data.item;
+                _s.index.uid[data.item.uid]  = data.item;
+                _s.index.ph[data.item.ph]  = data.item;
+                if (callback) callback(data.item);
+            }
+        });
+
+    }
 
 	_s.addToSession = function() {
 		var params = {"spec":[{"type":"type","data":'avl_unit',"flags":1025,"mode":0}]};
@@ -1638,6 +1770,7 @@ Main.service('Units',  ['Wialon'
         };
         params.params = params.params.concat(_s.prepareSensors(item));
         Wialon.request('core/batch', params, function(data) {
+            _s.refreshUnit(item.id);
             if(callback) callback(data);
         });        
     }
@@ -1985,6 +2118,42 @@ Main.service('Units',  ['Wialon'
 
 
 }]);
+Main.service('UserFormValidator', ['Validator', 'Users'
+  ,function(Validator,  Users) {
+    var _s = this;
+    _s.create = function(acc, crt_user) {
+      _s.v = new Validator(acc);
+      _s.validate = _s.v.validate;
+      _s.errClass = function(key) {
+        return _s.v.errors[key] ? 'has-error' : '';
+      }
+      _s.v.setPart('nm', function(item) {
+        var ret = {valid: true};
+        if(item) {
+          if(item.nm === undefined) {
+            ret.valid = false;
+            ret.msg = 'User Name is empty!';
+          } else {
+            if(item.nm.length<4 || item.nm.length>50) {
+              ret.valid = false;
+              ret.msg = 'User name length must be from 4 to 50';
+            }
+            if(Users.index.nm[item.nm]) {
+              if(Users.index.nm[item.nm].id !== item.id) {
+                ret.valid = false;
+                ret.msg = 'User with the same Name already exists';
+                ret.link = '#/user/'+Users.index.nm[item.nm].id;
+                ret.title = Users.index.nm[item.nm].nm;
+              }
+            }
+          }
+        }
+        return ret;
+      });
+      return _s.v
+    }
+    return _s;
+}]);
 Main.service('Users',  ['Wialon'
     ,function(Wialon){
 
@@ -1999,8 +2168,14 @@ Main.service('Users',  ['Wialon'
         	_s.index = {
                 id: createIndex(data.items, 'id')
                 ,crt: createIndex(data.items, 'crt')
+                ,nm: createIndex(data.items, 'nm')
         	};
-    	});
+             _s.index.key_id = {};
+            for(var key in _s.items) {
+                var item = _s.items[key];
+                _s.index.key_id[item.id] = key;
+            }
+   	});
 	}
 
     _s.getById = function(id, callback) {
@@ -2009,6 +2184,42 @@ Main.service('Users',  ['Wialon'
     		callback(data.item);
     	});
 	}
+
+    _s.saveUser = function(item, callback) {
+        var item = angular.copy(item);
+        var params_arr = [];
+        params_arr.push({"svc":"item/update_name","params":{"itemId":item.id,"name":item.nm}});
+        if(item._password) {
+            params_arr.push({"svc":"user/update_password","params":{"userId":item.id,"oldPassword":"","newPassword":item._password}});
+        }
+        Wialon.request('core/batch', {"params":params_arr,"flags":0}, function(data) {
+            _s.refreshUser(item.id);
+            if(callback) callback(data);
+        });
+    }
+
+    _s.refreshUser = function(id, callback) {
+        var params = {"id":1*id,"flags":261}
+        Wialon.request('core/search_item', params, function(data) {
+            if(data.item) {
+                _s.items[_s.index.key_id[id]] = data.item;
+                _s.index.id[id] = data.item;
+                _s.index.crt[data.item.crt]  = data.item;
+                _s.index.nm[data.item.nm]  = data.item;
+                if (callback) callback(data.item);
+            }
+        });
+    }
+
+    _s.generatePassword = function(l) {
+        var symbols = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890?!@#$%&*()_-+=';
+        var pass = '';
+        for (var i = 0; i < l; i++) {
+            pass = pass + symbols[Math.round(Math.random()*(symbols.length-1))];
+        }
+        return pass;
+    }
+
 
 }]);
 Main.factory('Validator', function() {
@@ -2311,16 +2522,17 @@ Main.controller('AboutCtrl',['$scope','$stateParams','$translate' ,'$translatePa
 
 
 
-Main.controller('AccountCtrl',['$scope','$stateParams','$translate' ,'$translatePartialLoader', 'WaitFor',  'Accounts','Users', 'Wialon'
-	,function($scope,$stateParams,$translate,  $translatePartialLoader, WaitFor, Accounts,Users,Wialon) {
-	//$translatePartialLoader.addPart('accounts-list');
-	//$translate.refresh();
+Main.controller('AccountCtrl',['$scope','$stateParams','$translate' ,'$translatePartialLoader','AccountFormValidator', 'WaitFor', 'Accounts','Users', 'Wialon'
+	,function($scope,$stateParams,$translate,  $translatePartialLoader, AccountFormValidator, WaitFor, Accounts,Users,Wialon) {
+	$translatePartialLoader.addPart('user');
+	$translatePartialLoader.addPart('account');
+	$translate.refresh();
 
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 
 	$scope.errors = {};
-	$scope.item = {};
+	$scope.acc = {};
 
 	$scope.accounts = Accounts;
 	$scope.users = Users;
@@ -2328,14 +2540,54 @@ Main.controller('AccountCtrl',['$scope','$stateParams','$translate' ,'$translate
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		Accounts.getById(id,function(acc) {
 			$scope.acc = acc;
+			$scope.v = AccountFormValidator.create($scope.acc);
+			$scope.validate = AccountFormValidator.validate;
+			$scope.errClass = AccountFormValidator.errClass;
 			if(acc.item.crt) {
 				Users.getById(acc.item.crt,function(item) {
-					$scope.crt_user = item
+					acc.crt_user = item
+					copyItem(acc);
 				});
 			}
 		});
 	});
 
+	$scope.saveItem = function() {
+		Accounts.saveAccount($scope.acc, function() {
+			Users.saveUser($scope.acc.crt_user, function() {
+				Accounts.getById(id,function(acc) {
+					$scope.acc = acc;
+					if(acc.item.crt) {
+						Users.getById(acc.item.crt,function(item) {
+							acc.crt_user = item
+							copyItem(acc);
+							$scope.checkChagnes();
+						});
+					}
+				});
+			});
+		});
+	}
+
+	$scope.checkChagnes = function() {
+		var copy = $scope.item_copy;
+		var item = angular.copy($scope.acc);
+		$scope.item_changed = (copy !== angular.toJson(item));
+	}
+
+	var copyItem = function(item) {
+		var copy = angular.copy(item);
+		$scope.item_copy = angular.toJson(copy);
+	}
+
+	$scope.setVisible = function() {
+		if(!$scope.acc.crt_user._password) return;
+		$scope.crt_user_password_visible = !$scope.crt_user_password_visible;
+	}
+
+	$scope.generatePassword = function() {
+		$scope.acc.crt_user._password = Users.generatePassword(20);
+	}
 
 }]);
 Main.controller('AccountsListCtrl',['$scope','$translate' ,'$translatePartialLoader', 'WaitFor', 'State', 'Accounts', 'Users', 'Wialon'
@@ -2401,10 +2653,12 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 
 	$scope.path = location.host+location.pathname;
 	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login';
-	if(location.host === 'wialoncrm' || location.host === 'localhost:3000') {
+	$scope.testmode = (location.host === 'wialoncrm' || location.host === 'localhost:3000');
+	
+	if($scope.testmode) {
 		Units.from = 1500;
 		Units.to = 2000;
-		//Units.autorefresh = false;
+		Units.autorefresh = false;
 	}
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');
@@ -2717,6 +2971,17 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 		$scope.item_copy = angular.toJson(copy);
 	}
 
+	$scope.readyForChart = function(sensor) {
+		if(sensor._d) {
+			if(sensor._d.length>1) {
+				if(sensor._d[0].x!==undefined && sensor._d[0].y!==undefined &&  sensor._d[1].x!==undefined &&  sensor._d[1].y!==undefined) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
     $scope.sensor_chart_options = {
       series: [
         {
@@ -2737,14 +3002,15 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 
  
 }]);
-Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', '$translate' ,'$translatePartialLoader'
-	,function($scope, State, Units, HWTypes, Accounts, $translate,  $translatePartialLoader) {
+Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', 'Users', '$translate' ,'$translatePartialLoader'
+	,function($scope, State, Units, HWTypes, Accounts, Users, $translate,  $translatePartialLoader) {
 	$translatePartialLoader.addPart('units-list');
 	$translate.refresh();
 
 	$scope.units = Units;
 	$scope.hwtypes = HWTypes;
 	$scope.accounts = Accounts;
+	$scope.users = Users;
 
 	$scope.s = State.units_list;
 
@@ -2778,6 +3044,100 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 		}
 		return false;
 	});
+
+}]);
+Main.controller('UserCtrl',['$scope','$stateParams','$translate' ,'$translatePartialLoader', 'WaitFor',  'Accounts','Users', 'Wialon','UserFormValidator'
+	,function($scope,$stateParams,$translate,  $translatePartialLoader, WaitFor, Accounts,Users,Wialon,UserFormValidator) {
+	$translatePartialLoader.addPart('user');
+	$translatePartialLoader.addPart('account');
+	$translate.refresh();
+
+	var id = $stateParams.id;
+	$scope.id = $stateParams.id;
+
+	$scope.errors = {};
+	$scope.item = {};
+
+	$scope.accounts = Accounts;
+	$scope.users = Users;
+
+	WaitFor(function() {return Wialon.auth;} ,function() {
+		Users.getById(id,function(item) {
+			$scope.item = item;
+			$scope.v = UserFormValidator.create($scope.item);
+			$scope.validate = UserFormValidator.validate;
+			$scope.errClass = UserFormValidator.errClass;
+			copyItem(item);
+		});
+	});
+
+	$scope.saveItem = function() {
+		Users.saveUser($scope.item, function() {
+			Users.getById(id,function(item) {
+				$scope.item = item;
+				copyItem(item);
+				$scope.checkChagnes();
+			});
+		});
+	}
+
+	$scope.checkChagnes = function() {
+		var copy = $scope.item_copy;
+		var item = angular.copy($scope.item);
+		$scope.item_changed = (copy !== angular.toJson(item));
+	}
+
+	var copyItem = function(item) {
+		var copy = angular.copy(item);
+		$scope.item_copy = angular.toJson(copy);
+	}
+
+	$scope.setVisible = function() {
+		if(!$scope.item._password) return;
+		$scope.user_password_visible = !$scope.user_password_visible;
+	}
+
+	$scope.generatePassword = function() {
+		$scope.item._password = Users.generatePassword(20);
+	}
+
+
+
+}]);
+Main.controller('UsersListCtrl',['$scope','$translate' ,'$translatePartialLoader', 'WaitFor', 'State', 'Accounts', 'Users', 'Wialon'
+	,function($scope,$translate,  $translatePartialLoader, WaitFor, State, Accounts, Users, Wialon) {
+	$translatePartialLoader.addPart('accounts-list');
+	$translatePartialLoader.addPart('users-list');
+	$translate.refresh();
+
+
+	$scope.s = State.users_list;
+	$scope.users = Users;
+	$scope.accounts = Accounts;
+
+	$scope.resetFilter = function() {
+		State.resetFilter('users_list');
+	}
+
+	// $scope.checkAll = function() {
+	// 	for(var key in $scope.items_result) {
+	// 		var item = $scope.items_result[key];
+	// 		item._checked = $scope.all_checked;
+	// 	}
+	// }
+
+ //    $scope.$watch(function() {
+	// 	$scope.items_checked = false;
+	// 	for(var key in $scope.items_result) {
+	// 		var item = $scope.items_result[key];
+	// 		if(item._checked) {
+	// 			$scope.items_checked = true;
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// });
+
 
 }]);
 Main.filter('AccountsFilter',function(){
@@ -2912,7 +3272,7 @@ Main.filter('ParamToSensorValue',['$filter',function($filter){
 }])
 
 Main.filter('UnitsFilter',function(){
-	return function (items, criterion, now, hwtypes, accounts) {
+	return function (items, criterion, now, hwtypes, accounts, users) {
 		if(!items) return items;
 		if(items.length===0) { return items};
 		if(!criterion) {return items};
@@ -2932,27 +3292,6 @@ Main.filter('UnitsFilter',function(){
     	//     }
     	// }
     	//var items = tmp;
-
-    	if(criterion.account_name) {
-	    	var tmp = [];
-	    	if(accounts) {
-	    		if(accounts.index) {
-		    		if(accounts.index.id) {
-				    	for(var key in items){
-				    	    var item = items[key];
-				    	    if(item.bact) {
-				    	    	if(accounts.index.id[item.bact]) {
-						    	    if(RegExp(criterion.account_name,'gi').test(accounts.index.id[item.bact].nm)){
-						    	        tmp.push(item);
-						    	    } 
-				    	    	}
-				    	    }
-				    	}
-		    		}
-	    		}
-	    	}
-	    	var items = tmp;
-    	}
 
     	if(criterion.hw) {
 	    	var tmp = [];
@@ -2998,6 +3337,127 @@ Main.filter('UnitsFilter',function(){
 	    	}
 	    	var items = tmp;
    		}
+
+    	if(criterion.account_name) {
+	    	var tmp = [];
+	    	if(accounts) {
+	    		if(accounts.index) {
+		    		if(accounts.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.bact) {
+				    	    	if(accounts.index.id[item.bact]) {
+						    	    if(RegExp(criterion.account_name,'gi').test(accounts.index.id[item.bact].nm)){
+						    	        tmp.push(item);
+						    	    } 
+				    	    	}
+				    	    }
+				    	}
+		    		}
+	    		}
+	    	}
+	    	var items = tmp;
+    	}
+
+    	if(criterion.crt_user_nm) {
+	    	var tmp = [];
+	    	if(items) {
+	    		if(users.index) {
+		    		if(users.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.crt) {
+				    	    	if(users.index.id[item.crt]) {
+						    	    if(RegExp(criterion.crt_user_nm,'gi').test(users.index.id[item.crt].nm)){
+						    	        tmp.push(item);
+						    	    }
+				    	    	}
+				    	    }
+				    	}
+		    		}
+	    		}
+	    	}
+	    	var items = tmp;
+    	}
+
+    	return items;
+ 	}
+})
+
+Main.filter('UsersFilter',function(){
+	return function (items, criterion, accounts, users) {
+		if(!items) return items;
+		if(items.length===0) { return items};
+		if(!criterion) {return items};
+
+    	if(criterion.account_nm) {
+	    	var tmp = [];
+	    	if(items) {
+	    		if(accounts.index) {
+		    		if(accounts.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.bact) {
+				    	    	if(accounts.index.id[item.bact]) {
+						    	    if(RegExp(criterion.account_nm,'gi').test(accounts.index.id[item.bact].nm)){
+						    	        tmp.push(item);
+						    	    } 
+				    	    	}
+				    	    }
+				    	}
+		    		}
+	    		}
+	    	}
+	    	var items = tmp;
+    	}
+
+    	if(criterion.crt_user_nm) {
+	    	var tmp = [];
+	    	if(items) {
+	    		if(users.index) {
+		    		if(users.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.crt) {
+				    	    	if(users.index.id[item.crt]) {
+						    	    if(RegExp(criterion.crt_user_nm,'gi').test(users.index.id[item.crt].nm)){
+						    	        tmp.push(item);
+						    	    } 
+				    	    	}
+				    	    }
+				    	}
+		    		}
+	    		}
+	    	}
+	    	var items = tmp;
+    	}
+
+     	if(criterion.parent_account_nm) {
+	    	var tmp = [];
+	    	if(items) {
+	    		if(accounts.index) {
+		    		if(accounts.index.id) {
+				    	for(var key in items){
+				    	    var item = items[key];
+				    	    if(item.bact) {
+				    	    	if(accounts.index.id[item.bact]) {
+				    	    		var acc = accounts.index.id[item.bact];
+				    	    		if(acc.bpact) {
+				    	    			if(accounts.index.id[acc.bpact]) {
+								    	    if(RegExp(criterion.parent_account_nm,'gi').test(accounts.index.id[acc.bpact].nm)){
+								    	        tmp.push(item);
+								    	    } 
+				    	    			}
+				    	    		}
+				    	    	}
+				    	    }
+				    	}
+		    		}
+	    		}
+	    	}
+	    	var items = tmp;
+    	}
+   	
 
     	return items;
  	}

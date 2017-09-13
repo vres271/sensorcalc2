@@ -46,7 +46,7 @@ Main.service('UnitFormValidator', ['Validator', 'Units'
             if(item.ph) {
               if(Units.index.ph[item.ph]) {
                 if(Units.index.ph[item.ph].id !== item.id ) {
-            ret.valid = false;
+                    ret.valid = false;
                     ret.msg = 'Unit with the same Phone already exists';
                     ret.link = '#/unit/'+Units.index.ph[item.ph].id; 
                     ret.title = Units.index.ph[item.ph].nm;
