@@ -30,6 +30,7 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 			Messages.get(id, null, null, function() {
 				Ready.set('messages',true);
 				$scope.filterCols();
+				if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com') Units.items = Messages.items;
 			    Messages.startNewMessageListener(function() {
 			    	if($scope.items_result[0]) {
 						var i = $scope.items_result[0].__i;

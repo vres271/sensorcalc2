@@ -8,8 +8,19 @@
 <hr>
 <div class="container text-center home">
 	<div ng-if="!wialon.auth" class="">
-		<br>
-		<a href="{{oauth_link}}" class="btn btn-primary btn-lg"><i class="fa fa-sign-in" aria-hidden="true"></i> {{'Sign in with your Wialon account'|translate}}</a><br><br><br>
+		<a href="{{agree ? oauth_link : '#'}}" ng-click="$event.stopPropagation();" class="btn btn-{{agree?'primary':'default'}} btn-lg" ng-disabled="!agree"><i class="fa fa-sign-in" aria-hidden="true"></i> {{'Sign in with your Wialon account'|translate}}</a>
+		<div ng-if="show_agreement" class="row animate-dropdown">
+			<div class="col-md-8 col-md-offset-2 home-text text-justify">
+				<div class="page-header text-center"><h2>Условия использования</h2></div>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
+				<br>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
+				<br>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
+			</div>
+		</div>
+		<div><input type="checkbox" ng-model="agree"> Я ознакомлен с <a href="" ng-click="show_agreement = !show_agreement"><strong>Условиями использования</strong></a></div>
 	</div>
 	<div ng-if="wialon.auth" class="">
 		User name: <strong>{{wialon.user.nm}}</strong>

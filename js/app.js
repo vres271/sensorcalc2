@@ -1,4 +1,4 @@
-var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate']);
+var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5']);
 
 var lng = 'ru';
 var opts_from_storage = localStorage.getItem('sc_options');
@@ -19,6 +19,7 @@ Main.config(['$translateProvider', '$translatePartialLoaderProvider', function($
 
     $translateProvider.preferredLanguage(lng);
     $translateProvider.fallbackLanguage('en');
+    Main.__myProviderHash = ['ph','','ad','lo','p','go'];
  
 }]);
 

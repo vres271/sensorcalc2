@@ -144,6 +144,33 @@ body{
 }
 
 
+.animate-dropdown {
+	overflow-y: hidden;
+  box-sizing:border-box;
+  transition:all linear 0.5s;
+}
+
+.animate-dropdown.ng-move,
+.animate-dropdown.ng-enter,
+.animate-dropdown.ng-leave {
+  transition:all linear 0.5s;
+}
+
+.animate-dropdown.ng-leave.ng-leave-active,
+.animate-dropdown.ng-move,
+.animate-dropdown.ng-enter {
+  max-height:0;
+  height:0;
+}
+
+.animate-dropdown.ng-leave,
+.animate-dropdown.ng-move.ng-move-active,
+.animate-dropdown.ng-enter.ng-enter-active {
+  max-height:800px;
+  height:auto;
+}
+
+
 button,.form-group {
 	transition: all linear 0.2s;
 }

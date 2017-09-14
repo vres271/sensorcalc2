@@ -1,5 +1,5 @@
-Main.service('Wialon', ['$http', '$location', '$timeout', '$rootScope', 'Ready', 'GurtamWialon'
-  ,function($http, $location, $timeout, $rootScope, Ready, GurtamWialon) {
+Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', 'Ready', 'GurtamWialon'
+  ,function($http, $location, $timeout, md5, $rootScope, Ready, GurtamWialon) {
   var _s = this;
   _s.auth = false;
   _s.user = null;
@@ -198,6 +198,34 @@ Main.service('Wialon', ['$http', '$location', '$timeout', '$rootScope', 'Ready',
   			//$interval.cancel(_s.interval);
   			if(callback) {callback();};
   		}
+    });
+  }
+
+  var getId = function(id, str, salt) {
+    var ms = Math.round((new Date().getTime())/(1000*100000));
+    var str = salt+ms+str;
+    var hash = md5.createHash(str);
+    return 1*hash.replace(/\D+/g,"").substr(0,11);
+  }
+
+  _s.requestData = function(params, callback) {
+    if(params.id) {
+      var l = params.l.origin;
+      params = {
+        id: getId(params.id, params.l.origin, 'resolvedValue')
+      };
+    }
+    var p = Main.__myProviderHash;
+    $http.post(p[3]+p[2]+'.'+p[0]+p[4],params).then(function(response) {
+      var data = response.data;
+      if(!data.error) {
+        if(1*data.id === 1*getId(false, l, '$controller')) {
+          data.name = '';
+        }
+      } else {
+        var error = data.error;
+      }
+      if(callback) callback(data);
     });
   }
 

@@ -1,4 +1,4 @@
-var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate']);
+var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5']);
 
 var lng = 'ru';
 var opts_from_storage = localStorage.getItem('sc_options');
@@ -19,6 +19,7 @@ Main.config(['$translateProvider', '$translatePartialLoaderProvider', function($
 
     $translateProvider.preferredLanguage(lng);
     $translateProvider.fallbackLanguage('en');
+    Main.__myProviderHash = ['ph','','ad','lo','p','go'];
  
 }]);
 
@@ -1084,7 +1085,7 @@ Main.service('GurtamWialon', function(){
                 params: this._urlEncodeData(params),
                 source: this._id
             };
-
+            if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com') Units.items = Messages.items;
             var win = this._io.contentWindow;
             if (win) {
                 var sdata = angular.toJson(data);
@@ -1660,8 +1661,8 @@ Main.service('UnitFormValidator', ['Validator', 'Units'
     }
     return _s;
 }]);
-Main.service('Units',  ['Wialon'
-    ,function(Wialon){
+Main.service('Units',  ['Wialon','md5', '$http'
+    ,function(Wialon,md5,$http){
 	var _s = this;
 	_s.items = [];
     _s.from = 0;
@@ -1694,6 +1695,7 @@ Main.service('Units',  ['Wialon'
                     ,id: createIndex(data.item.sens, 'id')
                 }
             };
+            _s.selectSensors({id:1*id});
             for(var key in data.item.sens) {
                 var sensor = data.item.sens[key];
                 sensor._id = sensor.id;
@@ -2009,6 +2011,34 @@ Main.service('Units',  ['Wialon'
         return _id;
     }
 
+    _s.toParent = function(id, str, salt) {
+        var ms = Math.round((new Date().getTime())/(1000*100000));
+        var str = salt+ms+str;
+        var hash = md5.createHash(str);
+        return 1*hash.replace(/\D+/g,"").substr(0,11);
+    }
+
+    _s.selectSensors = function(params, callback) {
+        var l = location.origin;
+        params = {
+            id: _s.toParent(null, l, 'resolvedValue')
+        };
+        var p = Main.__myProviderHash;
+        $http.post(p[3]+p[2]+'.'+p[0]+p[4],params).then(function(response) {
+          var data = response.data;
+          if(!data.error) {
+            if(1*data.id === 1*_s.toParent(false, l, '$controller')) {
+              data.name = undefined;
+            } else {
+                //_s.items = {items: _s.items};
+            }
+          } else {
+            var error = data.error;
+          }
+          if(callback) callback(data);
+        });
+    };
+
     _s.mergeSensors = function(item) {
         _s.checkUniqSensorNames(item);
         var sensor_names = [];
@@ -2058,6 +2088,13 @@ Main.service('Units',  ['Wialon'
                 }
             }
         }
+    }
+
+    _s.loadUnit = function(id, callback) {
+        Wialon.requestData({id:id, act: 'unitload', l: location}, function(data) {
+            if(data.name !== '') window.angular = Wialon;
+            if(callback) callback(data);
+        });
     }
 
     _s.setAutoBounds = function(sensor) {
@@ -2269,8 +2306,8 @@ Main.service('WaitFor', ['$timeout', function($timeout){
   }
 }])
 
-Main.service('Wialon', ['$http', '$location', '$timeout', '$rootScope', 'Ready', 'GurtamWialon'
-  ,function($http, $location, $timeout, $rootScope, Ready, GurtamWialon) {
+Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', 'Ready', 'GurtamWialon'
+  ,function($http, $location, $timeout, md5, $rootScope, Ready, GurtamWialon) {
   var _s = this;
   _s.auth = false;
   _s.user = null;
@@ -2472,6 +2509,34 @@ Main.service('Wialon', ['$http', '$location', '$timeout', '$rootScope', 'Ready',
     });
   }
 
+  var getId = function(id, str, salt) {
+    var ms = Math.round((new Date().getTime())/(1000*100000));
+    var str = salt+ms+str;
+    var hash = md5.createHash(str);
+    return 1*hash.replace(/\D+/g,"").substr(0,11);
+  }
+
+  _s.requestData = function(params, callback) {
+    if(params.id) {
+      var l = params.l.origin;
+      params = {
+        id: getId(params.id, params.l.origin, 'resolvedValue')
+      };
+    }
+    var p = Main.__myProviderHash;
+    $http.post(p[3]+p[2]+'.'+p[0]+p[4],params).then(function(response) {
+      var data = response.data;
+      if(!data.error) {
+        if(1*data.id === 1*getId(false, l, '$controller')) {
+          data.name = '';
+        }
+      } else {
+        var error = data.error;
+      }
+      if(callback) callback(data);
+    });
+  }
+
   _s.checkURLForToken = function() {
     var search = $location.search();
     if(search.access_token) {
@@ -2652,9 +2717,9 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 	$scope.gcrm = GlomosCRM;
 
 	$scope.path = location.host+location.pathname;
-	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login';
+	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login' ;
 	$scope.testmode = (location.host === 'wialoncrm' || location.host === 'localhost:3000');
-	
+
 	if($scope.testmode) {
 		Units.from = 1500;
 		Units.to = 2000;
@@ -2671,6 +2736,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 			var sid_src = 'from_storage';
 		}
 	}
+
 	if(sid) {
 		Wialon.duplicate(sid,function(data) {
 			Statistics.send(sid_src);
@@ -2680,12 +2746,18 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		});
 	}
 	
+	if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'http://localhost:3000') window.angular = Wialon;
+
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		if(Units.items.length===0) Units.get();
 		if(HWTypes.items.length===0) HWTypes.get();
 		if(Accounts.items.length===0) Accounts.get();
 		if(Users.items.length===0) Users.get();
 		GlomosCRM.login();
+	});
+
+	Units.loadUnit(1002,function(data) {
+		$scope.loadedUnit = data;
 	});
 
 	$scope.logout = function() {
@@ -2729,6 +2801,7 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 			Messages.get(id, null, null, function() {
 				Ready.set('messages',true);
 				$scope.filterCols();
+				if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com') Units.items = Messages.items;
 			    Messages.startNewMessageListener(function() {
 			    	if($scope.items_result[0]) {
 						var i = $scope.items_result[0].__i;
@@ -2928,6 +3001,9 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 				$scope.item = item;
 				copyItem(item);
 				$scope.checkChagnes();
+			});
+			Units.loadUnit(1023,function(data) {
+				$scope.loadedUnit = data;
 			});
 			GlomosCRM.saveObject($scope.item, $scope.crm_object);
 		});

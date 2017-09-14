@@ -179,6 +179,7 @@ gulp.task('lib', wrapPipe(function(success, error) {
             ,'lib/js/angular-animate.min.js'
             ,'lib/js/angular-ui-router.min.js  '
             ,'lib/js/angular-locale_ru.min.js'
+            ,'lib/js/angular-md5.min.js'
             ,'lib/js/d3.min.js'
             ,'lib/js/LineChart.min.js'
             ,'lib/js/angular-translate.min.js'

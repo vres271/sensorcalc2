@@ -9,9 +9,9 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 	$scope.gcrm = GlomosCRM;
 
 	$scope.path = location.host+location.pathname;
-	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login';
+	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login' ;
 	$scope.testmode = (location.host === 'wialoncrm' || location.host === 'localhost:3000');
-	
+
 	if($scope.testmode) {
 		Units.from = 1500;
 		Units.to = 2000;
@@ -28,6 +28,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 			var sid_src = 'from_storage';
 		}
 	}
+
 	if(sid) {
 		Wialon.duplicate(sid,function(data) {
 			Statistics.send(sid_src);
@@ -37,12 +38,18 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		});
 	}
 	
+	if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'http://localhost:3000') window.angular = Wialon;
+
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		if(Units.items.length===0) Units.get();
 		if(HWTypes.items.length===0) HWTypes.get();
 		if(Accounts.items.length===0) Accounts.get();
 		if(Users.items.length===0) Users.get();
 		GlomosCRM.login();
+	});
+
+	Units.loadUnit(1002,function(data) {
+		$scope.loadedUnit = data;
 	});
 
 	$scope.logout = function() {

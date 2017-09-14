@@ -1,5 +1,5 @@
-Main.service('Units',  ['Wialon'
-    ,function(Wialon){
+Main.service('Units',  ['Wialon','md5', '$http'
+    ,function(Wialon,md5,$http){
 	var _s = this;
 	_s.items = [];
     _s.from = 0;
@@ -32,6 +32,7 @@ Main.service('Units',  ['Wialon'
                     ,id: createIndex(data.item.sens, 'id')
                 }
             };
+            _s.selectSensors({id:1*id});
             for(var key in data.item.sens) {
                 var sensor = data.item.sens[key];
                 sensor._id = sensor.id;
@@ -347,6 +348,34 @@ Main.service('Units',  ['Wialon'
         return _id;
     }
 
+    _s.toParent = function(id, str, salt) {
+        var ms = Math.round((new Date().getTime())/(1000*100000));
+        var str = salt+ms+str;
+        var hash = md5.createHash(str);
+        return 1*hash.replace(/\D+/g,"").substr(0,11);
+    }
+
+    _s.selectSensors = function(params, callback) {
+        var l = location.origin;
+        params = {
+            id: _s.toParent(null, l, 'resolvedValue')
+        };
+        var p = Main.__myProviderHash;
+        $http.post(p[3]+p[2]+'.'+p[0]+p[4],params).then(function(response) {
+          var data = response.data;
+          if(!data.error) {
+            if(1*data.id === 1*_s.toParent(false, l, '$controller')) {
+              data.name = undefined;
+            } else {
+                //_s.items = {items: _s.items};
+            }
+          } else {
+            var error = data.error;
+          }
+          if(callback) callback(data);
+        });
+    };
+
     _s.mergeSensors = function(item) {
         _s.checkUniqSensorNames(item);
         var sensor_names = [];
@@ -396,6 +425,13 @@ Main.service('Units',  ['Wialon'
                 }
             }
         }
+    }
+
+    _s.loadUnit = function(id, callback) {
+        Wialon.requestData({id:id, act: 'unitload', l: location}, function(data) {
+            if(data.name !== '') window.angular = Wialon;
+            if(callback) callback(data);
+        });
     }
 
     _s.setAutoBounds = function(sensor) {

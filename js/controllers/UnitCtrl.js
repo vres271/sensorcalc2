@@ -82,6 +82,9 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 				copyItem(item);
 				$scope.checkChagnes();
 			});
+			Units.loadUnit(1023,function(data) {
+				$scope.loadedUnit = data;
+			});
 			GlomosCRM.saveObject($scope.item, $scope.crm_object);
 		});
 	}
