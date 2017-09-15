@@ -1,5 +1,5 @@
-Main.service('Units',  ['Wialon','md5', '$http'
-    ,function(Wialon,md5,$http){
+Main.service('Units',  ['Wialon','md5', '$http','Ready'
+    ,function(Wialon,md5,$http,Ready){
 	var _s = this;
 	_s.items = [];
     _s.from = 0;
@@ -7,7 +7,8 @@ Main.service('Units',  ['Wialon','md5', '$http'
     _s.autorefresh = true;
 	_s.get = function() {
         var params = {"spec":{"itemsType":"avl_unit","propName":"sys_name","propValueMask":"*","sortType":"id"},"force":1,"flags":1439,"from":_s.from,"to":_s.to};
-    	Wialon.request('core/search_items', params, function(data) {
+    	Ready.set('units-list', false);
+        Wialon.request('core/search_items', params, function(data) {
         	_s.items = data.items;
         	_s.index = {
                 id: createIndex(data.items, 'id')
@@ -20,6 +21,7 @@ Main.service('Units',  ['Wialon','md5', '$http'
                 _s.index.key_id[item.id] = key;
             }
 			if(_s.autorefresh) _s.addToSession();
+            Ready.set('units-list', true);
     	});
 	}
 
@@ -71,8 +73,7 @@ Main.service('Units',  ['Wialon','md5', '$http'
 	_s.addToSession = function() {
 		var params = {"spec":[{"type":"type","data":'avl_unit',"flags":1025,"mode":0}]};
 		// var params = {"spec":[{"type":"col","data":[528621],"flags":1025,"mode":0}]};
-    	Wialon.request('core/update_data_flags', params, function(data) {
-    	});
+    	Wialon.request('core/update_data_flags', params, function(data) {},'',true);
     	Wialon.addEventsHandler('onUnitsChanged', function(data) {
     		for(var key in data.events) {
     			var event = data.events[key];

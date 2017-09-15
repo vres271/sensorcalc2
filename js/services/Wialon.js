@@ -52,11 +52,11 @@ Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', '
     var mt = new Date().getTime();
     var apply_callback = function(data) {
     	callback(data);
-    	if(!bg) {
-        Ready.set('wialon_'+svc+'_'+mt, true);
-      }
     	if(!_s.testmode) {
         $rootScope.$digest();
+      }
+      if(!bg) {
+        Ready.set('wialon_'+svc+'_'+mt, true);
       }
     };
     if(!bg) {Ready.set('wialon_'+svc+'_'+mt,  false);}

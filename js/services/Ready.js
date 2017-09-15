@@ -20,7 +20,11 @@ Main.service('Ready', function() {
   }
 
   _s.set = function(key,value) {
-    _s.parts[key] = value;
+    if(value === false) {
+      _s.parts[key] = value;  
+    } else {
+      delete _s.parts[key];
+    }
     return _s.allParts();
   }
 

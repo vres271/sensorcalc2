@@ -1,5 +1,5 @@
-Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM', 'Statistics'
-	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM, Statistics) {
+Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM', 'Statistics','$translate' ,'$translatePartialLoader'
+	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM, Statistics,$translate,  $translatePartialLoader) {
 	 
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
@@ -8,8 +8,6 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 	$scope.opt = Options.item;
 	$scope.gcrm = GlomosCRM;
 
-	$scope.path = location.host+location.pathname;
-	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login' ;
 	$scope.testmode = (location.host === 'wialoncrm' || location.host === 'localhost:3000');
 
 	if($scope.testmode) {
@@ -17,8 +15,10 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		Units.to = 2000;
 		Units.autorefresh = false;
 	}
+
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');
+
 	if(sid_from_url) {
 		var sid = sid_from_url;
 		var sid_src = 'from_url';
@@ -59,5 +59,18 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		});
 	}
 
+	$translate.onReady(function() {
+		$scope.lng = $translate.use();
+	})
+	$scope.changeLng = function() {
+		if($scope.lng!=='en') {
+			$scope.lng = 'en';	
+		} else {
+			$scope.lng = 'ru';	
+		};
+		$translate.use($scope.lng);
+		Options.item.language = $scope.lng;
+		Options.save();
+	}
 	
 }]);

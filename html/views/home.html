@@ -1,17 +1,15 @@
-<div class="container text-center " >
-	<div class="home-logo">
+<div class="container text-center home" >
+	<div class="home-logo ">
 		<object class="logo" type="image/svg+xml" data="img/logowcrm.svg" ></object>
 		<h1>Wialon CRM</h1>
 		<i translate>Less clicks - more results</i>
-		</div>
-</div>
-<hr>
-<div class="container text-center home">
-	<div ng-if="!wialon.auth" class="">
+	</div>
+	<hr>
+	<div ng-hide="wialon.auth" class="">
 		<a href="{{agree ? oauth_link : '#'}}" ng-click="$event.stopPropagation();" class="btn btn-{{agree?'primary':'default'}} btn-lg" ng-disabled="!agree"><i class="fa fa-sign-in" aria-hidden="true"></i> {{'Sign in with your Wialon account'|translate}}</a>
 		<div ng-if="show_agreement" class="row animate-dropdown">
 			<div class="col-md-8 col-md-offset-2 home-text text-justify">
-				<div class="page-header text-center"><h2>Условия использования</h2></div>
+				<div class="page-header text-center" ><h2>{{'Terms of Service'|translate}}</h2></div>
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
 				<br>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
@@ -20,8 +18,12 @@
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet maiores nulla, eum laborum! Beatae explicabo, minus accusantium nulla amet pariatur suscipit libero a sint maxime labore sequi officia similique consectetur!
 			</div>
 		</div>
-		<div><input type="checkbox" ng-model="agree"> Я ознакомлен с <a href="" ng-click="show_agreement = !show_agreement"><strong>Условиями использования</strong></a></div>
-	</div>
+		<div class="agree-link">
+			<div class="checkbox">
+			  <label><input type="checkbox" ng-model="agree" ng-change="saveAgree()"> {{'I agree to the'|translate}} </label>
+			 <a href="" ng-click="show_agreement = !show_agreement"><strong>{{'to Terms of Service'|translate}}</strong></a></div>
+			</div>
+		</div>
 	<div ng-if="wialon.auth" class="">
 		User name: <strong>{{wialon.user.nm}}</strong>
 	</div>

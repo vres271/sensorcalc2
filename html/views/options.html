@@ -11,7 +11,7 @@
 		      <label class="control-label col-sm-3" for="wialon_crm_token">{{'WIALON_CRM_TOKEN'|translate}} <sup><span class="label label-primary">CRM</span></sup></label>
 		      <div class="col-sm-5">
 				<div class="input-group">
-				    <input  ng-model="options.item.wialon_crm_token" type="text" class="form-control" id="wialon_crm_token" placeholder="" name="wialon_crm_token"  ng-change="validate(); loginToCRM(); saveItem();">
+				    <input  ng-model="options.item.wialon_crm_token"  data-ng-model-options="{debounce: 400}" type="text" class="form-control" id="wialon_crm_token" placeholder="" name="wialon_crm_token"  ng-change="validate(); loginToCRM(); saveItem();">
 				    <div class="input-group-btn">
 				      <button class="btn btn-default" type="button">
 				        <i class="fa fa-check green" ng-if="gcrm.user"></i>

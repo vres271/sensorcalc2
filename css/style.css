@@ -40,6 +40,10 @@ body{
 	margin-top: 500px;
 }
 
+.upper{
+	text-transform: uppercase;
+}
+
 .wait-overlay{
 	transition: all linear .4s;
 	z-index: 1099; 
@@ -178,8 +182,11 @@ button.ng-hide,.form-group.ng-hide {
     opacity:0;
 }
 
+.home{
+	margin-top: 10%;
+}
 .home-logo{
-	padding-top:  30px;
+	padding-top:  20px;
 	padding-bottom:  20px;
 }
 .home-logo>.logo{
@@ -199,6 +206,16 @@ button.ng-hide,.form-group.ng-hide {
 .home h2{
 	font-weight: 300;
 }
+.home .agree-link{
+	padding-top: 5px;
+}
+.home .agree-link input{
+	margin-top: 2px;
+}
+.pointer{
+	cursor: pointer;
+}
+
 .home-text{
 	font-size: 14px;
 	color: rgba(0,0,0,0.6);

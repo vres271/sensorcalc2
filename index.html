@@ -12,7 +12,7 @@
 	    <link href="css/style.css?mt=<?=$my_css_mt?>" rel="stylesheet">
 	</head>
 	<body>
-		<div class="navbar navbar-inverse navbar-fluide navbar-fixed-top navbar-custom">
+		<div class="navbar navbar-inverse navbar-fluide navbar-fixed-top navbar-custom ">
 		    <nav class="container-fluide">
 				<ul ng-hide="!wialon.auth"  class="nav navbar-nav">
 					<li><a href="" ng-href="#options" ><i class="fa fa-bars" aria-hidden="true"></i></a></li>
@@ -30,9 +30,10 @@
 			      <li><a href="#" id="username"><span class="glyphicon glyphicon-user"></span> {{wialon.user.nm}}</a></li>
 			      <li><a ng-click="logout()" href="#" id="logout" title="{{'Sign-Out'|translate}}"  style="margin-right: 15px;"><span class="glyphicon glyphicon-log-out"></span></a></li>
 		    	</ul>
-		        <!-- <ul ng-hide="wialon.auth" class="nav navbar-nav navbar-right" >
-			      <li><a href="{{oauth_link}}" id="login"><span class="glyphicon glyphicon-log-in"></span> {{'Sign-In'|translate}}</a></li>
-		    	</ul> -->
+		        <ul ng-hide="wialon.auth" class="nav navbar-nav navbar-right" >
+			      <!-- <li><a href="{{oauth_link}}" id="login"><span class="glyphicon glyphicon-log-in"></span> {{'Sign-In'|translate}}</a></li> -->
+			      <li><a href="" ng-click="changeLng();">{{'Language'|translate}}: <span class="upper">{{lng}}</span></a></li>
+		    	</ul>
 		    </nav>
 		</div>
 	    <div class="container-fluide marg-2" ui-view ></div>
