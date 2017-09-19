@@ -11,8 +11,7 @@ Main.service('State', ['$interval', '$filter'
     filter: {
     }
     ,custom_filter: {
-      // mint:0
-      // ,maxt:9261440000
+      dt:'86400'
     }
     ,orderby: ['crt','nm']
     ,orderby_reverse: false

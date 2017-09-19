@@ -12,6 +12,7 @@
 	,"by HW Type":"тип АТ"
 	,"by Parent Account Name":"родительская у/з"
 	,"by Creator":"@:CRT_USER_NAME"
+	,"by lmsgT":"Фильтр по времени последнего сообщения"
 	,"col_show_accounts_nm":"@:ACCOUNT"
 	,"col_show_nm":"@:UNIT_NAME"
 	,"col_show_uid":"@:UID"

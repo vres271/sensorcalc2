@@ -1471,8 +1471,7 @@ Main.service('State', ['$interval', '$filter'
     filter: {
     }
     ,custom_filter: {
-      // mint:0
-      // ,maxt:9261440000
+      dt:'86400'
     }
     ,orderby: ['crt','nm']
     ,orderby_reverse: false
@@ -1716,12 +1715,25 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
                         sensor._dsrc = d_dsrc._dsrc; // и таблицу для текстареа
                     }
                }
-               sensor.c = angular.fromJson(sensor.c);
+               sensor.c = _s.parseSensorC(sensor.c);
                sensor._copy = _s.getClearSensor(sensor);
             }
     		callback(data.item);
     	});
 	}
+
+    _s.parseSensorC = function(c) {
+       if(typeof c === 'Object') {
+            c = angular.fromJson(c);
+       } else {
+            try{
+                eval('c = '+c);
+            } catch(e) {
+                log('error on sensor.c: '+e);
+            }
+       }
+       return c;
+    }
 
     _s.refreshUnit = function(id, callback) {
         var params = {"id":1*id,"flags":1439}
@@ -3146,6 +3158,16 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 		return false;
 	});
 
+	$scope.onTChange = function(type) {
+		if($scope.s.custom_filter.maxt<$scope.s.custom_filter.mint) {
+			if(type==='max') {
+				$scope.s.custom_filter.mint=$scope.s.custom_filter.maxt;
+			} else if(type==='min') {
+				$scope.s.custom_filter.maxt=$scope.s.custom_filter.mint;
+			}
+		}
+	}
+
 }]);
 Main.controller('UserCtrl',['$scope','$stateParams','$translate' ,'$translatePartialLoader', 'WaitFor',  'Accounts','Users', 'Wialon','UserFormValidator'
 	,function($scope,$stateParams,$translate,  $translatePartialLoader, WaitFor, Accounts,Users,Wialon,UserFormValidator) {
@@ -3377,22 +3399,6 @@ Main.filter('UnitsFilter',function(){
 		if(!items) return items;
 		if(items.length===0) { return items};
 		if(!criterion) {return items};
-		//if(!criterion.mint && !criterion.maxt) {return items};
-    	// var tmp = [];
-    	// for(var key in items){
-    	//     var item = items[key];
-    	//     if(item.lmsg) {
-    	//     	if(item.lmsg.t) {
-		   //  	    // if(RegExp(criterion.t,'g').test(item.lmsg.t)){
-		   //  	   //      tmp.push(item);
-		   //  	    // } 
-		   //  	    if(((now-1*item.lmsg.t) >= 1*criterion.mint) && ((now-1*item.lmsg.t) <= 1*criterion.maxt)) {
-		   //  	    	tmp.push(item);
-		   //  	    }
-    	//     	}
-    	//     }
-    	// }
-    	//var items = tmp;
 
     	if(criterion.hw) {
 	    	var tmp = [];
@@ -3480,6 +3486,23 @@ Main.filter('UnitsFilter',function(){
 	    	}
 	    	var items = tmp;
     	}
+
+    	if(criterion.mint && criterion.maxt && criterion.show_t) {
+	    	var tmp = [];
+	    	for(var key in items){
+	    	    var item = items[key];
+	    	    if(item.lmsg) {
+	    	    	if(item.lmsg.t) {
+	    	    		var t = 1*item.lmsg.t;
+			    	    if(1*criterion.mint<=t && t<=1*criterion.maxt) {
+			    	    	tmp.push(item);
+			    	    }
+	    	    	}
+	    	    }
+	    	}
+	    	var items = tmp;
+    	}
+
 
     	return items;
  	}

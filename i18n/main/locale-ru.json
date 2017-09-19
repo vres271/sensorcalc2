@@ -33,4 +33,20 @@
 	,"Warning":"Внимание"
 	,"Error":"Ошибка"
 	,"Slow internet connection":"Медленное интернет соединение: частота обновления снижена"
+	
+	,"Year":"Год"
+	,"Month":"Месяц"
+	,"Week":"Неделя"
+	,"Day":"День"
+	,"Hour":"Час"
+	,"Minute":"Минута"
+	,"Second":"Секунда"
+
+	,"sYear":"г"
+	,"sMonth":"м"
+	,"sWeek":"н"
+	,"sDay":"д"
+	,"sHour":"ч"
+	,"sMinute":"мин"
+	,"sSecond":"с"
 }

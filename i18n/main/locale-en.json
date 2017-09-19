@@ -32,4 +32,20 @@
 	,"Sensors":"Sensors"
 	,"Error":"Error"
 	,"Slow internet connection":"Slow internet connection: refresh rate reduced"
+
+	,"Year":"Year"
+	,"Month":"Month"
+	,"Week":"Week"
+	,"Day":"Day"
+	,"Hour":"Hour"
+	,"Minute":"Minute"
+	,"Second":"Second"
+
+	,"sYear":"y"
+	,"sMonth":"m"
+	,"sWeek":"w"
+	,"sDay":"d"
+	,"sHour":"h"
+	,"sMinute":"min"
+	,"sSecond":"s"
 }

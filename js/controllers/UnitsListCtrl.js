@@ -41,4 +41,14 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 		return false;
 	});
 
+	$scope.onTChange = function(type) {
+		if($scope.s.custom_filter.maxt<$scope.s.custom_filter.mint) {
+			if(type==='max') {
+				$scope.s.custom_filter.mint=$scope.s.custom_filter.maxt;
+			} else if(type==='min') {
+				$scope.s.custom_filter.maxt=$scope.s.custom_filter.mint;
+			}
+		}
+	}
+
 }]);

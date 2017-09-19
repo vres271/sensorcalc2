@@ -49,12 +49,25 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
                         sensor._dsrc = d_dsrc._dsrc; // и таблицу для текстареа
                     }
                }
-               sensor.c = angular.fromJson(sensor.c);
+               sensor.c = _s.parseSensorC(sensor.c);
                sensor._copy = _s.getClearSensor(sensor);
             }
     		callback(data.item);
     	});
 	}
+
+    _s.parseSensorC = function(c) {
+       if(typeof c === 'Object') {
+            c = angular.fromJson(c);
+       } else {
+            try{
+                eval('c = '+c);
+            } catch(e) {
+                log('error on sensor.c: '+e);
+            }
+       }
+       return c;
+    }
 
     _s.refreshUnit = function(id, callback) {
         var params = {"id":1*id,"flags":1439}

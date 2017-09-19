@@ -268,3 +268,26 @@ button.ng-hide,.form-group.ng-hide {
     color: #333;
     white-space: nowrap;	
 }
+
+input[type='range'].form-control {
+	outline: none;
+	border: none;
+	width: 100%;
+	box-shadow: none;
+	display: block;
+	box-sizing: border-box;
+}
+input[type='range'].form-control:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+.range-label{
+	background: rgba(0,0,0,0.5);
+	color: rgba(255,255,255,0.9);
+	padding: 3px 12px;
+	border-radius: 3px;
+	display: block;
+	position: absolute;
+	left: 30px;
+}

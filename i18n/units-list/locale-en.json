@@ -12,6 +12,7 @@
 	,"by HW Type":"HW Type"
 	,"by Parent Account Name":"Parent Account Name"
 	,"by Creator":"@:CRT_USER_NAME"
+	,"by lmsgT":"Filter by last message time"
 	,"col_show_accounts_nm":"@:ACCOUNT"
 	,"col_show_nm":"@:UNIT_NAME"
 	,"col_show_uid":"@:UID"
