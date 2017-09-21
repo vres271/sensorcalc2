@@ -18,6 +18,9 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');
+	var token = Wialon.checkURLForToken()
+	
+	if(!(sid_from_url||sid_from_storage||token)) location.hash = '';
 
 	if(sid_from_url) {
 		var sid = sid_from_url;
@@ -38,7 +41,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		});
 	}
 	
-	if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'http://localhost:3000') window.angular = Wialon;
+	if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'https://www.wialoncrm.com' && location.origin !== 'https://localhost:3000' && location.origin !== 'https://wialoncrm.com') window.angular = Wialon;
 
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		if(Units.items.length===0) Units.get();

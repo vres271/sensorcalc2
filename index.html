@@ -9,6 +9,7 @@
 	    <link href="lib/css/bootstrap.min.css" rel="stylesheet">
 	    <link href="lib/css/font-awesome.min.css" rel="stylesheet">
 	    <link href="lib/css/LineChart.min.css" rel="stylesheet">
+	    <link href="lib/css/angular.rangeSlider.min.css" rel="stylesheet">
 	    <link href="css/style.css?mt=<?=$my_css_mt?>" rel="stylesheet">
 	</head>
 	<body>
@@ -41,7 +42,8 @@
     		<br><br><object class="logo" type="image/svg+xml" data="img/logowcrm.svg" ></object> Wialon CRM <i class="fa fa-copyright" aria-hidden="true"></i> 2017 	
 		</footer>	    
 		<div ng-hide="ready.all" class="wait-overlay" ><i class="fa fa-circle-o-notch fa-spin" ></i></div>
-		<?=$my_js_lib?>
-		<?=$my_js?>
 	</body>
+	<?=$my_js_lib?>
+	<!-- <script src="lib/js/LineChart.js"></script> -->
+	<?=$my_js?>
 </html>

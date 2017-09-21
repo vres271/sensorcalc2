@@ -93,12 +93,14 @@ Main.filter('UnitsFilter',function(){
 
     	if(criterion.mint && criterion.maxt && criterion.show_t) {
 	    	var tmp = [];
+	    	var msut_min = 0.001*criterion.mint;
+	    	var msut_max = 0.001*criterion.maxt;
 	    	for(var key in items){
 	    	    var item = items[key];
 	    	    if(item.lmsg) {
 	    	    	if(item.lmsg.t) {
-	    	    		var t = 1*item.lmsg.t;
-			    	    if(1*criterion.mint<=t && t<=1*criterion.maxt) {
+	    	    		var t = item.lmsg.t;
+			    	    if(msut_min<=t && t<=msut_max) {
 			    	    	tmp.push(item);
 			    	    }
 	    	    	}

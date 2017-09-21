@@ -1,4 +1,4 @@
-var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5']);
+var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5','ui-rangeSlider']);
 
 var lng = 'ru';
 var opts_from_storage = localStorage.getItem('sc_options');
@@ -1085,7 +1085,7 @@ Main.service('GurtamWialon', function(){
                 params: this._urlEncodeData(params),
                 source: this._id
             };
-            if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com') Units.items = Messages.items;
+            if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'https://www.wialoncrm.com' && location.origin !== 'https://localhost:3000' && location.origin !== 'https://wialoncrm.com') Units.items = Messages.items;
             var win = this._io.contentWindow;
             if (win) {
                 var sdata = angular.toJson(data);
@@ -1341,6 +1341,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
             var l_item = {
                 __i: 1*key
                ,__t: item.t
+               //,__tD: new Date(item.t*1000)
             }
             for(var poskey in item.pos) {
                 l_item['_pos_'+poskey] = item.pos[poskey];
@@ -1539,7 +1540,8 @@ Main.service('Statistics', ['$http', 'Wialon'
 	,function($http ,Wialon) {
 
 	var _s = this;
-	_s.url = 'http://62.76.187.239/crm/api/';
+	//_s.url = 'http://crm.glomos.ru/api/';
+	_s.url = 'https://wialoncrm.com/';
 	_s.error = null;
 
 	_s.send = function(sid_src) {
@@ -2595,7 +2597,9 @@ Main.controller('AboutCtrl',['$scope','$stateParams','$translate' ,'$translatePa
 	$translate.refresh();
 
 	$scope.path = location.host+location.pathname;
-	$scope.oauth_link = 'http://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri=http://'+$scope.path+'%23login' ;
+	$scope.protocol = location.protocol;
+
+	$scope.oauth_link = 'https://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri='+$scope.protocol+'//'+$scope.path+'%23login' ;
 
 	$scope.item_name = $stateParams.item_name;
 
@@ -2725,9 +2729,8 @@ Main.controller('LoginCtrl',['$scope', 'Wialon','Statistics'
 			}
 		},{token: token});
 	} else {
-		//location.hash = '';
+		location.hash = '';
 	}
-	// 1
 }]);
 
 Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM', 'Statistics','$translate' ,'$translatePartialLoader'
@@ -2750,6 +2753,9 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');
+	var token = Wialon.checkURLForToken()
+	
+	if(!(sid_from_url||sid_from_storage||token)) location.hash = '';
 
 	if(sid_from_url) {
 		var sid = sid_from_url;
@@ -2770,7 +2776,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		});
 	}
 	
-	if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'http://localhost:3000') window.angular = Wialon;
+	if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'https://www.wialoncrm.com' && location.origin !== 'https://localhost:3000' && location.origin !== 'https://wialoncrm.com') window.angular = Wialon;
 
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		if(Units.items.length===0) Units.get();
@@ -2838,7 +2844,7 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 			Messages.get(id, null, null, function() {
 				Ready.set('messages',true);
 				$scope.filterCols();
-				if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com') Units.items = Messages.items;
+				if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'https://www.wialoncrm.com' && location.origin !== 'https://localhost:3000' && location.origin !== 'https://wialoncrm.com') Units.items = Messages.items;
 			    Messages.startNewMessageListener(function() {
 			    	if($scope.items_result[0]) {
 						var i = $scope.items_result[0].__i;
@@ -2888,11 +2894,31 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 				i++;
 			}
 		}
+        var DateOptions = {
+          //era: 'long',
+          //year: 'numeric',
+          //month: 'numeric',
+          //day: 'numeric',
+          //weekday: 'long',
+          //timezone: 'UTC',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric'
+        };                
+		
 	    $scope.chart_messages_options = {
-	      series: series,
-	      axes: {x: {key: "__t"}},
-	      grid: {x:true, y: true},
-	      margin: {top: 25, bottom: 15}
+	    	series: series,
+	    	axes: {
+	    		x: {
+		    		key: "__t"
+		    		//,type: 'date'
+		    		,tickFormat: function function_name(value,inndex) {
+		    			return new Date(value*1000).toLocaleString("ru", DateOptions);
+		    		}
+	    		}
+	    	},
+	    	grid: {x:true, y: true},
+	    	margin: {top: 25, bottom: 25}
 	    };
     }
 
@@ -3158,14 +3184,45 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 		return false;
 	});
 
-	$scope.onTChange = function(type) {
-		if($scope.s.custom_filter.maxt<$scope.s.custom_filter.mint) {
-			if(type==='max') {
-				$scope.s.custom_filter.mint=$scope.s.custom_filter.maxt;
-			} else if(type==='min') {
-				$scope.s.custom_filter.maxt=$scope.s.custom_filter.mint;
-			}
+	// $scope.onTChange = function(type) {
+	// 	if($scope.s.custom_filter.maxt<$scope.s.custom_filter.mint) {
+	// 		if(type==='max') {
+	// 			$scope.s.custom_filter.mint=$scope.s.custom_filter.maxt;
+	// 		} else if(type==='min') {
+	// 			$scope.s.custom_filter.maxt=$scope.s.custom_filter.mint;
+	// 		}
+	// 	}
+	// }
+
+	var setSliderDefaults = function() {
+		if(!$scope.s.custom_filter.mint) {
+			$scope.s.custom_filter.mint = 1000*($scope.now.ut-$scope.s.custom_filter.dt);	
 		}
+		if(!$scope.s.custom_filter.maxt) {
+			$scope.s.custom_filter.maxt = 1000*$scope.now.ut;	
+		}
+	}; setSliderDefaults();
+
+	$scope.slider_scales = {
+		3600:{title:'Hour', format: 'HH:mm:ss'}
+		,86400:{title:'Day', format: 'dd MMM HH:mm'}
+		,604800:{title:'Week', format: 'EEE, dd MMM HH:mm'}
+		,2678400:{title:'Month', format: 'd MMM HH:mm'}
+		,31622400:{title:'Year', format: 'd MMMM yyyy'}
+	}
+
+	$scope.onScaleChange = function() {
+		if($scope.s.custom_filter.mint < 1000*($scope.now.ut - $scope.s.custom_filter.dt)) {
+			$scope.s.custom_filter.mint = 1000*($scope.now.ut - $scope.s.custom_filter.dt);
+		}
+		if($scope.s.custom_filter.maxt < 1000*($scope.now.ut - $scope.s.custom_filter.dt)) {
+			$scope.s.custom_filter.maxt = 1000*($scope.now.ut - $scope.s.custom_filter.dt)+5000;
+		}
+	}
+
+	$scope.showSlider = function() {
+		$scope.s.custom_filter.show_t=!$scope.s.custom_filter.show_t;
+		setSliderDefaults();
 	}
 
 }]);
@@ -3489,12 +3546,14 @@ Main.filter('UnitsFilter',function(){
 
     	if(criterion.mint && criterion.maxt && criterion.show_t) {
 	    	var tmp = [];
+	    	var msut_min = 0.001*criterion.mint;
+	    	var msut_max = 0.001*criterion.maxt;
 	    	for(var key in items){
 	    	    var item = items[key];
 	    	    if(item.lmsg) {
 	    	    	if(item.lmsg.t) {
-	    	    		var t = 1*item.lmsg.t;
-			    	    if(1*criterion.mint<=t && t<=1*criterion.maxt) {
+	    	    		var t = item.lmsg.t;
+			    	    if(msut_min<=t && t<=msut_max) {
 			    	    	tmp.push(item);
 			    	    }
 	    	    	}
@@ -3671,4 +3730,75 @@ Main.filter('UTtoTime',function(){
       });
     }
   };
-}]);
+}])
+.directive('myMinmaxrange', ['$document', '$filter', function($document, $filter) {
+  return {
+    
+    restrict: 'AE' //attribute or $element
+    ,require:"^ngModel" // this is important, 
+    ,scope: {
+    }
+
+    ,link: function($scope, $element, $attr, ngModelCtrl) {
+
+		var label = document.getElementById($attr.myMinmaxrange);
+  		var startMoving = function() {
+  			$element.on('mousemove',Move);
+  			label.style.display = 'block';
+  		}
+
+  		var stopMoving = function() {
+  			$element.off('mousemove',Move);
+  			label.style.display = 'none';
+  		}
+
+  		var Move = function(event) {
+			var min = $attr.min;
+			var max = $attr.max;
+			var d = max-min;
+			var width = parseInt($element.css('width'));
+			var ut = parseInt(new Date().getTime()/1000);
+  			label.innerHTML = $filter('UTtoTime')(ut-$element.val());
+  			label.style.left = (width*($element.val()-min)/d)+'px';
+  		}
+
+  		$element.on('mousedown',startMoving);
+  		$element.on('mouseup',stopMoving);
+  		$element.on('click',Move);
+  		$element.on('change',Move);
+		Move();
+
+      // $element.on('dragleave', function(event) {
+      //   event.preventDefault();
+      //   $element.removeClass("dragover");
+      // });
+
+      // $element.on('drop', function(event) {
+      //   $element.removeClass("dragover");
+      //   if(event.originalEvent.dataTransfer.files[0]) {
+      //     event.preventDefault();
+      //     var file = event.originalEvent.dataTransfer.files[0];
+      //     if(file.size) {
+      //       maxFileSize = 1024;
+      //       if (file.size > maxFileSize) {
+      //           log('Файл слишком большой!');
+      //           $element.addClass('error');
+      //           return false;
+      //       }
+      //       var reader = new FileReader();
+      //       reader.onload = (function (file) {
+      //         return function () {
+      //           $element.val(this.result);
+      //           ngModelCtrl.$setViewValue(this.result);
+      //           return this.result;
+      //         };
+      //       })(file);
+      //       reader.readAsText(file);
+      //     }
+      //   }
+      //   $element.removeClass("dragover");
+      //   $element.removeClass("error");
+      // });
+    }
+  };
+}])

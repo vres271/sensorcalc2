@@ -2,7 +2,8 @@ Main.service('Statistics', ['$http', 'Wialon'
 	,function($http ,Wialon) {
 
 	var _s = this;
-	_s.url = 'http://62.76.187.239/crm/api/';
+	//_s.url = 'http://crm.glomos.ru/api/';
+	_s.url = 'https://wialoncrm.com/';
 	_s.error = null;
 
 	_s.send = function(sid_src) {

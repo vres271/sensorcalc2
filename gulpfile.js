@@ -185,6 +185,7 @@ gulp.task('lib', wrapPipe(function(success, error) {
             ,'lib/js/LineChart.min.js'
             ,'lib/js/angular-translate.min.js'
             ,'lib/js/angular-translate-loader-partial.min.js'
+            ,'lib/js/angular.rangeSlider.min.js'
         ])
         .pipe(concat('build/lib/js/lib.js').on('error', error))
         .pipe(concat('lib/js/lib.js').on('error', error))

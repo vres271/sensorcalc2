@@ -269,7 +269,7 @@ button.ng-hide,.form-group.ng-hide {
     white-space: nowrap;	
 }
 
-input[type='range'].form-control {
+/*input[type='range'].form-control {
 	outline: none;
 	border: none;
 	width: 100%;
@@ -289,5 +289,46 @@ input[type='range'].form-control:focus {
 	border-radius: 3px;
 	display: block;
 	position: absolute;
-	left: 30px;
+	left: 50%;
+	width: 100px;
+	white-space: nowrap;
+	min-height: 23px;
+	margin-left: -50px;
+	text-align: center;
 }
+.range-label.top{
+	margin-top: -52px;
+}
+.range-label.bottom{
+	margin-bottom: -68px;
+}
+*//*Range Slider*/
+.slider-container{
+	margin-top: 25px;
+	padding-bottom: 50px;
+}
+.range-slider-custom{
+	margin: 2px 0px 0px 0px;
+}
+.range-slider-custom.ngrs-range-slider .ngrs-value {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding: 5px 0 0 0;
+  margin-top: -50px;
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+}
+.range-slider-custom.ngrs-range-slider .ngrs-value.ngrs-value-max {
+}
+.range-slider-custom.ngrs-range-slider .ngrs-value.ngrs-value-min {
+ 	margin-top: 5px;
+}
+.range-slider-custom.ngrs-range-slider .ngrs-handle-min {
+	margin-left: -16px;
+}
+.range-slider-custom.ngrs-range-slider .ngrs-handle-max {
+	margin-left: -2px;
+}
+

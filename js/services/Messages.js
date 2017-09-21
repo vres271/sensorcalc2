@@ -121,6 +121,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
             var l_item = {
                 __i: 1*key
                ,__t: item.t
+               //,__tD: new Date(item.t*1000)
             }
             for(var poskey in item.pos) {
                 l_item['_pos_'+poskey] = item.pos[poskey];

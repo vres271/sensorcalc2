@@ -30,7 +30,7 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 			Messages.get(id, null, null, function() {
 				Ready.set('messages',true);
 				$scope.filterCols();
-				if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com') Units.items = Messages.items;
+				if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'https://www.wialoncrm.com' && location.origin !== 'https://localhost:3000' && location.origin !== 'https://wialoncrm.com') Units.items = Messages.items;
 			    Messages.startNewMessageListener(function() {
 			    	if($scope.items_result[0]) {
 						var i = $scope.items_result[0].__i;
@@ -80,11 +80,31 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 				i++;
 			}
 		}
+        var DateOptions = {
+          //era: 'long',
+          //year: 'numeric',
+          //month: 'numeric',
+          //day: 'numeric',
+          //weekday: 'long',
+          //timezone: 'UTC',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric'
+        };                
+		
 	    $scope.chart_messages_options = {
-	      series: series,
-	      axes: {x: {key: "__t"}},
-	      grid: {x:true, y: true},
-	      margin: {top: 25, bottom: 15}
+	    	series: series,
+	    	axes: {
+	    		x: {
+		    		key: "__t"
+		    		//,type: 'date'
+		    		,tickFormat: function function_name(value,inndex) {
+		    			return new Date(value*1000).toLocaleString("ru", DateOptions);
+		    		}
+	    		}
+	    	},
+	    	grid: {x:true, y: true},
+	    	margin: {top: 25, bottom: 25}
 	    };
     }
 

@@ -9,7 +9,6 @@ Main.controller('LoginCtrl',['$scope', 'Wialon','Statistics'
 			}
 		},{token: token});
 	} else {
-		//location.hash = '';
+		location.hash = '';
 	}
-	// 1
 }]);

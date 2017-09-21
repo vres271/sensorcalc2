@@ -751,7 +751,7 @@ Main.service('GurtamWialon', function(){
                 params: this._urlEncodeData(params),
                 source: this._id
             };
-            if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com') Units.items = Messages.items;
+            if(location.origin !== 'http://www.wialoncrm.com' && location.origin !== 'http://localhost:3000' && location.origin !== 'http://wialoncrm.com' && location.origin !== 'https://www.wialoncrm.com' && location.origin !== 'https://localhost:3000' && location.origin !== 'https://wialoncrm.com') Units.items = Messages.items;
             var win = this._io.contentWindow;
             if (win) {
                 var sdata = angular.toJson(data);

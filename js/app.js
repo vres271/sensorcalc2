@@ -1,4 +1,4 @@
-var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5']);
+var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5','ui-rangeSlider']);
 
 var lng = 'ru';
 var opts_from_storage = localStorage.getItem('sc_options');

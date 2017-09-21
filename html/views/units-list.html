@@ -43,7 +43,7 @@
 				<input ng-model="s.filter.ph" data-ng-model-options="{debounce: 150}"  class="form-control" type="text" name="" placeholder="{{'by Phone'|translate}}"  size="10">
 			</div>
 			<div class="form-group">  
-				<button ng-click="s.custom_filter.show_t=!s.custom_filter.show_t"  class="form-control" type="button" name="" title="{{'by lmsgT'|translate}}}"  ><i class="fa fa-clock-o" aria-hidden="true"></i></button>
+				<button ng-click="showSlider()"  class="form-control" type="button" name="" title="{{'by lmsgT'|translate}}}"  ><i class="fa fa-clock-o" aria-hidden="true"></i></button>
 			</div>
  			<div class="form-group">
 				<select ng-model="s.limit" ng-options="value for value in [25,50,100,200,400,800,10000]" data-slider-value="[250,450]" class="form-control" name="" placeholder="Limit" id="limit"></select>
@@ -60,24 +60,27 @@
 					</ul>
 				</div>
 			</div>
-			<div ng-if="s.custom_filter.show_t">
-				<br>
-				<div class="col-md-1">
-		 			<div class="form-group">
-						<br><select ng-model="s.custom_filter.dt" ng-options="key as value for (key , value) in {3600:('Hour'|translate),86400:('Day'|translate),604800:('Week'|translate),2678400:('Month'|translate),31622400:('Year'|translate)}" data-slider-value="[250,450]" class="form-control" name="" placeholder="Limit" id="limit"></select>
+  			<div ng-if="s.custom_filter.show_t" >
+  				<div class="slider-container">
+					<div class="col-md-1">
+						<select ng-model="s.custom_filter.dt"  ng-change="onScaleChange()" ng-options="key as value.title|translate for (key , value) in slider_scales"  class="form-control" name=""  id="slider_scale"></select>
+					</div>
+					<div class="col-md-11">
+						<div range-slider class="range-slider-custom"  min="1000*(now.ut-s.custom_filter.dt)" max="1000*now.ut" filter="date" filter-options="{{slider_scales[s.custom_filter.dt].format}}" model-min="s.custom_filter.mint" model-max="s.custom_filter.maxt" attach-handle-values="true" disabled="false"></div>
 					</div>
 				</div>
-				<div class="col-md-10">
+<!-- 				<div class="col-md-11">
 					<div>
-						<input ng-model="s.custom_filter.mint"  data-ng-model-options="{debounce: 150}" type="range" min="{{now.ut-s.custom_filter.dt}}" max="{{now.ut}}" ng-change="onTChange('min');" value="" class="form-control"> 
-						<div class="range-label">{{(now.ut-s.custom_filter.mint) | UTtoTime}}</div>
+						<input ng-model="s.custom_filter.mint" my-minmaxrange="min" data-ng-model-options="{debounce: 150}" type="range" min="{{now.ut-s.custom_filter.dt}}" max="{{now.ut}}" ng-change="onTChange('min');" value="" class="form-control"> 
+						<div class="range-label top" id="min"></div>
 					</div>
 					<div>
-						<input ng-model="s.custom_filter.maxt"  data-ng-model-options="{debounce: 150}" type="range" min="{{now.ut-s.custom_filter.dt}}" max="{{now.ut}}" ng-change="onTChange('max');"  value="" class="form-control"> 
-						<div class="range-label">{{(now.ut-s.custom_filter.maxt) | UTtoTime}}</div>
+						<input ng-model="s.custom_filter.maxt"  my-minmaxrange="max"  data-ng-model-options="{debounce: 150}" type="range" min="{{now.ut-s.custom_filter.dt}}" max="{{now.ut}}" ng-change="onTChange('max');"  value="" class="form-control"> 
+						<div class="range-label bottom"  id="max"></div>
 					</div>
 				</div>
-			</div>
+ -->			
+ 			</div>
 		</form>
 	</div>
 </nav>
