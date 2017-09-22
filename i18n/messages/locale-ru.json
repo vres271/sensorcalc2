@@ -4,4 +4,21 @@
 	,"Datetime":"Дата/время"
 	,"Start":"Начать с"
 	,"limit to":"вывести строк"
+
+	,"position":"Местоположение"
+	,"last message":"Последнее сообщение"
+	,"message time (UTC)":"Время сообщения"
+	,"flags (see below)":"Флаги (см. таблицу ниже)"
+	,"message type (ud - message with data)":"Тип сообщения (ud - сообщение с данными)"
+	,"position":"Местоположение"
+	,"latitude":"Широта"
+	,"longitude":"Долгота"
+	,"altitude":"Высота над уровнем моря"
+	,"speed":"Скорость"
+	,"course":"Курс"
+	,"satellites count":"Количество спутников"
+	,"input data":"Входящие данные"
+	,"output data":"Исходящие данные"
+	,"parameters":"Параметры"
+
 }

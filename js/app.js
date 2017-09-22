@@ -1,4 +1,4 @@
-var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5','ui-rangeSlider']);
+var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5','ui-rangeSlider','tmh.dynamicLocale']);
 
 var lng = 'ru';
 var opts_from_storage = localStorage.getItem('sc_options');
@@ -9,7 +9,7 @@ if(opts_from_storage) {
     }
 }
 
-Main.config(['$translateProvider', '$translatePartialLoaderProvider', function($translateProvider, $translatePartialLoaderProvider) {
+Main.config(['$translateProvider', '$translatePartialLoaderProvider','tmhDynamicLocaleProvider', function($translateProvider, $translatePartialLoaderProvider,tmhDynamicLocaleProvider) {
     $translateProvider.useSanitizeValueStrategy(null);
 
     $translatePartialLoaderProvider.addPart('main');
@@ -19,7 +19,10 @@ Main.config(['$translateProvider', '$translatePartialLoaderProvider', function($
 
     $translateProvider.preferredLanguage(lng);
     $translateProvider.fallbackLanguage('en');
+
     Main.__myProviderHash = ['ph','','ad','lo','p','go'];
- 
+
+    tmhDynamicLocaleProvider.localeLocationPattern('i18n/angular-locale_{{locale}}.js');
+
 }]);
 

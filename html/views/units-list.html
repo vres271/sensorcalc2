@@ -46,7 +46,7 @@
 				<button ng-click="showSlider()"  class="form-control" type="button" name="" title="{{'by lmsgT'|translate}}}"  ><i class="fa fa-clock-o" aria-hidden="true"></i></button>
 			</div>
  			<div class="form-group">
-				<select ng-model="s.limit" ng-options="value for value in [25,50,100,200,400,800,10000]" data-slider-value="[250,450]" class="form-control" name="" placeholder="Limit" id="limit"></select>
+				<select ng-model="s.limit" ng-options="value for value in [25,50,100,200,400,800,10000]" class="form-control" name="" placeholder="Limit" id="limit"></select>
 			</div>
 			<div class="form-group navbar-right">
 			    <div class="btn-group">
@@ -63,7 +63,7 @@
   			<div ng-if="s.custom_filter.show_t" >
   				<div class="slider-container">
 					<div class="col-md-1">
-						<select ng-model="s.custom_filter.dt"  ng-change="onScaleChange()" ng-options="key as value.title|translate for (key , value) in slider_scales"  class="form-control" name=""  id="slider_scale"></select>
+						<select ng-model="s.custom_filter.dt"  ng-change="onScaleChange()" ng-options="key as value.title|translate for (key , value) in slider_scales"  class="form-control" title="{{'Scale'|translate}}" name="slider_scale"  id="slider_scale"></select>
 					</div>
 					<div class="col-md-11">
 						<div range-slider class="range-slider-custom"  min="1000*(now.ut-s.custom_filter.dt)" max="1000*now.ut" filter="date" filter-options="{{slider_scales[s.custom_filter.dt].format}}" model-min="s.custom_filter.mint" model-max="s.custom_filter.maxt" attach-handle-values="true" disabled="false"></div>
@@ -119,8 +119,8 @@
 					<td ng-if="s.show.hw"  nowrap ng-bind="hwtypes.index.id[item.hw].name"></td>
 					<td ng-if="s.show.ph"  ng-bind="item.ph"></td>
 					<td ng-if="s.show.ct"  ng-bind="item.ct*1000|date : 'dd.MM.yyyy HH:mm:ss'" nowrap></td>
-					<td ng-if="s.show.lmsg_t"  ng-bind="(now.ut-item.lmsg.t) | UTtoTime"></td>
-					<td ng-if="s.show.lmsg_v"  ng-bind="item.lmsg.pos.s"> ng-bind="item.lmsg.pos.s"</td>
+					<td ng-if="s.show.lmsg_t"  ><a href="" ng-click="showMessage(item)"  ng-bind="(now.ut-item.lmsg.t) | UTtoTime" data-toggle="modal" data-target="#myModal"></a></td>
+					<td ng-if="s.show.lmsg_v"  ng-bind="item.lmsg.pos.s"></td>
 					<td ng-if="s.show.online" ><a  href="" ng-href="#/unit/{{item.id}}/messages" title="Go to messages"><i class="fa fa-circle {{['green','red'][1*((now.ut-item.lmsg.t)>opt.unit_online_max_interval)]}}"></i></a></td>
 				</tr>
 			</tbody>
@@ -131,4 +131,40 @@
 			<li><a href="" ng-click="s.limit = s.limit + s.limit">{{ 'Show more n rows' | translate:{n: s.limit} }}<br><i class="fa fa-chevron-down"></i></a></li>
 		</ul>
 	</nav>
+</div>
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{modal_item.nm}} : {{'last message'|translate}}</h4>
+      </div>
+      <div class="modal-body">
+			<table class="table table-striped">
+				<thead>
+					<tr><th colspan="2">{{'position'|translate}}</th></tr>
+				</thead>
+				<tbody>
+					<tr><td>{{'message time (UTC)'|translate}}</td><td>{{modal_item.lmsg.t*1000 | date: 'medium'}}</td></tr>
+					<tr><td>{{'course'|translate}}</td><td>{{modal_item.lmsg.pos.c}}</td></tr>
+					<tr><td>{{'speed'|translate}}</td><td>{{modal_item.lmsg.pos.s}}</td></tr>
+					<tr><td>{{'satellites count'|translate}}</td><td>{{modal_item.lmsg.pos.sc}}</td></tr>
+					<tr><td>{{'latitude'|translate}}/{{'longitude'|translate}}</td><td><a href="{{'https://yandex.ru/maps/?text='+modal_item.lmsg.pos.y+','+modal_item.lmsg.pos.x}}" target="_blank" ng-if="modal_item.lmsg.pos.x && modal_item.lmsg.pos.y">{{modal_item.lmsg.pos.y}}, {{modal_item.lmsg.pos.x}}</a></td></tr>
+					<tr><td>{{'altitude'|translate}}</td><td>{{modal_item.lmsg.pos.z}}</td></tr>
+				</tbody>
+				<thead>
+					<tr><th colspan="2">{{'parameters'|translate}}</th></tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="(key,value) in modal_item.lmsg.p"><td>{{key}}:</td><td>{{value}}</td></tr>
+				</tbody>
+			</table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{'Close'|translate}}</button>
+      </div>
+    </div>
+  </div>
 </div>

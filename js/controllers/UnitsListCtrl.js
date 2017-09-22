@@ -1,6 +1,7 @@
 Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', 'Users', '$translate' ,'$translatePartialLoader'
 	,function($scope, State, Units, HWTypes, Accounts, Users, $translate,  $translatePartialLoader) {
 	$translatePartialLoader.addPart('units-list');
+	$translatePartialLoader.addPart('messages');
 	$translate.refresh();
 
 	$scope.units = Units;
@@ -81,5 +82,10 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 		$scope.s.custom_filter.show_t=!$scope.s.custom_filter.show_t;
 		setSliderDefaults();
 	}
+
+	$scope.showMessage = function(item) {
+		$scope.modal_item = item;
+	}
+
 
 }]);

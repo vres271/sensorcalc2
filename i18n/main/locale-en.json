@@ -48,4 +48,6 @@
 	,"sHour":"h"
 	,"sMinute":"min"
 	,"sSecond":"s"
+
+	,"Close":"Close"
 }

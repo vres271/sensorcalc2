@@ -1,8 +1,10 @@
 Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', 'WaitFor', 'Wialon', 'Units', 'HWTypes', 'UnitFormValidator', 'GlomosCRM', '$translate' ,'$translatePartialLoader'
 	,function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator, GlomosCRM, $translate,  $translatePartialLoader) {
+	
 	$translatePartialLoader.addPart('unit');
 	$translatePartialLoader.addPart('sensors');
 	$translate.refresh();
+
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 	$scope.sensor_id = $stateParams.sensor_id;
@@ -10,6 +12,7 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 	$scope.hwtypes = HWTypes;
 	$scope.errors = {};
 	$scope.item = {};
+
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		Units.getById(id,function(item) {
 			$scope.item = item;
@@ -18,7 +21,11 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 			$scope.validate = UnitFormValidator.validate;
 			$scope.errClass = UnitFormValidator.errClass;
 			$scope.sens_errClass = UnitFormValidator.sens_errClass;
-			GlomosCRM.getObject($scope.id, function(data) {$scope.crm_object = data;});
+			if(GlomosCRM.enabled) {
+				WaitFor(function() {return GlomosCRM.auth;} ,function() {
+					GlomosCRM.getObject($scope.id, function(data) {$scope.crm_object = data;});
+				});
+			}
 		});
 	});
 

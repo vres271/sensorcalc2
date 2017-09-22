@@ -186,6 +186,7 @@ gulp.task('lib', wrapPipe(function(success, error) {
             ,'lib/js/angular-translate.min.js'
             ,'lib/js/angular-translate-loader-partial.min.js'
             ,'lib/js/angular.rangeSlider.min.js'
+            ,'lib/js/tmhDynamicLocale.min.js'
         ])
         .pipe(concat('build/lib/js/lib.js').on('error', error))
         .pipe(concat('lib/js/lib.js').on('error', error))

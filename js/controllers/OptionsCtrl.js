@@ -1,7 +1,8 @@
-Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , '$translatePartialLoader'
-	,function($scope, Options, GlomosCRM, $translate, $translatePartialLoader) {
+Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , '$translatePartialLoader','tmhDynamicLocale'
+	,function($scope, Options, GlomosCRM, $translate, $translatePartialLoader,tmhDynamicLocale) {
 	$translatePartialLoader.addPart('options');
 	$translate.refresh();
+	$scope.glomoscrm = GlomosCRM;
 	
 	$scope.options = Options;
 	$scope.languages = {
@@ -14,6 +15,7 @@ Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , 
 		Options.save();
 		if(copy_language !== Options.item.language) {
 			$translate.use(Options.item.language);
+			tmhDynamicLocale.set(Options.item.language);
 			copy_language = Options.item.language;
 		}
 	}

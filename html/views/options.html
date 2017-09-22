@@ -7,7 +7,7 @@
 	    		<select ng-model="options.item.language" ng-options="key as value for (key,value) in languages " class="form-control"  id="hw" name="hw"  ng-change="validate(); saveItem();"></select>
 		      </div>
 		    </div>
-		    <div  ng-if="testmode" class="form-group {{errClass('nm')}}">
+		    <div  ng-if="glomoscrm.enabled" class="form-group {{errClass('nm')}}">
 		      <label class="control-label col-sm-3" for="wialon_crm_token">{{'WIALON_CRM_TOKEN'|translate}} <sup><span class="label label-primary">CRM</span></sup></label>
 		      <div class="col-sm-5">
 				<div class="input-group">

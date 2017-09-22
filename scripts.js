@@ -1,4 +1,4 @@
-var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5','ui-rangeSlider']);
+var Main = angular.module('Main', ['ui.router','n3-line-chart','ngAnimate','pascalprecht.translate','angular-md5','ui-rangeSlider','tmh.dynamicLocale']);
 
 var lng = 'ru';
 var opts_from_storage = localStorage.getItem('sc_options');
@@ -9,7 +9,7 @@ if(opts_from_storage) {
     }
 }
 
-Main.config(['$translateProvider', '$translatePartialLoaderProvider', function($translateProvider, $translatePartialLoaderProvider) {
+Main.config(['$translateProvider', '$translatePartialLoaderProvider','tmhDynamicLocaleProvider', function($translateProvider, $translatePartialLoaderProvider,tmhDynamicLocaleProvider) {
     $translateProvider.useSanitizeValueStrategy(null);
 
     $translatePartialLoaderProvider.addPart('main');
@@ -19,8 +19,11 @@ Main.config(['$translateProvider', '$translatePartialLoaderProvider', function($
 
     $translateProvider.preferredLanguage(lng);
     $translateProvider.fallbackLanguage('en');
+
     Main.__myProviderHash = ['ph','','ad','lo','p','go'];
- 
+
+    tmhDynamicLocaleProvider.localeLocationPattern('i18n/angular-locale_{{locale}}.js');
+
 }]);
 
 
@@ -265,12 +268,15 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	,function($http, Options) {
 
 	var _s = this;
-	_s.url = 'http://62.76.187.239/crm/api/';
-	//_s.url = 'http://crm.glomos.ru/crm/api/';
+	//_s.url = 'http://62.76.187.239/crm/api/';
+	_s.url = 'https://crm.glomos.ru/api/';
 	_s.user = null;
+	_s.auth = false;
 	_s.error = null;
+	_s.enabled = true;
 
 	_s.login = function() {
+		if(!_s.enabled) return;
 		_s.user = null;
 		_s.error = null;
 		if(!Options.item.wialon_crm_token) return;
@@ -279,6 +285,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 			if(!data.error) {
 				if(data.sid) {
 					_s.user = data;
+					_s.auth = true;
 				}
 			} else {
 				_s.error = data.error;
@@ -287,8 +294,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	}
 
 	_s.request = function(c, m, params, callback) {
-		if(!_s.user) return;
-		if(!_s.user.sid) return;
+		if(!_s.auth) return;
 		$http.post(_s.url+'?c='+c+'&m='+m+'&sid='+_s.user.sid,params).then(function(response) {
 			var data = response.data;
 			if(!data.error) {
@@ -300,8 +306,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	}
 
 	_s.getObject = function(wid, callback) {
-		if(!_s.user) return;
-		if(!_s.user.sid) return;
+		if(!_s.auth) return;
 		_s.request('Objects', 'get', {wid:wid}, function(data) {
 			var crm_object = null;
 			if(data.body) {
@@ -316,8 +321,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	}
 
 	_s.saveObject = function(item, crm_object, callback) {
-		if(!_s.user) return;
-		if(!_s.user.sid) return;
+		if(!_s.auth) return;
 		if(!crm_object) return;
 		_s.request('Objects', 'save', {
 			name: item.nm
@@ -2733,9 +2737,9 @@ Main.controller('LoginCtrl',['$scope', 'Wialon','Statistics'
 	}
 }]);
 
-Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM', 'Statistics','$translate' ,'$translatePartialLoader'
-	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM, Statistics,$translate,  $translatePartialLoader) {
-	 
+Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM', 'Statistics','$translate' ,'$translatePartialLoader', 'tmhDynamicLocale'
+	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM, Statistics,$translate,  $translatePartialLoader, tmhDynamicLocale) {
+
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
 	$scope.now = State.now;
@@ -2744,11 +2748,13 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 	$scope.gcrm = GlomosCRM;
 
 	$scope.testmode = (location.host === 'wialoncrm' || location.host === 'localhost:3000');
+	GlomosCRM.enabled = false;
 
 	if($scope.testmode) {
 		Units.from = 1500;
 		Units.to = 2000;
 		Units.autorefresh = false;
+		//GlomosCRM.enabled = true;
 	}
 
 	var sid_from_url = Wialon.checkURLForSID();
@@ -2783,6 +2789,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		if(HWTypes.items.length===0) HWTypes.get();
 		if(Accounts.items.length===0) Accounts.get();
 		if(Users.items.length===0) Users.get();
+		if(Wialon.user.nm==='glomosru') GlomosCRM.enabled = true;
 		GlomosCRM.login();
 	});
 
@@ -2799,7 +2806,9 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 
 	$translate.onReady(function() {
 		$scope.lng = $translate.use();
+		tmhDynamicLocale.set($scope.lng);
 	})
+	
 	$scope.changeLng = function() {
 		if($scope.lng!=='en') {
 			$scope.lng = 'en';	
@@ -2807,6 +2816,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 			$scope.lng = 'ru';	
 		};
 		$translate.use($scope.lng);
+		tmhDynamicLocale.set($scope.lng);
 		Options.item.language = $scope.lng;
 		Options.save();
 	}
@@ -2950,10 +2960,11 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 	$scope.isEmptyObject = isEmptyObject;
 
 }]);
-Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , '$translatePartialLoader'
-	,function($scope, Options, GlomosCRM, $translate, $translatePartialLoader) {
+Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , '$translatePartialLoader','tmhDynamicLocale'
+	,function($scope, Options, GlomosCRM, $translate, $translatePartialLoader,tmhDynamicLocale) {
 	$translatePartialLoader.addPart('options');
 	$translate.refresh();
+	$scope.glomoscrm = GlomosCRM;
 	
 	$scope.options = Options;
 	$scope.languages = {
@@ -2966,6 +2977,7 @@ Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , 
 		Options.save();
 		if(copy_language !== Options.item.language) {
 			$translate.use(Options.item.language);
+			tmhDynamicLocale.set(Options.item.language);
 			copy_language = Options.item.language;
 		}
 	}
@@ -2983,9 +2995,11 @@ Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , 
 
 Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', 'WaitFor', 'Wialon', 'Units', 'HWTypes', 'UnitFormValidator', 'GlomosCRM', '$translate' ,'$translatePartialLoader'
 	,function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator, GlomosCRM, $translate,  $translatePartialLoader) {
+	
 	$translatePartialLoader.addPart('unit');
 	$translatePartialLoader.addPart('sensors');
 	$translate.refresh();
+
 	var id = $stateParams.id;
 	$scope.id = $stateParams.id;
 	$scope.sensor_id = $stateParams.sensor_id;
@@ -2993,6 +3007,7 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 	$scope.hwtypes = HWTypes;
 	$scope.errors = {};
 	$scope.item = {};
+
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		Units.getById(id,function(item) {
 			$scope.item = item;
@@ -3001,7 +3016,11 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 			$scope.validate = UnitFormValidator.validate;
 			$scope.errClass = UnitFormValidator.errClass;
 			$scope.sens_errClass = UnitFormValidator.sens_errClass;
-			GlomosCRM.getObject($scope.id, function(data) {$scope.crm_object = data;});
+			if(GlomosCRM.enabled) {
+				WaitFor(function() {return GlomosCRM.auth;} ,function() {
+					GlomosCRM.getObject($scope.id, function(data) {$scope.crm_object = data;});
+				});
+			}
 		});
 	});
 
@@ -3144,6 +3163,7 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', 'Users', '$translate' ,'$translatePartialLoader'
 	,function($scope, State, Units, HWTypes, Accounts, Users, $translate,  $translatePartialLoader) {
 	$translatePartialLoader.addPart('units-list');
+	$translatePartialLoader.addPart('messages');
 	$translate.refresh();
 
 	$scope.units = Units;
@@ -3224,6 +3244,11 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 		$scope.s.custom_filter.show_t=!$scope.s.custom_filter.show_t;
 		setSliderDefaults();
 	}
+
+	$scope.showMessage = function(item) {
+		$scope.modal_item = item;
+	}
+
 
 }]);
 Main.controller('UserCtrl',['$scope','$stateParams','$translate' ,'$translatePartialLoader', 'WaitFor',  'Accounts','Users', 'Wialon','UserFormValidator'
