@@ -4,6 +4,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
     var _s = this;
     
     _s.items = [];
+    _s.all_cols = {};
     _s.layer = null;
 	_s.unit_id = '';
     _s.chart_data = [];
@@ -25,6 +26,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
         if(typeof timeTo === 'object') timeTo = parseInt(timeTo.getTime()/1000);
         _s.layer = null;
         _s.items = [];
+        _s.all_cols = {};
         Wialon.removeEventsHandler('onUnitMessageRecieved');
         _s.createLayer(id, timeFrom, timeTo, function() {
             _s.getMessages(0,_s.limit, callback);
@@ -116,6 +118,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
 
     _s.linerase = function(items) {
         var l_items = [];
+
         for(var key in items) {
             var item = items[key];
             var l_item = {
@@ -123,17 +126,20 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
                ,__t: item.t
                //,__tD: new Date(item.t*1000)
             }
-            for(var poskey in item.pos) {
-                l_item['_pos_'+poskey] = item.pos[poskey];
-            }
             if(_s.unit) {
                 for(var key in _s.unit.sens) {
                     var sensor = _s.unit.sens[key];
-                    l_item['_p_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
+                    l_item['_s_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
+                    _s.all_cols['_s_'+sensor.n] = true;
                 }
+            }
+            for(var poskey in item.pos) {
+                l_item['_pos_'+poskey] = item.pos[poskey];
+                //_s.all_cols['_pos_'+poskey] = true;
             }
             for(var pkey in item.p) {
                 l_item['_p_'+pkey] = item.p[pkey];
+                _s.all_cols['_p_'+pkey] = true;
             }
             l_items.push(l_item);
         }

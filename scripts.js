@@ -1228,6 +1228,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
     var _s = this;
     
     _s.items = [];
+    _s.all_cols = {};
     _s.layer = null;
 	_s.unit_id = '';
     _s.chart_data = [];
@@ -1249,6 +1250,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
         if(typeof timeTo === 'object') timeTo = parseInt(timeTo.getTime()/1000);
         _s.layer = null;
         _s.items = [];
+        _s.all_cols = {};
         Wialon.removeEventsHandler('onUnitMessageRecieved');
         _s.createLayer(id, timeFrom, timeTo, function() {
             _s.getMessages(0,_s.limit, callback);
@@ -1340,6 +1342,7 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
 
     _s.linerase = function(items) {
         var l_items = [];
+
         for(var key in items) {
             var item = items[key];
             var l_item = {
@@ -1347,17 +1350,20 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
                ,__t: item.t
                //,__tD: new Date(item.t*1000)
             }
-            for(var poskey in item.pos) {
-                l_item['_pos_'+poskey] = item.pos[poskey];
-            }
             if(_s.unit) {
                 for(var key in _s.unit.sens) {
                     var sensor = _s.unit.sens[key];
-                    l_item['_p_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
+                    l_item['_s_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
+                    _s.all_cols['_s_'+sensor.n] = true;
                 }
+            }
+            for(var poskey in item.pos) {
+                l_item['_pos_'+poskey] = item.pos[poskey];
+                //_s.all_cols['_pos_'+poskey] = true;
             }
             for(var pkey in item.p) {
                 l_item['_p_'+pkey] = item.p[pkey];
+                _s.all_cols['_p_'+pkey] = true;
             }
             l_items.push(l_item);
         }
@@ -2867,7 +2873,6 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 		});
 	});
 
-
 	$scope.getMessages = function() {
 		Messages.get(id, $scope.s.timeFrom, $scope.s.timeTo, function(data) {
 			$rootScope.$digest();
@@ -2904,27 +2909,49 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 				i++;
 			}
 		}
-        var DateOptions = {
-          //era: 'long',
-          //year: 'numeric',
-          //month: 'numeric',
-          //day: 'numeric',
-          //weekday: 'long',
-          //timezone: 'UTC',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric'
-        };                
-		
+        var DateOptions = [
+        	{
+	          //era: 'long',
+	          //year: 'numeric',
+	          //month: 'numeric',
+	          //day: 'numeric',
+	          //weekday: 'long',
+	          //timezone: 'UTC',
+	          hour: 'numeric',
+	          minute: 'numeric',
+	          second: 'numeric'
+	        }
+        	,{
+	          //era: 'long',
+	          year: 'numeric',
+	          month: 'numeric',
+	          day: 'numeric',
+	          //weekday: 'long',
+	          //timezone: 'UTC',
+	          hour: 'numeric',
+	          minute: 'numeric',
+	          second: 'numeric'
+	        }
+        ];                
+		dt_options_key = 0;
+		if($scope.items_result) {
+			if($scope.items_result.length) {
+				if($scope.items_result[$scope.items_result.length-1]) {
+					if($scope.items_result[$scope.items_result.length-1].__t) {
+						if($scope.items_result[$scope.items_result.length-1].__t <= ($scope.now.ut - 86400/2)) {
+							dt_options_key = 1;
+						}
+					}
+				}
+			}
+		}
 	    $scope.chart_messages_options = {
 	    	series: series,
 	    	axes: {
 	    		x: {
 		    		key: "__t"
 		    		//,type: 'date'
-		    		,tickFormat: function function_name(value,inndex) {
-		    			return new Date(value*1000).toLocaleString("ru", DateOptions);
-		    		}
+		    		,tickFormat: function function_name(value,inndex) {return new Date(value*1000).toLocaleString("ru", DateOptions[dt_options_key]);}
 	    		}
 	    	},
 	    	grid: {x:true, y: true},

@@ -38,7 +38,7 @@
 		</p>
 	</div>
 </div>
-<div class="container-fluide trans-open-down" ng-if="!isEmptyObject(chart_keys)" >
+<div class="container-fluide trans-open-down" ng-show="!isEmptyObject(chart_keys)" >
 	<div  style="height: 300px;">
 	    <linechart data="mdata" options="chart_messages_options"></linechart>
 	</div>
@@ -58,7 +58,8 @@
                   <th width="200px">{{'Datetime'|translate}}</th>
                   <th width="30px">XY</th>
                   <th  width="30px"><a href="" ng-click="createChart('_pos_s');">V</a></th>
-                  <th  ng-hide="hide_cols[key] || $index<8"  ng-repeat="(key, value) in messages.items[0] ">
+                  <th  ng-hide="hide_cols[key]"  ng-repeat="(key, value) in messages.all_cols ">
+                  <!-- <th  ng-hide="hide_cols[key] || $index<8"  ng-repeat="(key, value) in messages.all_cols "> -->
                   	<a href="" ng-click="createChart(key);">
                   		<i ng-if="chart_keys[key]" class="fa fa-line-chart" aria-hidden="true"></i>
                   		<span ng-bind="::key.substr(3, 50)"></span>
@@ -72,7 +73,8 @@
 					<td ng-bind="item.__t*1000 | date : 'yy.MM.dd_HH:mm:ss'"></td>
 					<td class="text-nowrap"><a href="{{'https://yandex.ru/maps/?text='+item._pos_y+','+item._pos_x}}" target="_blank" ng-if="item._pos_x && item._pos_y"><i class="fa fa-map-marker"></i></a> <sup ng-bind="::item._pos_sc"></sup></td>
 					<td ng-bind="::item._pos_s"></td>
-					<td ng-hide="hide_cols[key] || $index<8" ng-repeat="(key, param) in item "  ng-bind="::param"></td>
+					<!-- <td ng-hide="hide_cols[key] || $index<8" ng-repeat="(key, param) in item "  ng-bind="::(key+'=['+param+']')"></td> -->
+					<td ng-hide="hide_cols[key]" ng-repeat="(key, param) in messages.all_cols " title="{{key.substr(3, 50)}}" ng-bind="::item[key]"></td>
 				</tr>
 			</tbody>
 		</table>

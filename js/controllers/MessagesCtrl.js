@@ -43,7 +43,6 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 		});
 	});
 
-
 	$scope.getMessages = function() {
 		Messages.get(id, $scope.s.timeFrom, $scope.s.timeTo, function(data) {
 			$rootScope.$digest();
@@ -80,27 +79,49 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 				i++;
 			}
 		}
-        var DateOptions = {
-          //era: 'long',
-          //year: 'numeric',
-          //month: 'numeric',
-          //day: 'numeric',
-          //weekday: 'long',
-          //timezone: 'UTC',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric'
-        };                
-		
+        var DateOptions = [
+        	{
+	          //era: 'long',
+	          //year: 'numeric',
+	          //month: 'numeric',
+	          //day: 'numeric',
+	          //weekday: 'long',
+	          //timezone: 'UTC',
+	          hour: 'numeric',
+	          minute: 'numeric',
+	          second: 'numeric'
+	        }
+        	,{
+	          //era: 'long',
+	          year: 'numeric',
+	          month: 'numeric',
+	          day: 'numeric',
+	          //weekday: 'long',
+	          //timezone: 'UTC',
+	          hour: 'numeric',
+	          minute: 'numeric',
+	          second: 'numeric'
+	        }
+        ];                
+		dt_options_key = 0;
+		if($scope.items_result) {
+			if($scope.items_result.length) {
+				if($scope.items_result[$scope.items_result.length-1]) {
+					if($scope.items_result[$scope.items_result.length-1].__t) {
+						if($scope.items_result[$scope.items_result.length-1].__t <= ($scope.now.ut - 86400/2)) {
+							dt_options_key = 1;
+						}
+					}
+				}
+			}
+		}
 	    $scope.chart_messages_options = {
 	    	series: series,
 	    	axes: {
 	    		x: {
 		    		key: "__t"
 		    		//,type: 'date'
-		    		,tickFormat: function function_name(value,inndex) {
-		    			return new Date(value*1000).toLocaleString("ru", DateOptions);
-		    		}
+		    		,tickFormat: function function_name(value,inndex) {return new Date(value*1000).toLocaleString("ru", DateOptions[dt_options_key]);}
 	    		}
 	    	},
 	    	grid: {x:true, y: true},
