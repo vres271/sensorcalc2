@@ -6,6 +6,7 @@ $my_js_lib_mt = FileLMT('lib/js/lib.js');
 
 $my_js = '<script src="scripts.js?mt='.$my_js_mt.'" type="text/javascript"></script>';
 $my_js_lib = '<script src="lib/js/lib.js?mt='.$my_js_lib_mt.'" type="text/javascript"></script>';
+$my_counter = '';
 
 include_once('index.html');
 

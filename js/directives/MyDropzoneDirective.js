@@ -4,6 +4,7 @@
     restrict: 'AE' //attribute or $element
     ,require:"^ngModel" // this is important, 
     ,scope: {
+      _onfileload: '=myDropzone'
     }
 
     ,link: function($scope, $element, $attr, ngModelCtrl) {
@@ -24,7 +25,7 @@
           event.preventDefault();
           var file = event.originalEvent.dataTransfer.files[0];
           if(file.size) {
-            maxFileSize = 1024;
+            maxFileSize = 100*1024;
             if (file.size > maxFileSize) {
                 log('Файл слишком большой!');
                 $element.addClass('error');
@@ -35,6 +36,7 @@
               return function () {
                 $element.val(this.result);
                 ngModelCtrl.$setViewValue(this.result);
+                if($scope._onfileload) $scope._onfileload.callback($scope._onfileload.context,{file: file, content: this.result});
                 return this.result;
               };
             })(file);

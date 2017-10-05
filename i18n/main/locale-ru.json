@@ -30,6 +30,7 @@
 	,"Reset all filters":"Сбросить фильтры"
 	,"Save changes":"Сохранить изменения"
 	,"Sensors":"Датчики"
+	,"Sensor":"Датчик"
 	,"Warning":"Внимание"
 	,"Error":"Ошибка"
 	,"Slow internet connection":"Медленное интернет соединение: частота обновления снижена"
@@ -51,4 +52,14 @@
 	,"sSecond":"с"
 
 	,"Close":"Закрыть"
+	,"Select displayed columns":"Выбрать отображаемые столбцы"
+
+	,"Ergonomica Ltd":"ООО Эргономика"
+
+	,"Attention":"Внимание"
+
+
+
+
+
 }

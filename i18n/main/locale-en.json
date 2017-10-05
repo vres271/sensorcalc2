@@ -30,6 +30,7 @@
 	,"Reset all filters":"Reset all filters"
 	,"Save changes":"Save changes"
 	,"Sensors":"Sensors"
+	,"Sensor":"Sensor"
 	,"Error":"Error"
 	,"Slow internet connection":"Slow internet connection: refresh rate reduced"
 
@@ -50,4 +51,15 @@
 	,"sSecond":"s"
 
 	,"Close":"Close"
+	,"Select displayed columns":"Select displayed columns"
+
+	,"Ergonomica Ltd":"Ergonomica Ltd"
+
+	,"Attention":"Attention"
+
+
+
+
+
+
 }

@@ -95,8 +95,8 @@
 			</table>
 		</div>
 		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
-				<button ng-hide="!sensors_checked" ng-click="mergeSensors(); checkChagnes();" type="button" class="btn btn-primary btn-block"><i class="fa fa-compress"></i> {{'Merge Sensors'|translate}}</button>
+			<div class="col-md-6 col-md-offset-3"><a ng-hide="!sensors_checked" my-pop="{{'help-merge'|translate}}" class="glued-right" data-placement="top"></a>
+				<button ng-hide="!sensors_checked" ng-click="mergeSensors(); checkChagnes();" type="button" class="btn btn-primary btn-block"><i class="fa fa-compress"></i> {{'Merge Sensors'|translate}} </button>
 				<button ng-hide="sensors_checked" ng-click="createSensor(); checkChagnes();" type="button" class="btn btn-default btn-block"><i class="fa fa-plus"></i> {{'Create new Sensor'|translate}}</button>
 			</div>
 		</div>
@@ -105,3 +105,4 @@
 		<br>
 	</div>
 </form>
+<div ng-include="'html/views/unit.multisensor-dialog.html'" scope="" onload="">11</div>

@@ -39,6 +39,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 		});
 	}
 
+
 	_s.getObject = function(wid, callback) {
 		if(!_s.auth) return;
 		_s.request('Objects', 'get', {wid:wid}, function(data) {
@@ -66,6 +67,40 @@ Main.service('GlomosCRM', ['$http', 'Options'
 		}, function(data) {
 			if(callback) callback(data);
 		})
+	}
+
+	_s.getAccount = function(params, callback) {
+		$http.post(_s.url+'wcrm.php?obj=account&m=get',params).then(function(response) {
+			var data = response.data;
+			if(!data.error) {
+				if(callback) callback(data);
+			} else {
+				log(data.error);
+			}
+		});
+	}
+
+	_s.createAccount = function(params, callback) {
+		$http.post(_s.url+'wcrm.php?obj=account&m=create',params).then(function(response) {
+			var data = response.data;
+			if(!data.error) {
+				if(callback) callback(data);
+			} else {
+				log(data.error);
+			}
+		});
+
+	}
+	_s.registerAccount = function(params, callback) {
+		$http.post(_s.url+'wcrm.php?obj=amember&m=register',params).then(function(response) {
+			var data = response.data;
+			if(!data.error) {
+				if(callback) callback(data);
+			} else {
+				log(data.error);
+			}
+		});
+
 	}
 
   

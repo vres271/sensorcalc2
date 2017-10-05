@@ -1,0 +1,44 @@
+<!-- Modal -->
+<div id="multisensor-dialog" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{'Attention'|translate}}!</h4>
+      </div>
+      <div class="modal-body">
+			   <p>{{'Data contain multiple tables'|translate}}.</p>
+         <p>{{'What to do'|translate}}?</p>
+         <div class="form-group">
+           <div class="radio">
+              <label style="margin-bottom: 10px;"><input type="radio" ng-model="multisensor_dialog.single" ng-change="multisensor_dialog.validate()" value="1">{{'Use one table in this sensor'|translate}}</label>
+              <br>
+              <label><input type="radio" ng-model="multisensor_dialog.single" ng-change="multisensor_dialog.validate()" value="0">{{'Create sensors for tables and merge them'|translate}}</label> 
+            </div>
+          </div>
+          <div>
+            <div ng-hide="multisensor_dialog.single==='0'">
+             <table  class="table"  >
+               <caption>{{'Tables found'|translate}}</caption>
+               <tbody>
+                 <tr ng-repeat="sens in multisensor_dialog.sensors" class="pointer {{1*multisensor_dialog.selected === 1*$index ? 'active' : ''}}">
+                  <td width="40px" ><input type="radio"  ng-model="multisensor_dialog.selected" ng-change="multisensor_dialog.validate()"  value="{{$index}}" ></td>
+                  <td width="120px"  ng-click="multisensor_dialog.selected=''+$index; multisensor_dialog.validate()">{{'Sensor'|translate}} {{sens.number}}</td>
+                  <td  ng-click="multisensor_dialog.selected=''+$index; multisensor_dialog.validate()">{{sens.max/10}} l</td>
+                 </tr>
+               </tbody>
+             </table>
+            </div>
+          </div>
+          <div ng-hide="!multisensor_dialog.mess" >
+            <div   class="alert alert-warning">{{multisensor_dialog.mess|translate}}</div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button"  ng-click="multisensor_dialog.onSubmit()" class="btn btn-{{multisensor_dialog.valid ? 'success' : 'disabled'}}" >Ok</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{'Close'|translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

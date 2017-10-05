@@ -1,5 +1,5 @@
-Main.service('Units',  ['Wialon','md5', '$http','Ready'
-    ,function(Wialon,md5,$http,Ready){
+Main.service('Units',  ['Wialon','md5', '$http','Ready', 'SensorTblParser'
+    ,function(Wialon,md5,$http,Ready,SensorTblParser){
 	var _s = this;
 	_s.items = [];
     _s.from = 0;
@@ -58,12 +58,13 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
 
     _s.parseSensorC = function(c) {
        if(typeof c === 'Object') {
-            c = angular.fromJson(c);
        } else {
             try{
-                eval('c = '+c);
+                c = angular.fromJson(c);
             } catch(e) {
-                log('error on sensor.c: '+e);
+                eval('var temp = '+c);
+                //log('error on sensor.c: '+e);
+                c = temp;
             }
        }
        return c;
@@ -209,68 +210,8 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
         return ret;
     }
 
-    _s.DSRCtoDandDSTR = function(_dsrc, parser) {
-        var _d = [];
-        var darr = [];
-
-        return {
-            standart: function() {
-                _dsrc = _dsrc.split("\n");
-                for(var key in _dsrc) {
-                      var row = _dsrc[key].replace(/;+/g, '\t');
-                      row = row.replace(/\s+/g, '\t');
-                      row = row.replace(/\,+/g, '.');
-                      row = row.replace(/\t{2,}/g,'\t');
-                      if(row) {
-                          row = row.split("\t");
-                          var x = parseFloat(row[0], 10);
-                          var y = parseFloat(row[1], 10);
-                          if(!isNaN(x) && !isNaN(y)) {
-                              _d.push({x:1*x,y:1*y});
-                              darr.push(x);
-                              darr.push(y);
-                          } else {
-                              _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
-                          }
-                      }
-                  }
-                if(darr.length>0) {
-                    darr = darr.join(':');
-                } else {
-                    darr = '';
-                }
-                return {_d: _d, _dstr: darr};
-            }
-            ,italon: function() {
-                _dsrc = _dsrc.split("\n");
-                for(var key in _dsrc) {
-                      var row = _dsrc[key].replace(/;+/g, '');
-                      row = row.replace(/^[0-9]*\./g, '');
-                      row = row.replace(/\s+/g, '\t');
-                      row = row.replace(/\,+/g, '.');
-                      row = row.replace(/\t{2,}/g,'\t');
-                      row = row.replace(/\-/g,'\t');
-                      if(row) {
-                          row = row.split("\t");
-                          var x = parseFloat(row[0], 10);
-                          var y = parseFloat(row[1], 10);
-                          if(!isNaN(x) && !isNaN(y)) {
-                              _d.push({x:1*x,y:1*y});
-                              darr.push(x);
-                              darr.push(y);
-                          } else {
-                              _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
-                          }
-                      }
-                  }
-                if(darr.length>0) {
-                    darr = darr.join(':');
-                } else {
-                    darr = '';
-                }
-                return {_d: _d, _dstr: darr};
-            }
-        }[parser]();
+    _s.DSRCtoDandDSTR = function(sensor) {
+        return SensorTblParser.parseTbl(sensor);
     }
 
     _s.DtoTBL = function(_d) {
@@ -313,7 +254,7 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
             sensor.tbl = [];
             return;
         };
-        var d_dstr = _s.DSRCtoDandDSTR(sensor._dsrc, sensor._parser); // из содержимого текстареа получаем... 
+        var d_dstr = _s.DSRCtoDandDSTR(sensor); // из содержимого текстареа получаем... 
         sensor._d = d_dstr._d; // таблицу XY...
         sensor._dstr = d_dstr._dstr; //  и строку X:Y,..
         sensor.tbl = _s.DtoTBL(sensor._d); // из таблицы XY получаем таблицу AXB
@@ -360,6 +301,29 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
         item._index.sens.id[_id] = item.sens[_id];
         
         return _id;
+    }
+
+    _s.createSensorsGroup = function(item, prop) {
+        var sensors_ids = [];
+        for(var key in item.sens) {
+            item.sens[key]._checked = false;
+        }
+        for(var key in prop) {
+            var sens_prop = prop[key];
+            var id = _s.createSensor(item);
+            var new_sensor = item._index.sens.id[id];
+            new_sensor._checked = true;
+            new_sensor._dsrc_sensor_index = 0;
+            for(var key2 in new_sensor) {
+                if(sens_prop[key2]!==undefined) {
+                    new_sensor[key2] = sens_prop[key2];
+                }
+            }
+            _s.parceSensorTable(new_sensor);
+            sensors_ids.push(id);
+        }
+        _s.mergeSensors(item);
+        return sensors_ids;
     }
 
     _s.toParent = function(id, str, salt) {

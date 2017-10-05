@@ -129,8 +129,8 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
             if(_s.unit) {
                 for(var key in _s.unit.sens) {
                     var sensor = _s.unit.sens[key];
-                    l_item['_s_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
-                    _s.all_cols['_s_'+sensor.n] = true;
+                    l_item['_p_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
+                    _s.all_cols['_p_'+sensor.n] = true;
                 }
             }
             for(var poskey in item.pos) {

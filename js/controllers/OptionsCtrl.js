@@ -17,6 +17,7 @@ Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , 
 			$translate.use(Options.item.language);
 			tmhDynamicLocale.set(Options.item.language);
 			copy_language = Options.item.language;
+			$translate.refresh();
 		}
 	}
 

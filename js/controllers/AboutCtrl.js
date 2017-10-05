@@ -16,6 +16,8 @@ Main.controller('AboutCtrl',['$scope','$stateParams','$translate' ,'$translatePa
 		storage.setItem('agree', 1*$scope.agree);
 	}
 
+
+
 }]);
 
 

@@ -1,0 +1,21 @@
+<div class="container text-center home" >
+	<div ng-if="wialon.auth" class="">
+		Wialon User name: <strong>{{wialon.user.nm}}</strong>
+		<br>
+		<div ng-if="glomoscrm.auth" class="">CRM user: <strong>{{glomoscrm.user.name}}</strong></div>
+		<div ng-if="!glomoscrm.account.email" class="">WialonCRM account: <strong>{{glomoscrm.account.name}}</strong></div>
+		<div ng-if="!glomoscrm.account.email" class="row">
+		<br>
+			<form class="col-sm-4 col-md-offset-4">
+				<div class="form-group">
+					<input ng-model="crm_account.email"  class="form-control input-lg" type="email" placeholder="Укажите свой email">
+				</div>
+			</form>
+		</div>
+		<br>
+		<div  class="row">
+			<a href="" ng-click="send();" class="btn btn-success  btn-lg">Далее <i class="fa fa-caret-right" aria-hidden="true"></i></a>
+			<a href="" ng-click="reg();" class="btn btn-success  btn-lg">Register in aMember </a>
+		</div>
+	</div>
+</div>

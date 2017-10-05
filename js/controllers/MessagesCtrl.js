@@ -154,6 +154,9 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 		});
 	}
 
-	$scope.isEmptyObject = isEmptyObject;
+	$scope.isEmptyObject = function(obj) {
+    if(obj === undefined) return true;
+    return !Object.keys(obj).length;
+}
 
 }]);

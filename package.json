@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "gulp": "^3.9.1",
-    "gulp-angular-gettext-export-html": "0.0.2"
+    "gulp-angular-gettext-export-html": "0.0.2",
+    "xml-js": "^1.5.0"
   },
   "devDependencies": {
     "browser-sync": "^2.18.13",

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="Main" ng-controller="MainCtrl" >
+<html lang="{{lng}}" ng-app="Main" ng-controller="MainCtrl" >
 	<head>
 		<meta charset="UTF-8">
 		<title>Wialon CRM</title>
@@ -39,12 +39,13 @@
 		</div>
 	    <div class="container-fluide marg-2" ui-view ></div>
 		<footer id="footer" class="text-center">
-    		<br><br><object class="logo" type="image/svg+xml" data="img/logowcrm.svg" ></object> Wialon CRM <i class="fa fa-copyright" aria-hidden="true"></i> 2017 	
+    		<br>
+    		<object class="logo" type="image/svg+xml" data="img/logowcrm.svg" ></object> Wialon CRM <i class="fa fa-copyright" aria-hidden="true"></i> 2017 | <a href="/about{{(lng==='en'?'-en':'')}}.html">{{'Ergonomica Ltd'|translate}}.</a>
 		</footer>	    
 		<div ng-hide="ready.all" class="wait-overlay" ><i class="fa fa-circle-o-notch fa-spin" ></i></div>
 	</body>
 	<?=$my_js_lib?>
 	<?=$my_js?>
-	<!-- <script src="lib/js/LineChart.js"></script> -->
-	<!-- <script src="i18n/angular-locale_ru.js"></script> -->
+	<?=$my_counter?>
+</script>
 </html>

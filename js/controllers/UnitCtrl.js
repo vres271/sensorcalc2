@@ -1,5 +1,5 @@
-Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', 'WaitFor', 'Wialon', 'Units', 'HWTypes', 'UnitFormValidator', 'GlomosCRM', '$translate' ,'$translatePartialLoader'
-	,function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator, GlomosCRM, $translate,  $translatePartialLoader) {
+Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', 'WaitFor', 'Wialon', 'Units', 'HWTypes', 'UnitFormValidator', 'GlomosCRM', '$translate' ,'$translatePartialLoader', 'SensorTblParser'
+	,function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes,  UnitFormValidator, GlomosCRM, $translate,  $translatePartialLoader, SensorTblParser) {
 	
 	$translatePartialLoader.addPart('unit');
 	$translatePartialLoader.addPart('sensors');
@@ -12,6 +12,7 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 	$scope.hwtypes = HWTypes;
 	$scope.errors = {};
 	$scope.item = {};
+
 
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		Units.getById(id,function(item) {
@@ -55,11 +56,70 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 	}
 
 	$scope.parceSensorTable = function(sensor) {
-		Units.parceSensorTable(sensor);
+		Units.parceSensorTable(sensor );
+	}
+
+	$scope.checkFile = function(context, data) {
+		var sensor = context.sensor;
+		var i = context.index;
+		var format = SensorTblParser.getDataFormat(data);
+		sensor._parser = format.parser;
+		if(format.sensors_n>1) {
+			$scope.multisensor_dialog = {
+				single: '1'
+				,sensors: format.sensors
+				,validate: function function_name() {
+					var _s = $scope.multisensor_dialog;
+					_s.mess = '';
+					_s.valid = false;
+					if(_s.single===undefined) {
+						_s.valid = false;
+						return false
+					};
+					if(_s.single==='1') {
+						if(_s.selected===undefined) {
+							_s.mess = 'Select which table to use';
+							_s.valid = false;
+							return false;
+						};
+					}
+					_s.valid = true;
+					return true;
+				}
+				,onSubmit: function() {
+					var _s = $scope.multisensor_dialog;
+					_s.validate();
+					if(!_s.valid) return false;
+					if(_s.single==='1') {
+						sensor._dsrc_sensor_index = _s.selected;
+						Units.parceSensorTable(sensor);
+					}
+					if(_s.single==='0') {
+						var prop = _s.sensors;
+						for(var key in prop) {
+							var sens_prop = prop[key];
+							sens_prop._dsrc = sensor._dsrc;
+							sens_prop._parser = sensor._parser;
+							sens_prop._dsrc_sensor_index = key;
+						}
+						Units.createSensorsGroup($scope.item, prop);
+						$scope.deleteSensor(sensor,i);
+						$location.url('/unit/'+$scope.id);
+						$scope.goto(undefined);
+					}
+					$('#multisensor-dialog').modal('hide');
+				}
+				,mess: ''
+				,valid: false
+			}
+			$('#multisensor-dialog').modal('show');
+		}
+
 	}
 
 	$scope.setAutoBounds = function(sensor) {
 		Units.setAutoBounds(sensor);
+		sensor._parser = 'standart';
 		Units.parceSensorTable(sensor);
 	}
 
@@ -117,6 +177,8 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 
 	$scope.inverseSrcTable = function(sensor) {
 		Units.inverseSrcTable(sensor);
+		sensor._parser = 'standart';
+		Units.parceSensorTable(sensor)
 	}
 
 	$scope.onSensorTypeChange = function(sensor) {
@@ -161,7 +223,6 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
       margin: {top: 5}
     };
 
-    $scope.tbl_parsers = ['standart','italon'];
+    $scope.tbl_parsers = ['standart','italon','omnicomm'];
 
- 
 }]);

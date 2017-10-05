@@ -1,0 +1,37 @@
+https://wialoncrm.com/amember/api/check-access/by-login-pass
+?_key=qYTyOfLc5SlGchfSmbgq
+&login=maximka
+&pass=d1Ap1KHN
+
+https://wialoncrm.com/amember/api/check-access/by-login
+?_key=qYTyOfLc5SlGchfSmbgq
+&login=maximka
+
+https://wialoncrm.com/amember/api/check-access/by-email
+?_key=qYTyOfLc5SlGchfSmbgq
+&email=borunov@glomos.ru
+
+
+POST https://wialoncrm.com/amember/login
+
+amember_login=maximka
+amember_pass=d1Ap1KHN
+amember_redirect_url=/amember/amember
+login_attempt_id=%ID сессии. может быть любым. Amember берет UnixTime(Now)%
+ Регистрация юзеров:
+POST https://wialoncrm.com/amember/api/users
+_key=qYTyOfLc5SlGchfSmbgq
+login=test12345
+pass=QwertY123321
+email=mail@glomos.ru
+name_f=Тест
+name_l=Тестов
+ возвращает:
+
+[{"user_id":3,"login":"test12345","pass":null,"remember_key":null,"pass_dattm":"2017-09-25 09:33:26","email":"mail@glomos.ru","name_f":"\u0422\u0435\u0441\u0442","name_l":"\u0422\u0435\u0441\u0442\u043e\u0432","street":null,"street2":null,"city":null,"state":null,"zip":null,"country":null,"phone":null,"added":"2017-09-25 09:33:26","remote_addr":"188.235.129.145","user_agent":"Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/60.0.3112.105 Safari\/537.36 Vivaldi\/1.92.917.43","saved_form_id":null,"status":"0","unsubscribed":"0","lang":null,"i_agree":"0","is_approved":"1","is_locked":"0","disable_lock_until":null,"reseller_id":null,"comment":null,"tax_id":null,"last_login":null,"last_ip":null,"last_user_agent":null,"last_session":null,"aff_id":null,"aff_added":null,"is_affiliate":null,"aff_payout_type":null}]
+
+
+
+wialoncrm.com/amember/admin 
+admin
+cfcfCF220475

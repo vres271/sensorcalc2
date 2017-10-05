@@ -118,12 +118,12 @@ Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', '
         Maxt = r.t;
       }
     }
-    if(Maxt <= _s.default_refresh_interval/10) {
+    if(Maxt <= _s.default_refresh_interval/3) {
       _s.refresh_interval = _s.default_refresh_interval;
-    } else if ((_s.default_refresh_interval/10 < Maxt) && (Maxt <= _s.default_refresh_interval)) {
+    } else if ((_s.default_refresh_interval/3 < Maxt) && (Maxt <= _s.default_refresh_interval)) {
       _s.refresh_interval = _s.default_refresh_interval*3;
     } else {
-      _s.refresh_interval = _s.default_refresh_interval*10;
+      _s.refresh_interval = _s.default_refresh_interval*3;
     }
   }
   _s.duplicate = function(sid, callback, callback_fail) { // дубликация сесии, если уж есть id

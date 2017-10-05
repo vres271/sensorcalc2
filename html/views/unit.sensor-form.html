@@ -55,7 +55,6 @@
 		    <div class="form-group">
 		      <label class="control-label col-sm-3" for="{{'p_'+sensor.id}}" >{{'Sensor Param'|translate}}</label>
 		      <div class="col-sm-9">
-		        <!-- <select  ng-options="key as key+': '+value for (key, value) in short_item.lmsg.p" class="form-control"   name="{{'p_'+sensor.id}}" id="{{'p_'+sensor.id}}"></select> -->
 				<input  ng-change="validate(); checkChagnes();" ng-model="sensor.p" class="form-control"   name="{{'p_'+sensor.id}}" id="{{'p_'+sensor.id}}" list="sensor-p-list" >
 				<datalist id="sensor-p-list">
 					<option ng-repeat="(key, value) in short_item.lmsg.p" value="{{key}}" label="{{value}}">
@@ -69,7 +68,8 @@
 		      </div>
 		    </div>
 		    <div class="form-group">
-		      <label class="control-label col-sm-3" for="{{'c-lower_bound_'+sensor.id}}">{{'Bounds'|translate}}</label>
+		      <label class="control-label col-sm-3" for="{{'c-lower_bound_'+sensor.id}}">{{'Bounds'|translate}} <a  my-pop="{{'help-bounds'|translate}}"></a>
+		      </label>
 		      <div class="col-sm-3">
 		        <input  ng-change="validate(); checkChagnes();" ng-model="sensor.c.lower_bound"  type="text" class="form-control"  name="{{'c-lower_bound_'+sensor.id}}" id="{{'c-lower_bound_'+sensor.id}}" >
 		      </div>
@@ -81,17 +81,19 @@
 			  </div>
 		    </div>
 		    <div class="form-group {{sens_errClass('sens_d',sensor.id)}}">
-		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}">{{'Source Table'|translate}}</label>
+		      <label class="control-label col-sm-3" for="{{'m_'+sensor.id}}" >	
+		      	{{'Source Table'|translate}} <a  my-pop="{{'help-srctbl'|translate}}" ></a>
+		      	</label>
 		      <div class="col-sm-9">
-		        <textarea   ng-model="sensor._dsrc" data-ng-model-options="{debounce: 150}"  my-dropzone   class="form-control dropzone" rows="10" name="{{'d_'+sensor.id}}" id="{{'d_'+sensor.id}}" ng-change="parceSensorTable(sensor); validate(); checkChagnes();" ></textarea>
+		        <textarea   ng-model="sensor._dsrc" data-ng-model-options="{debounce: 150}"  my-dropzone="{context: {sensor:sensor, index: key}, callback: checkFile}" my-typeontab  class="form-control dropzone" rows="10" name="{{'dsrc_'+sensor.id}}" id="{{'dsrc_'+sensor.id}}" ng-change="parceSensorTable(sensor,dsrcfiledata); validate(); checkChagnes();"></textarea>
 		      </div>
 		    </div>
 		    <div class="form-group">
 		      <div class="col-sm-4 col-md-offset-3">
-				<button class="btn btn-default" type="button" ng-click="inverseSrcTable(sensor); checkChagnes();"><i class="fa fa-exchange" aria-hidden="true"></i> {{'Inverse Table'|translate}}</button>      
+				<button class="btn btn-default" type="button" ng-click="inverseSrcTable(sensor); checkChagnes();"><i class="fa fa-exchange" aria-hidden="true"></i> {{'Inverse Table'|translate}}</button><a  my-pop="{{'help-inverse'|translate}}" class="glued"></a>      
 		      </div>
 		      <div class="col-sm-4  col-md-offset-1">
-		        <select ng-model="sensor._parser" ng-change="parceSensorTable(sensor); validate();" ng-options="value for value in tbl_parsers" class="form-control"></select>
+		        <select ng-model="sensor._parser" ng-change="parceSensorTable(sensor); validate();" ng-options="value for value in tbl_parsers" class="form-control"></select><a  my-pop="{{'help-parser'|translate}}" class="glued"></a>
 		      </div>
 		    </div>
 		    <div class="form-group">

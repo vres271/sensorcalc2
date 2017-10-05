@@ -48,5 +48,19 @@
 	,"Engine":"Engine"
 	,"Fuel":"Fuel"
 	,"Other":"Other"
+
+	,"Data contain multiple tables":"Data in the \"Source table\" contain multiple calibration tables"
+	,"What to do":"What to do"
+	,"Use one table in this sensor":"Use one table in this sensor"
+	,"Create sensors for tables and merge them":"Create a separate sensor for each table and merge them"
+	,"Tables found":"Tables found"
+	,"Select which table to use":"Select which table to use"
+
+	,"help-srctbl":"Enter manually, copy from Excel table, or drag a text file with the calibration table. If you select standard format, a pair x:y to be separated by a line break. Between x and y can stand any number of spaces or tab characters. The fractional part separated a comma or a point."
+	,"help-bounds":"The upper and lower limit values of the sensor parameter. Readings that are outside the boundary are ignored in the calculation of the fuel level. The button <Auto> sets the boundaries in accordance with the minimum and maximum values of the calibration table. If the minimum value is zero, it changes to 0.1"
+	,"help-inverse":"Swap x and y in the table"
+	,"help-parser":"The format of the input data. Select the model of your sensor in the list, if, which is produced through calibration of the sensor has its own table format"
+	,"help-merge":"Is used, for example, for objects with multiple fuel level sensors. Makes invisible the selected sensors and sets the type for the custom sensor. Creates a new sensor, summing the readings selected."
+	
 	
 }

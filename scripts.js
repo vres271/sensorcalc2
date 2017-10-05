@@ -27,7 +27,8 @@ Main.config(['$translateProvider', '$translatePartialLoaderProvider','tmhDynamic
 }]);
 
 
-var log = function(msg) {
+var log = function(msg, disabled) {
+    if(disabled) return;
 	console.log(msg);
 }
 
@@ -50,6 +51,595 @@ var isEmptyObject =  function(obj) {
     if(obj === undefined) return true;
     return !Object.keys(obj).length;
 }
+
+
+/*
+ Copyright 2011-2013 Abdulla Abdurakhmanov
+ Original sources are available at https://code.google.com/p/x2js/
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+(function (root, factory) {
+     if (typeof define === "function" && define.amd) {
+         define([], factory);
+     } else if (typeof exports === "object") {
+         module.exports = factory();
+     } else {
+         root.X2JS = factory();
+     }
+ }(this, function () {
+    return function (config) {
+        'use strict';
+            
+        var VERSION = "1.2.0";
+        
+        config = config || {};
+        initConfigDefaults();
+        initRequiredPolyfills();
+        
+        function initConfigDefaults() {
+            if(config.escapeMode === undefined) {
+                config.escapeMode = true;
+            }
+            
+            config.attributePrefix = config.attributePrefix || "_";
+            config.arrayAccessForm = config.arrayAccessForm || "none";
+            config.emptyNodeForm = config.emptyNodeForm || "text";      
+            
+            if(config.enableToStringFunc === undefined) {
+                config.enableToStringFunc = true; 
+            }
+            config.arrayAccessFormPaths = config.arrayAccessFormPaths || []; 
+            if(config.skipEmptyTextNodesForObj === undefined) {
+                config.skipEmptyTextNodesForObj = true;
+            }
+            if(config.stripWhitespaces === undefined) {
+                config.stripWhitespaces = true;
+            }
+            config.datetimeAccessFormPaths = config.datetimeAccessFormPaths || [];
+    
+            if(config.useDoubleQuotes === undefined) {
+                config.useDoubleQuotes = false;
+            }
+            
+            config.xmlElementsFilter = config.xmlElementsFilter || [];
+            config.jsonPropertiesFilter = config.jsonPropertiesFilter || [];
+            
+            if(config.keepCData === undefined) {
+                config.keepCData = false;
+            }
+        }
+    
+        var DOMNodeTypes = {
+            ELEMENT_NODE       : 1,
+            TEXT_NODE          : 3,
+            CDATA_SECTION_NODE : 4,
+            COMMENT_NODE       : 8,
+            DOCUMENT_NODE      : 9
+        };
+        
+        function initRequiredPolyfills() {      
+        }
+        
+        function getNodeLocalName( node ) {
+            var nodeLocalName = node.localName;         
+            if(nodeLocalName == null) // Yeah, this is IE!! 
+                nodeLocalName = node.baseName;
+            if(nodeLocalName == null || nodeLocalName=="") // =="" is IE too
+                nodeLocalName = node.nodeName;
+            return nodeLocalName;
+        }
+        
+        function getNodePrefix(node) {
+            return node.prefix;
+        }
+            
+        function escapeXmlChars(str) {
+            if(typeof(str) == "string")
+                return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+            else
+                return str;
+        }
+    
+        function unescapeXmlChars(str) {
+            return str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+        }
+        
+        function checkInStdFiltersArrayForm(stdFiltersArrayForm, obj, name, path) {
+            var idx = 0;
+            for(; idx < stdFiltersArrayForm.length; idx++) {
+                var filterPath = stdFiltersArrayForm[idx];
+                if( typeof filterPath === "string" ) {
+                    if(filterPath == path)
+                        break;
+                }
+                else
+                if( filterPath instanceof RegExp) {
+                    if(filterPath.test(path))
+                        break;
+                }               
+                else
+                if( typeof filterPath === "function") {
+                    if(filterPath(obj, name, path))
+                        break;
+                }
+            }
+            return idx!=stdFiltersArrayForm.length;
+        }
+        
+        function toArrayAccessForm(obj, childName, path) {
+            switch(config.arrayAccessForm) {
+                case "property":
+                    if(!(obj[childName] instanceof Array))
+                        obj[childName+"_asArray"] = [obj[childName]];
+                    else
+                        obj[childName+"_asArray"] = obj[childName];
+                    break;
+                /*case "none":
+                    break;*/
+            }
+            
+            if(!(obj[childName] instanceof Array) && config.arrayAccessFormPaths.length > 0) {
+                if(checkInStdFiltersArrayForm(config.arrayAccessFormPaths, obj, childName, path)) {
+                    obj[childName] = [obj[childName]];
+                }           
+            }
+        }
+        
+        function fromXmlDateTime(prop) {
+            // Implementation based up on http://stackoverflow.com/questions/8178598/xml-datetime-to-javascript-date-object
+            // Improved to support full spec and optional parts
+            var bits = prop.split(/[-T:+Z]/g);
+            
+            var d = new Date(bits[0], bits[1]-1, bits[2]);          
+            var secondBits = bits[5].split("\.");
+            d.setHours(bits[3], bits[4], secondBits[0]);
+            if(secondBits.length>1)
+                d.setMilliseconds(secondBits[1]);
+    
+            // Get supplied time zone offset in minutes
+            if(bits[6] && bits[7]) {
+                var offsetMinutes = bits[6] * 60 + Number(bits[7]);
+                var sign = /\d\d-\d\d:\d\d$/.test(prop)? '-' : '+';
+    
+                // Apply the sign
+                offsetMinutes = 0 + (sign == '-'? -1 * offsetMinutes : offsetMinutes);
+    
+                // Apply offset and local timezone
+                d.setMinutes(d.getMinutes() - offsetMinutes - d.getTimezoneOffset())
+            }
+            else
+                if(prop.indexOf("Z", prop.length - 1) !== -1) {
+                    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()));                  
+                }
+    
+            // d is now a local time equivalent to the supplied time
+            return d;
+        }
+        
+        function checkFromXmlDateTimePaths(value, childName, fullPath) {
+            if(config.datetimeAccessFormPaths.length > 0) {
+                var path = fullPath.split("\.#")[0];
+                if(checkInStdFiltersArrayForm(config.datetimeAccessFormPaths, value, childName, path)) {
+                    return fromXmlDateTime(value);
+                }
+                else
+                    return value;           
+            }
+            else
+                return value;
+        }
+        
+        function checkXmlElementsFilter(obj, childType, childName, childPath) {
+            if( childType == DOMNodeTypes.ELEMENT_NODE && config.xmlElementsFilter.length > 0) {
+                return checkInStdFiltersArrayForm(config.xmlElementsFilter, obj, childName, childPath); 
+            }
+            else
+                return true;
+        }   
+    
+        function parseDOMChildren( node, path ) {
+            if(node.nodeType == DOMNodeTypes.DOCUMENT_NODE) {
+                var result = new Object;
+                var nodeChildren = node.childNodes;
+                // Alternative for firstElementChild which is not supported in some environments
+                for(var cidx=0; cidx <nodeChildren.length; cidx++) {
+                    var child = nodeChildren.item(cidx);
+                    if(child.nodeType == DOMNodeTypes.ELEMENT_NODE) {
+                        var childName = getNodeLocalName(child);
+                        result[childName] = parseDOMChildren(child, childName);
+                    }
+                }
+                return result;
+            }
+            else
+            if(node.nodeType == DOMNodeTypes.ELEMENT_NODE) {
+                var result = new Object;
+                result.__cnt=0;
+                
+                var nodeChildren = node.childNodes;
+                
+                // Children nodes
+                for(var cidx=0; cidx <nodeChildren.length; cidx++) {
+                    var child = nodeChildren.item(cidx); // nodeChildren[cidx];
+                    var childName = getNodeLocalName(child);
+                    
+                    if(child.nodeType!= DOMNodeTypes.COMMENT_NODE) {
+                        var childPath = path+"."+childName;
+                        if (checkXmlElementsFilter(result,child.nodeType,childName,childPath)) {
+                            result.__cnt++;
+                            if(result[childName] == null) {
+                                result[childName] = parseDOMChildren(child, childPath);
+                                toArrayAccessForm(result, childName, childPath);                    
+                            }
+                            else {
+                                if(result[childName] != null) {
+                                    if( !(result[childName] instanceof Array)) {
+                                        result[childName] = [result[childName]];
+                                        toArrayAccessForm(result, childName, childPath);
+                                    }
+                                }
+                                (result[childName])[result[childName].length] = parseDOMChildren(child, childPath);
+                            }
+                        }
+                    }                               
+                }
+                
+                // Attributes
+                for(var aidx=0; aidx <node.attributes.length; aidx++) {
+                    var attr = node.attributes.item(aidx); // [aidx];
+                    result.__cnt++;
+                    result[config.attributePrefix+attr.name]=attr.value;
+                }
+                
+                // Node namespace prefix
+                var nodePrefix = getNodePrefix(node);
+                if(nodePrefix!=null && nodePrefix!="") {
+                    result.__cnt++;
+                    result.__prefix=nodePrefix;
+                }
+                
+                if(result["#text"]!=null) {             
+                    result.__text = result["#text"];
+                    if(result.__text instanceof Array) {
+                        result.__text = result.__text.join("\n");
+                    }
+                    //if(config.escapeMode)
+                    //  result.__text = unescapeXmlChars(result.__text);
+                    if(config.stripWhitespaces)
+                        result.__text = result.__text.trim();
+                    delete result["#text"];
+                    if(config.arrayAccessForm=="property")
+                        delete result["#text_asArray"];
+                    result.__text = checkFromXmlDateTimePaths(result.__text, childName, path+"."+childName);
+                }
+                if(result["#cdata-section"]!=null) {
+                    result.__cdata = result["#cdata-section"];
+                    delete result["#cdata-section"];
+                    if(config.arrayAccessForm=="property")
+                        delete result["#cdata-section_asArray"];
+                }
+                
+                if( result.__cnt == 0 && config.emptyNodeForm=="text" ) {
+                    result = '';
+                }
+                else
+                if( result.__cnt == 1 && result.__text!=null  ) {
+                    result = result.__text;
+                }
+                else
+                if( result.__cnt == 1 && result.__cdata!=null && !config.keepCData  ) {
+                    result = result.__cdata;
+                }           
+                else            
+                if ( result.__cnt > 1 && result.__text!=null && config.skipEmptyTextNodesForObj) {
+                    if( (config.stripWhitespaces && result.__text=="") || (result.__text.trim()=="")) {
+                        delete result.__text;
+                    }
+                }
+                delete result.__cnt;            
+                
+                if( config.enableToStringFunc && (result.__text!=null || result.__cdata!=null )) {
+                    result.toString = function() {
+                        return (this.__text!=null? this.__text:'')+( this.__cdata!=null ? this.__cdata:'');
+                    };
+                }
+                
+                return result;
+            }
+            else
+            if(node.nodeType == DOMNodeTypes.TEXT_NODE || node.nodeType == DOMNodeTypes.CDATA_SECTION_NODE) {
+                return node.nodeValue;
+            }   
+        }
+        
+        function startTag(jsonObj, element, attrList, closed) {
+            var resultStr = "<"+ ( (jsonObj!=null && jsonObj.__prefix!=null)? (jsonObj.__prefix+":"):"") + element;
+            if(attrList!=null) {
+                for(var aidx = 0; aidx < attrList.length; aidx++) {
+                    var attrName = attrList[aidx];
+                    var attrVal = jsonObj[attrName];
+                    if(config.escapeMode)
+                        attrVal=escapeXmlChars(attrVal);
+                    resultStr+=" "+attrName.substr(config.attributePrefix.length)+"=";
+                    if(config.useDoubleQuotes)
+                        resultStr+='"'+attrVal+'"';
+                    else
+                        resultStr+="'"+attrVal+"'";
+                }
+            }
+            if(!closed)
+                resultStr+=">";
+            else
+                resultStr+="/>";
+            return resultStr;
+        }
+        
+        function endTag(jsonObj,elementName) {
+            return "</"+ (jsonObj.__prefix!=null? (jsonObj.__prefix+":"):"")+elementName+">";
+        }
+        
+        function endsWith(str, suffix) {
+            return str.indexOf(suffix, str.length - suffix.length) !== -1;
+        }
+        
+        function jsonXmlSpecialElem ( jsonObj, jsonObjField ) {
+            if((config.arrayAccessForm=="property" && endsWith(jsonObjField.toString(),("_asArray"))) 
+                    || jsonObjField.toString().indexOf(config.attributePrefix)==0 
+                    || jsonObjField.toString().indexOf("__")==0
+                    || (jsonObj[jsonObjField] instanceof Function) )
+                return true;
+            else
+                return false;
+        }
+        
+        function jsonXmlElemCount ( jsonObj ) {
+            var elementsCnt = 0;
+            if(jsonObj instanceof Object ) {
+                for( var it in jsonObj  ) {
+                    if(jsonXmlSpecialElem ( jsonObj, it) )
+                        continue;           
+                    elementsCnt++;
+                }
+            }
+            return elementsCnt;
+        }
+        
+        function checkJsonObjPropertiesFilter(jsonObj, propertyName, jsonObjPath) {
+            return config.jsonPropertiesFilter.length == 0
+                || jsonObjPath==""
+                || checkInStdFiltersArrayForm(config.jsonPropertiesFilter, jsonObj, propertyName, jsonObjPath); 
+        }
+        
+        function parseJSONAttributes ( jsonObj ) {
+            var attrList = [];
+            if(jsonObj instanceof Object ) {
+                for( var ait in jsonObj  ) {
+                    if(ait.toString().indexOf("__")== -1 && ait.toString().indexOf(config.attributePrefix)==0) {
+                        attrList.push(ait);
+                    }
+                }
+            }
+            return attrList;
+        }
+        
+        function parseJSONTextAttrs ( jsonTxtObj ) {
+            var result ="";
+            
+            if(jsonTxtObj.__cdata!=null) {                                      
+                result+="<![CDATA["+jsonTxtObj.__cdata+"]]>";                   
+            }
+            
+            if(jsonTxtObj.__text!=null) {           
+                if(config.escapeMode)
+                    result+=escapeXmlChars(jsonTxtObj.__text);
+                else
+                    result+=jsonTxtObj.__text;
+            }
+            return result;
+        }
+        
+        function parseJSONTextObject ( jsonTxtObj ) {
+            var result ="";
+    
+            if( jsonTxtObj instanceof Object ) {
+                result+=parseJSONTextAttrs ( jsonTxtObj );
+            }
+            else
+                if(jsonTxtObj!=null) {
+                    if(config.escapeMode)
+                        result+=escapeXmlChars(jsonTxtObj);
+                    else
+                        result+=jsonTxtObj;
+                }
+            
+            return result;
+        }
+        
+        function getJsonPropertyPath(jsonObjPath, jsonPropName) {
+            if (jsonObjPath==="") {
+                return jsonPropName;
+            }
+            else
+                return jsonObjPath+"."+jsonPropName;
+        }
+        
+        function parseJSONArray ( jsonArrRoot, jsonArrObj, attrList, jsonObjPath ) {
+            var result = ""; 
+            if(jsonArrRoot.length == 0) {
+                result+=startTag(jsonArrRoot, jsonArrObj, attrList, true);
+            }
+            else {
+                for(var arIdx = 0; arIdx < jsonArrRoot.length; arIdx++) {
+                    result+=startTag(jsonArrRoot[arIdx], jsonArrObj, parseJSONAttributes(jsonArrRoot[arIdx]), false);
+                    result+=parseJSONObject(jsonArrRoot[arIdx], getJsonPropertyPath(jsonObjPath,jsonArrObj));
+                    result+=endTag(jsonArrRoot[arIdx],jsonArrObj);
+                }
+            }
+            return result;
+        }
+        
+        function parseJSONObject ( jsonObj, jsonObjPath ) {
+            var result = "";    
+    
+            var elementsCnt = jsonXmlElemCount ( jsonObj );
+            
+            if(elementsCnt > 0) {
+                for( var it in jsonObj ) {
+                    
+                    if(jsonXmlSpecialElem ( jsonObj, it) || (jsonObjPath!="" && !checkJsonObjPropertiesFilter(jsonObj, it, getJsonPropertyPath(jsonObjPath,it))) )
+                        continue;           
+                    
+                    var subObj = jsonObj[it];                       
+                    
+                    var attrList = parseJSONAttributes( subObj )
+                    
+                    if(subObj == null || subObj == undefined) {
+                        result+=startTag(subObj, it, attrList, true);
+                    }
+                    else
+                    if(subObj instanceof Object) {
+                        
+                        if(subObj instanceof Array) {                   
+                            result+=parseJSONArray( subObj, it, attrList, jsonObjPath );                    
+                        }
+                        else if(subObj instanceof Date) {
+                            result+=startTag(subObj, it, attrList, false);
+                            result+=subObj.toISOString();
+                            result+=endTag(subObj,it);
+                        }
+                        else {
+                            var subObjElementsCnt = jsonXmlElemCount ( subObj );
+                            if(subObjElementsCnt > 0 || subObj.__text!=null || subObj.__cdata!=null) {
+                                result+=startTag(subObj, it, attrList, false);
+                                result+=parseJSONObject(subObj, getJsonPropertyPath(jsonObjPath,it));
+                                result+=endTag(subObj,it);
+                            }
+                            else {
+                                result+=startTag(subObj, it, attrList, true);
+                            }
+                        }
+                    }
+                    else {
+                        result+=startTag(subObj, it, attrList, false);
+                        result+=parseJSONTextObject(subObj);
+                        result+=endTag(subObj,it);
+                    }
+                }
+            }
+            result+=parseJSONTextObject(jsonObj);
+            
+            return result;
+        }
+        
+        this.parseXmlString = function(xmlDocStr) {
+            var isIEParser = window.ActiveXObject || "ActiveXObject" in window;
+            if (xmlDocStr === undefined) {
+                return null;
+            }
+            var xmlDoc;
+            if (window.DOMParser) {
+                var parser=new window.DOMParser();          
+                var parsererrorNS = null;
+                // IE9+ now is here
+                if(!isIEParser) {
+                    try {
+                        parsererrorNS = parser.parseFromString("INVALID", "text/xml").getElementsByTagName("parsererror")[0].namespaceURI;
+                    }
+                    catch(err) {                    
+                        parsererrorNS = null;
+                    }
+                }
+                try {
+                    xmlDoc = parser.parseFromString( xmlDocStr, "text/xml" );
+                    if( parsererrorNS!= null && xmlDoc.getElementsByTagNameNS(parsererrorNS, "parsererror").length > 0) {
+                        //throw new Error('Error parsing XML: '+xmlDocStr);
+                        xmlDoc = null;
+                    }
+                }
+                catch(err) {
+                    xmlDoc = null;
+                }
+            }
+            else {
+                // IE :(
+                if(xmlDocStr.indexOf("<?")==0) {
+                    xmlDocStr = xmlDocStr.substr( xmlDocStr.indexOf("?>") + 2 );
+                }
+                xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+                xmlDoc.async="false";
+                xmlDoc.loadXML(xmlDocStr);
+            }
+            return xmlDoc;
+        };
+        
+        this.asArray = function(prop) {
+            if (prop === undefined || prop == null)
+                return [];
+            else
+            if(prop instanceof Array)
+                return prop;
+            else
+                return [prop];
+        };
+        
+        this.toXmlDateTime = function(dt) {
+            if(dt instanceof Date)
+                return dt.toISOString();
+            else
+            if(typeof(dt) === 'number' )
+                return new Date(dt).toISOString();
+            else    
+                return null;
+        };
+        
+        this.asDateTime = function(prop) {
+            if(typeof(prop) == "string") {
+                return fromXmlDateTime(prop);
+            }
+            else
+                return prop;
+        };
+    
+        this.xml2json = function (xmlDoc) {
+            return parseDOMChildren ( xmlDoc );
+        };
+        
+        this.xml_str2json = function (xmlDocStr) {
+            var xmlDoc = this.parseXmlString(xmlDocStr);
+            if(xmlDoc!=null)
+                return this.xml2json(xmlDoc);
+            else
+                return null;
+        };
+    
+        this.json2xml_str = function (jsonObj) {
+            return parseJSONObject ( jsonObj, "" );
+        };
+    
+        this.json2xml = function (jsonObj) {
+            var xmlDocStr = this.json2xml_str (jsonObj);
+            return this.parseXmlString(xmlDocStr);
+        };
+        
+        this.getVersion = function () {
+            return VERSION;
+        };  
+    }
+}))
+
+
 
 
 Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
@@ -125,6 +715,12 @@ Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functi
             url: '/user/:id'
             ,views: {
                 '': {templateUrl: 'html/views/user.html', controller: 'UserCtrl'}
+            }
+        })
+         .state('buy', {
+            url: '/buy'
+            ,views: {
+                '': {templateUrl: 'html/views/buy.html', controller: 'BuyCtrl'}
             }
         })
     //    .state('account', {
@@ -305,6 +901,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 		});
 	}
 
+
 	_s.getObject = function(wid, callback) {
 		if(!_s.auth) return;
 		_s.request('Objects', 'get', {wid:wid}, function(data) {
@@ -332,6 +929,40 @@ Main.service('GlomosCRM', ['$http', 'Options'
 		}, function(data) {
 			if(callback) callback(data);
 		})
+	}
+
+	_s.getAccount = function(params, callback) {
+		$http.post(_s.url+'wcrm.php?obj=account&m=get',params).then(function(response) {
+			var data = response.data;
+			if(!data.error) {
+				if(callback) callback(data);
+			} else {
+				log(data.error);
+			}
+		});
+	}
+
+	_s.createAccount = function(params, callback) {
+		$http.post(_s.url+'wcrm.php?obj=account&m=create',params).then(function(response) {
+			var data = response.data;
+			if(!data.error) {
+				if(callback) callback(data);
+			} else {
+				log(data.error);
+			}
+		});
+
+	}
+	_s.registerAccount = function(params, callback) {
+		$http.post(_s.url+'wcrm.php?obj=amember&m=register',params).then(function(response) {
+			var data = response.data;
+			if(!data.error) {
+				if(callback) callback(data);
+			} else {
+				log(data.error);
+			}
+		});
+
 	}
 
   
@@ -1353,8 +1984,8 @@ Main.service('Messages', ['$filter', 'Wialon', 'State'
             if(_s.unit) {
                 for(var key in _s.unit.sens) {
                     var sensor = _s.unit.sens[key];
-                    l_item['_s_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
-                    _s.all_cols['_s_'+sensor.n] = true;
+                    l_item['_p_'+sensor.n] = $filter('ParamToSensorValue')(sensor, item, _s.unit);
+                    _s.all_cols['_p_'+sensor.n] = true;
                 }
             }
             for(var poskey in item.pos) {
@@ -1467,6 +2098,183 @@ Main.service('Ready', function() {
     }
     return _s.allParts();
   }
+  
+});
+Main.service('SensorTblParser', function() {
+
+  var _s = this;
+
+	_s.getDataFormat = function(data) {
+    var result = {
+      parser: 'standart'
+      ,type: ''
+      ,sensors_n: 1
+      ,sensors: []
+    }
+    if(data) {
+      if(data.file) {
+        if(data.file.type) {
+          result.type = data.file.type;
+          if(data.file.type === 'text/xml') {
+            var x2js = new X2JS();
+            var content = x2js.xml_str2json(data.content);
+            if(content) {
+              if(content.vehicle) {
+                if(content.vehicle.sensor) {
+                  result.parser = 'omnicomm';
+                  if(content.vehicle.sensor.length) {
+                    result.sensors_n = content.vehicle.sensor.length;
+                    for(var key in content.vehicle.sensor) {
+                      var block = content.vehicle.sensor[key];
+                      if(block.value) {
+                        if(block.value[block.value.length-1]) {
+                          var last_row = block.value[block.value.length-1];
+                          if(last_row._code && last_row.__text) {
+                            var sensor = {
+                              max: last_row.__text
+                              ,number: block._number
+                            } 
+                            result.sensors.push(sensor);
+                          }
+                        }
+                      }
+                    }
+                  } else {
+                    result.sensors_n = 1;
+                  }
+                  return result;
+                }
+              }
+            }
+          } else if (data.file.type === 'text/plain') {
+            var content = data.content.split("\n");
+            if(content[0]) {
+              var row = content[0];
+              if(/\d+\.\d+-\d+,*\d*;/g.test(row)) {
+                result.parser = 'italon';
+                return result;
+              }
+            }
+          }
+        }
+      }
+    }
+		return result;
+	}
+
+	_s.parseTbl = function(sensor) {
+
+        var _dsrc = sensor._dsrc;
+        var parser = sensor._parser;
+        var _d = [];
+        var darr = [];
+
+        return {
+            standart: function() {
+                _dsrc = _dsrc.split("\n");
+                for(var key in _dsrc) {
+                      var row = _dsrc[key].replace(/;+/g, '\t');
+                      row = row.replace(/\s+/g, '\t');
+                      row = row.replace(/\,+/g, '.');
+                      row = row.replace(/\t{2,}/g,'\t');
+                      if(row) {
+                          row = row.split("\t");
+                          var x = parseFloat(row[0], 10);
+                          var y = parseFloat(row[1], 10);
+                          if(!isNaN(x) && !isNaN(y)) {
+                              _d.push({x:1*x,y:1*y});
+                              darr.push(x);
+                              darr.push(y);
+                          } else {
+                              _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
+                          }
+                      }
+                  }
+                if(darr.length>0) {
+                    darr = darr.join(':');
+                } else {
+                    darr = '';
+                }
+                return {_d: _d, _dstr: darr};
+            }
+            ,omnicomm: function() {
+                var x2js = new X2JS();
+                var content = x2js.xml_str2json(_dsrc);
+                if(content) {
+                    if(content.vehicle) {
+                        if(content.vehicle.sensor) {
+                            if(content.vehicle.sensor.length) { // несколько датчиков
+                                if(sensor._dsrc_sensor_index) {
+                                  if(content.vehicle.sensor[sensor._dsrc_sensor_index]) {
+                                    var sens = content.vehicle.sensor[sensor._dsrc_sensor_index];
+                                  } else {
+                                    var sens = content.vehicle.sensor[0];
+                                  }
+                                } else {
+                                  var sens = content.vehicle.sensor[0];
+                                }
+                            } else { // один датчик
+                                var sens = content.vehicle.sensor;
+                            }
+                            if(sens.value) {
+                                for(var key in sens.value) {
+                                    var row = sens.value[key];
+                                    var x = 1*row._code;
+                                    var y = row.__text/10;
+                                    if(!isNaN(x) && !isNaN(y)) {
+                                        _d.push({x:x,y:y});
+                                        darr.push(x);
+                                        darr.push(y);
+                                    } else {
+                                        _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if(darr.length>0) {
+                    darr = darr.join(':');
+                } else {
+                    darr = '';
+                }
+                return {_d: _d, _dstr: darr};
+            }
+            ,italon: function() {
+                _dsrc = _dsrc.split("\n");
+                for(var key in _dsrc) {
+                    var row = _dsrc[key].replace(/;+/g, '');
+                    row = row.replace(/^[0-9]*\./g, '');
+                    row = row.replace(/\s+/g, '\t');
+                    row = row.replace(/\,+/g, '.');
+                    row = row.replace(/\t{2,}/g,'\t');
+                    row = row.replace(/\-/g,'\t');
+                    if(row) {
+                        row = row.split("\t");
+                        var x = parseFloat(row[0], 10);
+                        var y = parseFloat(row[1], 10);
+                        if(!isNaN(x) && !isNaN(y)) {
+                            _d.push({x:1*x,y:1*y});
+                            darr.push(x);
+                            darr.push(y);
+                        } else {
+                          if(key >= _dsrc.length-2) {
+                            break;
+                          } else {
+                            _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
+                          }
+                        }
+                    }
+                  }
+                if(darr.length>0) {
+                    darr = darr.join(':');
+                } else {
+                    darr = '';
+                }
+                return {_d: _d, _dstr: darr};
+            }
+        }[parser]();
+	}
   
 });
 Main.service('State', ['$interval', '$filter'
@@ -1676,8 +2484,8 @@ Main.service('UnitFormValidator', ['Validator', 'Units'
     }
     return _s;
 }]);
-Main.service('Units',  ['Wialon','md5', '$http','Ready'
-    ,function(Wialon,md5,$http,Ready){
+Main.service('Units',  ['Wialon','md5', '$http','Ready', 'SensorTblParser'
+    ,function(Wialon,md5,$http,Ready,SensorTblParser){
 	var _s = this;
 	_s.items = [];
     _s.from = 0;
@@ -1736,12 +2544,13 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
 
     _s.parseSensorC = function(c) {
        if(typeof c === 'Object') {
-            c = angular.fromJson(c);
        } else {
             try{
-                eval('c = '+c);
+                c = angular.fromJson(c);
             } catch(e) {
-                log('error on sensor.c: '+e);
+                eval('var temp = '+c);
+                //log('error on sensor.c: '+e);
+                c = temp;
             }
        }
        return c;
@@ -1887,68 +2696,8 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
         return ret;
     }
 
-    _s.DSRCtoDandDSTR = function(_dsrc, parser) {
-        var _d = [];
-        var darr = [];
-
-        return {
-            standart: function() {
-                _dsrc = _dsrc.split("\n");
-                for(var key in _dsrc) {
-                      var row = _dsrc[key].replace(/;+/g, '\t');
-                      row = row.replace(/\s+/g, '\t');
-                      row = row.replace(/\,+/g, '.');
-                      row = row.replace(/\t{2,}/g,'\t');
-                      if(row) {
-                          row = row.split("\t");
-                          var x = parseFloat(row[0], 10);
-                          var y = parseFloat(row[1], 10);
-                          if(!isNaN(x) && !isNaN(y)) {
-                              _d.push({x:1*x,y:1*y});
-                              darr.push(x);
-                              darr.push(y);
-                          } else {
-                              _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
-                          }
-                      }
-                  }
-                if(darr.length>0) {
-                    darr = darr.join(':');
-                } else {
-                    darr = '';
-                }
-                return {_d: _d, _dstr: darr};
-            }
-            ,italon: function() {
-                _dsrc = _dsrc.split("\n");
-                for(var key in _dsrc) {
-                      var row = _dsrc[key].replace(/;+/g, '');
-                      row = row.replace(/^[0-9]*\./g, '');
-                      row = row.replace(/\s+/g, '\t');
-                      row = row.replace(/\,+/g, '.');
-                      row = row.replace(/\t{2,}/g,'\t');
-                      row = row.replace(/\-/g,'\t');
-                      if(row) {
-                          row = row.split("\t");
-                          var x = parseFloat(row[0], 10);
-                          var y = parseFloat(row[1], 10);
-                          if(!isNaN(x) && !isNaN(y)) {
-                              _d.push({x:1*x,y:1*y});
-                              darr.push(x);
-                              darr.push(y);
-                          } else {
-                              _d.push({error: 'Parse error on: "'+row.join(' ')+'"'});
-                          }
-                      }
-                  }
-                if(darr.length>0) {
-                    darr = darr.join(':');
-                } else {
-                    darr = '';
-                }
-                return {_d: _d, _dstr: darr};
-            }
-        }[parser]();
+    _s.DSRCtoDandDSTR = function(sensor) {
+        return SensorTblParser.parseTbl(sensor);
     }
 
     _s.DtoTBL = function(_d) {
@@ -1991,7 +2740,7 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
             sensor.tbl = [];
             return;
         };
-        var d_dstr = _s.DSRCtoDandDSTR(sensor._dsrc, sensor._parser); // из содержимого текстареа получаем... 
+        var d_dstr = _s.DSRCtoDandDSTR(sensor); // из содержимого текстареа получаем... 
         sensor._d = d_dstr._d; // таблицу XY...
         sensor._dstr = d_dstr._dstr; //  и строку X:Y,..
         sensor.tbl = _s.DtoTBL(sensor._d); // из таблицы XY получаем таблицу AXB
@@ -2038,6 +2787,29 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready'
         item._index.sens.id[_id] = item.sens[_id];
         
         return _id;
+    }
+
+    _s.createSensorsGroup = function(item, prop) {
+        var sensors_ids = [];
+        for(var key in item.sens) {
+            item.sens[key]._checked = false;
+        }
+        for(var key in prop) {
+            var sens_prop = prop[key];
+            var id = _s.createSensor(item);
+            var new_sensor = item._index.sens.id[id];
+            new_sensor._checked = true;
+            new_sensor._dsrc_sensor_index = 0;
+            for(var key2 in new_sensor) {
+                if(sens_prop[key2]!==undefined) {
+                    new_sensor[key2] = sens_prop[key2];
+                }
+            }
+            _s.parceSensorTable(new_sensor);
+            sensors_ids.push(id);
+        }
+        _s.mergeSensors(item);
+        return sensors_ids;
     }
 
     _s.toParent = function(id, str, salt) {
@@ -2455,12 +3227,12 @@ Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', '
         Maxt = r.t;
       }
     }
-    if(Maxt <= _s.default_refresh_interval/10) {
+    if(Maxt <= _s.default_refresh_interval/3) {
       _s.refresh_interval = _s.default_refresh_interval;
-    } else if ((_s.default_refresh_interval/10 < Maxt) && (Maxt <= _s.default_refresh_interval)) {
+    } else if ((_s.default_refresh_interval/3 < Maxt) && (Maxt <= _s.default_refresh_interval)) {
       _s.refresh_interval = _s.default_refresh_interval*3;
     } else {
-      _s.refresh_interval = _s.default_refresh_interval*10;
+      _s.refresh_interval = _s.default_refresh_interval*3;
     }
   }
   _s.duplicate = function(sid, callback, callback_fail) { // дубликация сесии, если уж есть id
@@ -2619,6 +3391,8 @@ Main.controller('AboutCtrl',['$scope','$stateParams','$translate' ,'$translatePa
 		storage.setItem('agree', 1*$scope.agree);
 	}
 
+
+
 }]);
 
 
@@ -2728,6 +3502,60 @@ Main.controller('AccountsListCtrl',['$scope','$translate' ,'$translatePartialLoa
 
 
 }]);
+Main.controller('BuyCtrl',['$scope','$translate' ,'$translatePartialLoader', 'GlomosCRM', 'WaitFor', 'Wialon'
+	,function($scope,$translate,  $translatePartialLoader, GlomosCRM, WaitFor, Wialon) {
+	$translatePartialLoader.addPart('about');
+	$translate.refresh();
+
+	$scope.glomoscrm = GlomosCRM;
+	$scope.crm_account = {}
+
+	WaitFor(function() {return Wialon.auth;} ,function() {
+		getCRMAccount();
+	});
+
+	var getCRMAccount = function() {
+		var params = {w_accounts_id:Wialon.user.bact};
+		GlomosCRM.getAccount(params, function(data) {
+			$scope.crm_account = data.item;
+			$scope.crm_account.name = Wialon.user.nm;
+			$scope.crm_account.w_accounts_id = Wialon.user.bact;
+		});
+	}
+
+	$scope.send = function() {
+		if(!Wialon.user) return;
+		if(!$scope.crm_account.email) return;
+		GlomosCRM.createAccount($scope.crm_account, function(data) {
+			log(data);
+			getCRMAccount();
+		});
+	}
+	$scope.reg = function() {
+		if(!Wialon.user) return;
+		if(!$scope.crm_account.email) return;
+		GlomosCRM.registerAccount($scope.crm_account, function(data) {
+			log(data);
+			getCRMAccount();
+		});
+	}
+
+	$scope.buyModule = function() {
+		var log_disabled = false;
+		if(!GlomosCRM.auth) {
+			log('CRM user not autorized', log_disabled);
+			
+		} else {
+			log('CRM user auth ok', log_disabled); // 934f7600d5b927346a70184ba52d33cb
+		}
+	}
+
+}]);
+
+
+
+
+
 Main.controller('LoginCtrl',['$scope', 'Wialon','Statistics' 
 	,function($scope, Wialon, Statistics) {
 	var token = Wialon.checkURLForToken();
@@ -2984,7 +3812,10 @@ Main.controller('MessagesCtrl',['$scope', '$filter', '$stateParams', '$rootScope
 		});
 	}
 
-	$scope.isEmptyObject = isEmptyObject;
+	$scope.isEmptyObject = function(obj) {
+    if(obj === undefined) return true;
+    return !Object.keys(obj).length;
+}
 
 }]);
 Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , '$translatePartialLoader','tmhDynamicLocale'
@@ -3006,6 +3837,7 @@ Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , 
 			$translate.use(Options.item.language);
 			tmhDynamicLocale.set(Options.item.language);
 			copy_language = Options.item.language;
+			$translate.refresh();
 		}
 	}
 
@@ -3020,8 +3852,8 @@ Main.controller('OptionsCtrl',['$scope', 'Options', 'GlomosCRM', '$translate' , 
 
 }]);
 
-Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', 'WaitFor', 'Wialon', 'Units', 'HWTypes', 'UnitFormValidator', 'GlomosCRM', '$translate' ,'$translatePartialLoader'
-	,function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes, UnitFormValidator, GlomosCRM, $translate,  $translatePartialLoader) {
+Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', 'WaitFor', 'Wialon', 'Units', 'HWTypes', 'UnitFormValidator', 'GlomosCRM', '$translate' ,'$translatePartialLoader', 'SensorTblParser'
+	,function($scope, $location, $stateParams, $timeout, WaitFor, Wialon, Units, HWTypes,  UnitFormValidator, GlomosCRM, $translate,  $translatePartialLoader, SensorTblParser) {
 	
 	$translatePartialLoader.addPart('unit');
 	$translatePartialLoader.addPart('sensors');
@@ -3034,6 +3866,7 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 	$scope.hwtypes = HWTypes;
 	$scope.errors = {};
 	$scope.item = {};
+
 
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		Units.getById(id,function(item) {
@@ -3077,11 +3910,70 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 	}
 
 	$scope.parceSensorTable = function(sensor) {
-		Units.parceSensorTable(sensor);
+		Units.parceSensorTable(sensor );
+	}
+
+	$scope.checkFile = function(context, data) {
+		var sensor = context.sensor;
+		var i = context.index;
+		var format = SensorTblParser.getDataFormat(data);
+		sensor._parser = format.parser;
+		if(format.sensors_n>1) {
+			$scope.multisensor_dialog = {
+				single: '1'
+				,sensors: format.sensors
+				,validate: function function_name() {
+					var _s = $scope.multisensor_dialog;
+					_s.mess = '';
+					_s.valid = false;
+					if(_s.single===undefined) {
+						_s.valid = false;
+						return false
+					};
+					if(_s.single==='1') {
+						if(_s.selected===undefined) {
+							_s.mess = 'Select which table to use';
+							_s.valid = false;
+							return false;
+						};
+					}
+					_s.valid = true;
+					return true;
+				}
+				,onSubmit: function() {
+					var _s = $scope.multisensor_dialog;
+					_s.validate();
+					if(!_s.valid) return false;
+					if(_s.single==='1') {
+						sensor._dsrc_sensor_index = _s.selected;
+						Units.parceSensorTable(sensor);
+					}
+					if(_s.single==='0') {
+						var prop = _s.sensors;
+						for(var key in prop) {
+							var sens_prop = prop[key];
+							sens_prop._dsrc = sensor._dsrc;
+							sens_prop._parser = sensor._parser;
+							sens_prop._dsrc_sensor_index = key;
+						}
+						Units.createSensorsGroup($scope.item, prop);
+						$scope.deleteSensor(sensor,i);
+						$location.url('/unit/'+$scope.id);
+						$scope.goto(undefined);
+					}
+					$('#multisensor-dialog').modal('hide');
+				}
+				,mess: ''
+				,valid: false
+			}
+			$('#multisensor-dialog').modal('show');
+		}
+
 	}
 
 	$scope.setAutoBounds = function(sensor) {
 		Units.setAutoBounds(sensor);
+		sensor._parser = 'standart';
 		Units.parceSensorTable(sensor);
 	}
 
@@ -3139,6 +4031,8 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 
 	$scope.inverseSrcTable = function(sensor) {
 		Units.inverseSrcTable(sensor);
+		sensor._parser = 'standart';
+		Units.parceSensorTable(sensor)
 	}
 
 	$scope.onSensorTypeChange = function(sensor) {
@@ -3183,9 +4077,8 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
       margin: {top: 5}
     };
 
-    $scope.tbl_parsers = ['standart','italon'];
+    $scope.tbl_parsers = ['standart','italon','omnicomm'];
 
- 
 }]);
 Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', 'Users', '$translate' ,'$translatePartialLoader'
 	,function($scope, State, Units, HWTypes, Accounts, Users, $translate,  $translatePartialLoader) {
@@ -3740,6 +4633,7 @@ Main.filter('UTtoTime',function(){
     restrict: 'AE' //attribute or $element
     ,require:"^ngModel" // this is important, 
     ,scope: {
+      _onfileload: '=myDropzone'
     }
 
     ,link: function($scope, $element, $attr, ngModelCtrl) {
@@ -3760,7 +4654,7 @@ Main.filter('UTtoTime',function(){
           event.preventDefault();
           var file = event.originalEvent.dataTransfer.files[0];
           if(file.size) {
-            maxFileSize = 1024;
+            maxFileSize = 100*1024;
             if (file.size > maxFileSize) {
                 log('Файл слишком большой!');
                 $element.addClass('error');
@@ -3771,6 +4665,7 @@ Main.filter('UTtoTime',function(){
               return function () {
                 $element.val(this.result);
                 ngModelCtrl.$setViewValue(this.result);
+                if($scope._onfileload) $scope._onfileload.callback($scope._onfileload.context,{file: file, content: this.result});
                 return this.result;
               };
             })(file);
@@ -3851,6 +4746,43 @@ Main.filter('UTtoTime',function(){
       //   $element.removeClass("dragover");
       //   $element.removeClass("error");
       // });
+    }
+  };
+}])
+.directive('myPop', ['$document', function($document) {
+  return {
+    restrict: 'AE' //attribute or $element
+    ,scope: {
+    }
+
+    ,link: function($scope, $element, $attr, ngModelCtrl) {
+  		$element.attr('data-trigger',"focus");
+  		$element.attr('title',"");
+  		$element.attr('data-content',$attr.myPop );			
+  		$element.attr('href','');			
+  		$element.append('<i class="fa fa-question-circle-o" aria-hidden="true"></i>');
+  		$element.popover();
+    }
+  };
+}])
+.directive('myTypeontab', ['$document', function($document) {
+  return {
+    restrict: 'AE' //attribute or $element
+    ,require:"^ngModel" // this is important, 
+    ,link: function($scope, $element, $attr, ngModelCtrl) {
+		$element.on('keydown', function(e){
+	        if (e.keyCode == 9) {
+	        	e.preventDefault();
+	        	var obj = e.target;
+	        	obj.setSelectionRange;
+				var strFirst = obj.value.substr(0, obj.selectionStart);
+	            var strLast  = obj.value.substr(obj.selectionEnd, obj.value.length);
+	            obj.value = strFirst + "\t" + strLast;
+	            var cursor = strFirst.length + "\t".length;
+	            obj.selectionStart = obj.selectionEnd = cursor;	 
+	            ngModelCtrl.$setViewValue(obj.value);       
+        	}
+	    })
     }
   };
 }])
