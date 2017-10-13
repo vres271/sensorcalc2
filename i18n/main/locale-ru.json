@@ -58,8 +58,22 @@
 
 	,"Attention":"Внимание"
 
+	,"Wialon Version":"Версия Wialon"
+	,"Use this Server":"Использовать этот сервер"
+	,"Server address":"Адрес сервера"
+	,"Remove this Server from list":"Удалить сервер из списка"
+	,"Add Server to list":"Добавить ещё один сервер в список"
+	,"Empty value":"Не указан адрес"
+	,"Server address must start with http://": "Адрес сервера должен начинаться с \"http://\" или \"https://\""
 
+	,"In the server address server_addres specified insecure http Protocol" : "В адресе сервера {{server_addres}} указан незащищенный протокол http"
+    ,"For login you should be redirected http" : "Для входа вы должны быть перенаправлены на сайт WialonCRM без SSL"
+ 	,"In the server address server_addres specified secure https Protocol" : "В адресе сервера {{server_addres}} указан защищенный протокол https"
+    ,"For login you should be redirected https" : "Для входа вы должны быть перенаправлены на сайт WialonCRM с SSL"
+    ,"To login to Wialon Hosting should redirect to secure version WialonCRM" : "Для авторизации в Wialon Hosting необходимо перенаправление на защищенную версию WialonCRM"
+	,"Redirect" : "Перенаправить"
 
+    ,"Cancel" : "Отмена"
 
 
 }

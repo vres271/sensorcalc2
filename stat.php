@@ -17,6 +17,7 @@ include_once($root.'_pre.php');
 // spl_autoload_register ('classautoloader2');
 
 $core = new stdClass();
+$core->_parent = new stdClass();
 $core->_parent->dbi = new DBi();
 $core->_parent->dbi->Connect();
 
@@ -29,12 +30,14 @@ if(@$_POST->user->id) {
 			,Array('s',@$_POST->user->nm)
 			,Array('s',@$_POST->user->prp->city)
 			,Array('i',@$_POST->user->prp->tz)
+			,Array('s',@$_POST->wialon_version)
 			,Array('s',@$_POST->sid_src)
 			,Array('s',$GLOBALS['_SERVER']['REMOTE_ADDR'])
 			,Array('s',$GLOBALS['_SERVER']['HTTP_REFERER'])
 		),"
-		INSERT INTO sc_stat (act, w_users_id, w_user_nm, w_user_city, tz, sid_src, ip, referer, dt)	VALUES (
+		INSERT INTO sc_stat (act, w_users_id, w_user_nm, w_user_city, tz, wialon_version, sid_src, ip, referer, dt)	VALUES (
 			?
+			,?
 			,?
 			,?
 			,?

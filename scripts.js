@@ -865,7 +865,9 @@ Main.service('GlomosCRM', ['$http', 'Options'
 
 	var _s = this;
 	//_s.url = 'http://62.76.187.239/crm/api/';
-	_s.url = 'https://crm.glomos.ru/api/';
+	//_s.url = 'https://crm.glomos.ru/api/';
+	_s.url = 'https://wialoncrm.com/';
+	_s.url = '';
 	_s.user = null;
 	_s.auth = false;
 	_s.error = null;
@@ -932,7 +934,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	}
 
 	_s.getAccount = function(params, callback) {
-		$http.post(_s.url+'wcrm.php?obj=account&m=get',params).then(function(response) {
+		$http.post(_s.url+'wcrm.php?obj=account&m=get',params).then(function(response) { //934f7600d5b927346a70184ba52d33cb
 			var data = response.data;
 			if(!data.error) {
 				if(callback) callback(data);
@@ -942,24 +944,13 @@ Main.service('GlomosCRM', ['$http', 'Options'
 		});
 	}
 
-	_s.createAccount = function(params, callback) {
+	_s.createAccount = function(params, callback, onerror) {
 		$http.post(_s.url+'wcrm.php?obj=account&m=create',params).then(function(response) {
 			var data = response.data;
 			if(!data.error) {
 				if(callback) callback(data);
 			} else {
-				log(data.error);
-			}
-		});
-
-	}
-	_s.registerAccount = function(params, callback) {
-		$http.post(_s.url+'wcrm.php?obj=amember&m=register',params).then(function(response) {
-			var data = response.data;
-			if(!data.error) {
-				if(callback) callback(data);
-			} else {
-				log(data.error);
+				if(onerror) onerror(data);
 			}
 		});
 
@@ -2035,8 +2026,31 @@ Main.service('Options', function() {
 		wialon_crm_token: ''
 		,unit_online_max_interval: 300
 		,language: 'ru'
+		,wialon_version: 'hosting'
+		,wialon_local_paths: [{addr:''}]
+		,wialon_local_paths_selected: 0
+	}
+	var paths = {
+		hosting: {
+			request_url:'https://hst-api.wialon.com'
+			,site_url:'https://hosting.wialon.com'
+		} 
+		,local: {
+			request_url:'' // http://cms-05.garage-gps.com
+			,site_url:''
+		}
 	}
 	_s.item = {};
+
+	_s.getPaths = function() {
+		if(_s.item.wialon_version==='hosting') return paths[_s.item.wialon_version];
+		if(_s.item.wialon_version==='local') {
+			return {
+				request_url: _s.item.wialon_local_paths[_s.item.wialon_local_paths_selected].addr
+				,site_url: _s.item.wialon_local_paths[_s.item.wialon_local_paths_selected].addr
+			};
+		}
+	}
 
 
 	_s.load = function() {
@@ -2049,6 +2063,12 @@ Main.service('Options', function() {
 			_s.item = angular.fromJson(item_from_storage);
 		} catch(e) {
 			_s.item = default_options;
+		}
+		for(var key in default_options) {
+			var def = default_options[key];
+			if(_s.item[key] === undefined) {
+				_s.item[key] = def;
+			}
 		}
 	}
 
@@ -2354,12 +2374,13 @@ Main.service('State', ['$interval', '$filter'
   }
 
 }]);
-Main.service('Statistics', ['$http', 'Wialon'
-	,function($http ,Wialon) {
+Main.service('Statistics', ['$http', 'Wialon', 'Options'
+	,function($http ,Wialon, Options) {
 
 	var _s = this;
 	//_s.url = 'http://crm.glomos.ru/api/';
 	_s.url = 'https://wialoncrm.com/';
+	_s.url = '';
 	_s.error = null;
 
 	_s.send = function(sid_src) {
@@ -2374,6 +2395,7 @@ Main.service('Statistics', ['$http', 'Wialon'
 					,tz : Wialon.user.prp.tz
 				}
 			}
+			,wialon_version: Options.item.wialon_version
 			,sid_src: sid_src
 			,act: 'init'
 		}).then(function(response) {
@@ -3118,15 +3140,21 @@ Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', '
   _s.storage = sessionStorage;
   _s.avl_stack = [];
 
-  _s.EventsHandlers = {};
-  if((typeof test_mode) !== 'undefined') _s.testmode = true;
-  _s.state = {
-    started: 0
-    ,i: 0
-    ,last_responce: ''
+  //_s.host = 'http://cms-05.garage-gps.com';
+  //_s.host = 'https://hst-api.wialon.com';
+
+
+  _s.init = function() {
+    _s.EventsHandlers = {};
+    if((typeof test_mode) !== 'undefined') _s.testmode = true;
+    _s.state = {
+      started: 0
+      ,i: 0
+      ,last_responce: ''
+    }
+    _s._gurtam_W = GurtamWialon;
+    _s._gurtam_W._request = new _s._gurtam_W.Request(_s.host);
   }
-  _s._gurtam_W = GurtamWialon;
-  _s._gurtam_W._request = new _s._gurtam_W.Request('https://hst-api.wialon.com');
 
   _s.turnOnTestMode = function() {
     _s.testmode = true;
@@ -3152,9 +3180,9 @@ Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', '
 
   _s.request = function(svc,params,callback,path, bg) {
     if(!path) {
-      var path = 'https://hst-api.wialon.com/wialon/ajax.html?svc=';
+      var path = _s.host+'/wialon/ajax.html?svc=';
     } else {
-      var path = 'https://hst-api.wialon.com/'+path;
+      var path = _s.host+'/'+path;
     }
     var req_params = {params: params};
     if(_s.sid) req_params.sid = _s.sid;
@@ -3373,15 +3401,13 @@ Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', '
   }
 
 }]);
-Main.controller('AboutCtrl',['$scope','$stateParams','$translate' ,'$translatePartialLoader'
-	,function($scope,$stateParams,$translate,  $translatePartialLoader) {
+Main.controller('AboutCtrl',['$scope','$stateParams','$translate' ,'$translatePartialLoader', 'Wialon', 'Options'
+	,function($scope,$stateParams,$translate,  $translatePartialLoader, Wialon, Options) {
 	$translatePartialLoader.addPart('about');
 	$translate.refresh();
 
-	$scope.path = location.host+location.pathname;
+	$scope.redirect_uri = location.host+location.pathname;
 	$scope.protocol = location.protocol;
-
-	$scope.oauth_link = 'https://hosting.wialon.com/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri='+$scope.protocol+'//'+$scope.path+'%23login' ;
 
 	$scope.item_name = $stateParams.item_name;
 
@@ -3391,6 +3417,112 @@ Main.controller('AboutCtrl',['$scope','$stateParams','$translate' ,'$translatePa
 		storage.setItem('agree', 1*$scope.agree);
 	}
 
+	$scope.onVersionChange = function function_name() {
+		$scope.paths = Options.getPaths();
+		$scope.validate();
+		if($scope.valid) {
+			Options.save();
+			Wialon.host = $scope.paths.request_url;
+			Wialon.init();
+		}
+	}
+
+	$scope.valid = true;
+	$scope.validate = function() {
+		$scope.valid = true;
+		if(Options.item.wialon_version === 'hosting') return true;
+		for(var key in Options.item.wialon_local_paths) {
+			delete Options.item.wialon_local_paths[key]._error; 
+		}
+		var selected_server = Options.item.wialon_local_paths[Options.item.wialon_local_paths_selected]; 
+		if(!selected_server.addr) {
+			selected_server._error = 'Empty value';
+			$scope.valid = false;
+			return false;
+		}
+		if(!(/^http(s{0,1}):\/\/.+/g.test(selected_server.addr))) {
+			selected_server._error = 'Server address must start with http://';
+			$scope.valid = false;
+			return false;
+		}
+	}
+	$scope.validate();
+
+	$scope.setSelected  = function(i) {
+		Options.item.wialon_local_paths_selected = i;
+		$scope.validate();
+		Options.save();
+		$scope.paths = Options.getPaths();
+	}
+
+	$scope.addServer  = function(i) {
+		Options.item.wialon_local_paths.push({addr: ''});
+		Options.item.wialon_local_paths_selected = Options.item.wialon_local_paths.length-1;
+		$scope.validate();
+	}
+
+	$scope.removeServer  = function(i) {
+		if(i===Options.item.wialon_local_paths_selected) {
+			$scope.setSelected(i-1);
+		}
+		Options.item.wialon_local_paths.splice(i,1);
+		//delete Options.item.wialon_local_paths[i];
+	}
+
+	$scope.goToOAuth = function() {
+		$scope.validate();
+		if(!$scope.agree) return;
+		if(!$scope.valid) return;
+		$scope.paths = Options.getPaths();
+		Options.save();
+		$scope.paths.site_url = $scope.paths.site_url.replace(/\s+/g, '');
+		$scope.paths.site_url = $scope.paths.site_url.replace(/\t+/g,'');
+		var tmp = $scope.paths.site_url.split('://');
+		if(Options.item.wialon_version === 'hosting') {
+			if(!$scope.testmode) {
+				if(location.protocol==='http:') {
+					$scope.http_dialog = {
+						tohosting: true
+						,onSubmit: function() {
+							location.href = 'https://'+location.host+location.pathname;
+						}
+					}
+					$('#http-dialog').modal('show');
+					return false;
+				}
+				$scope.protocol = 'https:';
+			}
+		} else {
+			if(tmp[0]) {
+				if(tmp[0]==='http' && location.protocol==='https:') {
+					$scope.http_dialog = {
+						tononssl: true
+						,addr: $scope.paths.site_url
+						,onSubmit: function() {
+							location.href = 'http://'+location.host+location.pathname;
+						}
+					}
+					$('#http-dialog').modal('show');
+					return false;
+				}
+				if(tmp[0]==='https' && location.protocol==='http:') {
+					$scope.http_dialog = {
+						tossl: true
+						,addr: $scope.paths.site_url
+						,onSubmit: function() {
+							location.href = 'https://'+location.host+location.pathname;
+						}
+					}
+					$('#http-dialog').modal('show');
+					return false;
+				}
+				if(tmp[0]==='http') $scope.protocol = 'http:';
+				if(tmp[0]==='https') $scope.protocol = 'https:';
+			}
+		}
+		$scope.oauth_link = '/login.html?client_id=wialoncrm&access_type=-1&activation_time=0&duration=0&user=&flags=0x1&redirect_uri='+$scope.protocol+'//'+$scope.redirect_uri+'login' ;
+		location.href = $scope.paths.site_url+$scope.oauth_link;
+	}
 
 
 }]);
@@ -3513,7 +3645,6 @@ Main.controller('BuyCtrl',['$scope','$translate' ,'$translatePartialLoader', 'Gl
 	WaitFor(function() {return Wialon.auth;} ,function() {
 		getCRMAccount();
 	});
-
 	var getCRMAccount = function() {
 		var params = {w_accounts_id:Wialon.user.bact};
 		GlomosCRM.getAccount(params, function(data) {
@@ -3523,31 +3654,53 @@ Main.controller('BuyCtrl',['$scope','$translate' ,'$translatePartialLoader', 'Gl
 		});
 	}
 
+	var err = function(e) {
+		if(!e) {
+			$scope.err_msg = '';
+			return;
+		}
+		if(e.message) {
+			$scope.err_msg = e.message;
+			return;
+		} else {
+			$scope.err_msg = '';
+		}
+	}
 	$scope.send = function() {
 		if(!Wialon.user) return;
 		if(!$scope.crm_account.email) return;
+		err();
 		GlomosCRM.createAccount($scope.crm_account, function(data) {
-			log(data);
-			getCRMAccount();
-		});
-	}
-	$scope.reg = function() {
-		if(!Wialon.user) return;
-		if(!$scope.crm_account.email) return;
-		GlomosCRM.registerAccount($scope.crm_account, function(data) {
-			log(data);
-			getCRMAccount();
-		});
+			if(data.created) {
+				$scope.amember = {
+					login: data.amember_response.login
+					,pass: data.pass
+					,login_attempt_id: $scope.now.ut
+				}
+				sendaMemberForm(data);
+			} else {
+				log('createAccount error');
+			}
+		},err);
 	}
 
 	$scope.buyModule = function() {
 		var log_disabled = false;
 		if(!GlomosCRM.auth) {
 			log('CRM user not autorized', log_disabled);
-			
 		} else {
 			log('CRM user auth ok', log_disabled); // 934f7600d5b927346a70184ba52d33cb
 		}
+	}
+
+	var sendaMemberForm = function(data) {
+		var elem = function(id) {
+			return document.getElementById(id);
+		}
+		elem('amember-login').value=data.amember_response.login;
+		elem('amember-pass').value=data.pass;
+		elem('amember-login_attempt_id').value=$scope.now.ut;
+		elem('am-login-form').submit();
 	}
 
 }]);
@@ -3581,10 +3734,15 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 	$scope.opt = Options.item;
 	$scope.gcrm = GlomosCRM;
 
+	$scope.paths = Options.getPaths();
+
+	Wialon.host = $scope.paths.request_url;
+	Wialon.init();
+
 	$scope.testmode = (location.host === 'wialoncrm' || location.host === 'localhost:3000');
 	GlomosCRM.enabled = false;
 
-	if($scope.testmode) {
+	if($scope.testmode && $scope.opt.wialon_version==='hosting') {
 		Units.from = 1500;
 		Units.to = 2000;
 		Units.autorefresh = false;

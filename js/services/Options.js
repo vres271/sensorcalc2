@@ -6,8 +6,31 @@ Main.service('Options', function() {
 		wialon_crm_token: ''
 		,unit_online_max_interval: 300
 		,language: 'ru'
+		,wialon_version: 'hosting'
+		,wialon_local_paths: [{addr:''}]
+		,wialon_local_paths_selected: 0
+	}
+	var paths = {
+		hosting: {
+			request_url:'https://hst-api.wialon.com'
+			,site_url:'https://hosting.wialon.com'
+		} 
+		,local: {
+			request_url:'' // http://cms-05.garage-gps.com
+			,site_url:''
+		}
 	}
 	_s.item = {};
+
+	_s.getPaths = function() {
+		if(_s.item.wialon_version==='hosting') return paths[_s.item.wialon_version];
+		if(_s.item.wialon_version==='local') {
+			return {
+				request_url: _s.item.wialon_local_paths[_s.item.wialon_local_paths_selected].addr
+				,site_url: _s.item.wialon_local_paths[_s.item.wialon_local_paths_selected].addr
+			};
+		}
+	}
 
 
 	_s.load = function() {
@@ -20,6 +43,12 @@ Main.service('Options', function() {
 			_s.item = angular.fromJson(item_from_storage);
 		} catch(e) {
 			_s.item = default_options;
+		}
+		for(var key in default_options) {
+			var def = default_options[key];
+			if(_s.item[key] === undefined) {
+				_s.item[key] = def;
+			}
 		}
 	}
 

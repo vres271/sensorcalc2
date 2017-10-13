@@ -9,15 +9,21 @@ Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', '
   _s.storage = sessionStorage;
   _s.avl_stack = [];
 
-  _s.EventsHandlers = {};
-  if((typeof test_mode) !== 'undefined') _s.testmode = true;
-  _s.state = {
-    started: 0
-    ,i: 0
-    ,last_responce: ''
+  //_s.host = 'http://cms-05.garage-gps.com';
+  //_s.host = 'https://hst-api.wialon.com';
+
+
+  _s.init = function() {
+    _s.EventsHandlers = {};
+    if((typeof test_mode) !== 'undefined') _s.testmode = true;
+    _s.state = {
+      started: 0
+      ,i: 0
+      ,last_responce: ''
+    }
+    _s._gurtam_W = GurtamWialon;
+    _s._gurtam_W._request = new _s._gurtam_W.Request(_s.host);
   }
-  _s._gurtam_W = GurtamWialon;
-  _s._gurtam_W._request = new _s._gurtam_W.Request('https://hst-api.wialon.com');
 
   _s.turnOnTestMode = function() {
     _s.testmode = true;
@@ -43,9 +49,9 @@ Main.service('Wialon', ['$http', '$location', '$timeout', 'md5', '$rootScope', '
 
   _s.request = function(svc,params,callback,path, bg) {
     if(!path) {
-      var path = 'https://hst-api.wialon.com/wialon/ajax.html?svc=';
+      var path = _s.host+'/wialon/ajax.html?svc=';
     } else {
-      var path = 'https://hst-api.wialon.com/'+path;
+      var path = _s.host+'/'+path;
     }
     var req_params = {params: params};
     if(_s.sid) req_params.sid = _s.sid;

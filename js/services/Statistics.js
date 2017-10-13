@@ -1,9 +1,10 @@
-Main.service('Statistics', ['$http', 'Wialon'
-	,function($http ,Wialon) {
+Main.service('Statistics', ['$http', 'Wialon', 'Options'
+	,function($http ,Wialon, Options) {
 
 	var _s = this;
 	//_s.url = 'http://crm.glomos.ru/api/';
 	_s.url = 'https://wialoncrm.com/';
+	_s.url = '';
 	_s.error = null;
 
 	_s.send = function(sid_src) {
@@ -18,6 +19,7 @@ Main.service('Statistics', ['$http', 'Wialon'
 					,tz : Wialon.user.prp.tz
 				}
 			}
+			,wialon_version: Options.item.wialon_version
 			,sid_src: sid_src
 			,act: 'init'
 		}).then(function(response) {

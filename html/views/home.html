@@ -6,7 +6,41 @@
 	</div>
 	<hr>
 	<div ng-hide="wialon.auth" class="">
-		<a href="{{agree ? oauth_link : '#'}}" ng-click="$event.stopPropagation();" class="btn btn-{{agree?'primary':'default'}} btn-lg" ng-disabled="!agree"><i class="fa fa-sign-in" aria-hidden="true"></i> {{'Sign in with your Wialon account'|translate}}</a>
+		<div class="row">
+		    <div class="form-group col-md-2 col-md-offset-5 text-center" >
+		   		<label class="control-label" for="" >{{'Wialon Version'|translate}}</label>
+				<select ng-model="opt.wialon_version" ng-options="key as value for (key,value) in {hosting:'Hosting',local:'Local'}" ng-change="onVersionChange()" ng-disabled="!agree" class="form-control"  ></select>
+		    </div>
+	    </div>
+		<div ng-if="opt.wialon_version==='local'" class="row  animate-dropdown">
+		    <div class=" col-md-4 col-md-offset-4 text-center" >
+		    	<form  class="form-horizontal">
+			    	<div class="form-group" ng-repeat="server in opt.wialon_local_paths">
+			    		<small ng-if="server._error" class="red"><i class="fa fa-warning"></i> {{server._error|translate}}</small>
+				   		<div  class="input-group ">
+				   			<a href="" class="btn btn-default input-group-addon" ng-click="setSelected($index)"  title="{{'Use this Server'|translate}}"><i class="fa fa-circle{{opt.wialon_local_paths_selected===$index ? '' : '-thin grey'}}" aria-hidden="true"></i></a>
+							<input type="text" ng-model="server.addr" class="form-control {{opt.wialon_local_paths_selected===$index ? '' : 'grey'}}" placeholder="{{'Server address'|translate}}" ng-change="validate()"  >
+				   			<a ng-if="$index" href="" class="btn btn-default input-group-addon" ng-click="removeServer($index)"  title="{{'Remove this Server from list'|translate}}"><i class="fa fa-times {{opt.wialon_local_paths_selected===$index ? '' : 'grey'}}" aria-hidden="true" ></i></a>
+							<!-- <a class="input-group-addon" href="" ><i class="glyphicon glyphicon-plus {{server._valid ? '' : 'grey'}}"></i></a> -->
+			    		</div>
+			    	</div>
+			    	<a href="" class="under-add" ng-click="addServer()"  title="{{'Add Server to list'|translate}}"><i class="fa fa-plus"></i></a>
+			    	<!-- <small ng-if="!valid" class="red"><i class="fa fa-warning"></i> Server address must start with "http://" or "https://"</small> -->
+		    	</form>
+		    </div>
+		    <br>
+		    <br>
+		    <br>
+		    <br>
+	    </div>
+		<div class="row">
+			<a 
+				href="" 
+				ng-click="$event.stopPropagation(); goToOAuth();" 
+				class="btn btn-{{(agree && valid)?'primary':'default'}} btn-lg" 
+				ng-disabled="!(agree && valid)"
+			><i class="fa fa-sign-in" aria-hidden="true"></i> {{'Sign in with your Wialon account'|translate}}</a>
+	    </div>
 		<div ng-if="show_agreement" class="row animate-dropdown">
 			<div class="col-md-8 col-md-offset-2 home-text text-justify">
 				<div class="page-header text-center" ><h2>{{'Terms of Service'|translate}}</h2></div>
@@ -15,10 +49,11 @@
 		</div>
 		<div class="agree-link">
 			<div class="checkbox">
-			  <label><input type="checkbox" ng-model="agree" ng-change="saveAgree()"> {{'I agree to the'|translate}} </label>
-			 <a href="" ng-click="show_agreement = !show_agreement"><strong>{{'to Terms of Service'|translate}}</strong></a></div>
+				<label><input type="checkbox" ng-model="agree" ng-change="saveAgree()"> {{'I agree to the'|translate}} </label>
+				<a href="" ng-click="show_agreement = !show_agreement"><strong>{{'to Terms of Service'|translate}}</strong></a>
 			</div>
 		</div>
+	</div>
 	<div ng-if="wialon.auth" class="">
 		User name: <strong>{{wialon.user.nm}}</strong>
 	</div>
@@ -31,3 +66,6 @@
 </div>
 <br>
 <br>
+<div ng-include="'html/views/home.http-form.html'" scope="" onload="">11</div>
+
+

@@ -53,6 +53,7 @@ gulp.task('serve',  function() {
     gulp.run('img');
     gulp.run('i18n');
     gulp.run('lib');
+    gulp.run('php');
 
     if(!bs.active) {
         bs.init({
@@ -78,6 +79,10 @@ gulp.task('serve',  function() {
 
     gulp.watch(['img/*'],  function() {
         gulp.run('img');
+    });
+
+    gulp.watch(['load.php','stat.php','wcrm.php','bytoken.php'],  function() {
+        gulp.run('php');
     });
 
     // gulp.watch(['i18n/**/*.json'],  function() {
@@ -114,7 +119,7 @@ gulp.task('js', wrapPipe(function(success, error) {
     .pipe(gulp.dest(''))
     .pipe(concat('build/js/scripts.js').on('error', error))
     .pipe(uglify().on('error', error))
-    .pipe(js_obfuscator({}).on('error', error))
+    //.pipe(js_obfuscator({}).on('error', error))
     .pipe(gulp.dest(''))
 }));
 
@@ -167,6 +172,13 @@ gulp.task('i18n', wrapPipe(function(success, error) {
         .pipe(bs.stream({once: true}))
         .pipe(gulp.dest('build/i18n/'));
 }));
+
+gulp.task('php', wrapPipe(function(success, error) {
+  return gulp.src(['load.php','stat.php','wcrm.php','bytoken.php'])
+    //.pipe(bs.stream({once: true}))
+    .pipe(gulp.dest('build'))
+}));
+
 
 gulp.task('lib', wrapPipe(function(success, error) {
     gulp

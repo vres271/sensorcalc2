@@ -57,8 +57,22 @@
 
 	,"Attention":"Attention"
 
+	,"Wialon Version":"Wialon Version"
+	,"Use this Server":"Use this Server"
+	,"Server address":"Server address"
+	,"Remove this Server from list":"Remove this Server from list"
+	,"Add Server to list":"Add another server to the list"
+	,"Empty value":"Empty address"
+	,"Server address must start with http://": "Server address must start with \"http://\" or \"https://\""
 
+	,"In the server address server_addres specified insecure http Protocol" : "In the server address {{server_addres}} specified insecure http Protocol"
+    ,"For login you should be redirected http" : "For login you should be redirected to website WialonCRM without SSL"
+	,"In the server address server_addres specified secure https Protocol" : "In the server address {{server_addres}} specified secure https Protocol"
+    ,"For login you should be redirected https" : "For login you should be redirected to website WialonCRM with SSL"
+    ,"To login to Wialon Hosting should redirect to secure version WialonCRM" : "To log in to Wialon Hosting should redirect to secure version WialonCRM"
+    ,"Redirect" : "Redirect"
 
+    ,"Cancel" : "Cancel"
 
 
 

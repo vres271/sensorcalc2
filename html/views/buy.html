@@ -13,9 +13,27 @@
 			</form>
 		</div>
 		<br>
+		<div ng-if="err_msg" class="alert alert-warning">{{err_msg}}</div>
 		<div  class="row">
-			<a href="" ng-click="send();" class="btn btn-success  btn-lg">Далее <i class="fa fa-caret-right" aria-hidden="true"></i></a>
-			<a href="" ng-click="reg();" class="btn btn-success  btn-lg">Register in aMember </a>
+			<a href="" ng-click="send();" ng-disabled="!crm_account.email" class="btn btn-success  btn-lg">Купить что-нибудь <i class="fa fa-caret-right" aria-hidden="true"></i></a>
+			<!-- <a href="" ng-click="reg();" class="btn btn-success  btn-lg">Register in aMember </a> -->
 		</div>
+		<div ng-if="crm_account.subscriptions" class="col-sm-4 col-md-offset-4">
+			<br>
+			<br>
+			<h5>Подписки</h5>
+			<table class="table">
+				<tr ng-repeat="(id, dtto) in crm_account.subscriptions">
+					<td>{{id}}</td>
+					<td>{{dtto}}</td>
+				</tr>
+			</table>
+		</div>
+		<form name="login" ng-hide="true" method="post" action='https://wialoncrm.com/amember/login' id="am-login-form">
+            <input type="text" ngmodel="amember.login" id="amember-login" name="amember_login"  value=""  />
+            <input type="password" ngmodel="amember.pass" id="amember-pass" name="amember_pass" />
+            <input type="text" name="amember_redirect_url" value="https://wialoncrm.com/amember/signup">
+            <input type="text" name="login_attempt_id" ngmodel="amember.login_attempt_id" id="amember-login_attempt_id">
+		</form>
 	</div>
 </div>

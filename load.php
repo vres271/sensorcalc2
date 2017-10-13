@@ -1,5 +1,6 @@
 <?
 	if($_SERVER['REQUEST_METHOD'] == 'POST') {
+		header('Content-type: application/json; charset=utf-8');
 		$ret = new stdClass();
 	    $data = file_get_contents("php://input");
 	    $_POST =json_decode($data);

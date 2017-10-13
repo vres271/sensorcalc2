@@ -8,10 +8,15 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 	$scope.opt = Options.item;
 	$scope.gcrm = GlomosCRM;
 
+	$scope.paths = Options.getPaths();
+
+	Wialon.host = $scope.paths.request_url;
+	Wialon.init();
+
 	$scope.testmode = (location.host === 'wialoncrm' || location.host === 'localhost:3000');
 	GlomosCRM.enabled = false;
 
-	if($scope.testmode) {
+	if($scope.testmode && $scope.opt.wialon_version==='hosting') {
 		Units.from = 1500;
 		Units.to = 2000;
 		Units.autorefresh = false;

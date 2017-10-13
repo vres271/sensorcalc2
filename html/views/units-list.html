@@ -113,7 +113,7 @@
 					<td ng-if="s.show.p_accounts_nm" ><a href="" ng-href="#account/{{accounts.index.id[item.bact].bpact}}"  ng-bind="accounts.index.id[accounts.index.id[item.bact].bpact].nm"></a></td>
 					<td ng-if="s.show.accounts_nm" ><a href="" ng-href="#account/{{item.bact}}"  ng-bind="accounts.index.id[item.bact].nm"></a></td>
 					<td ng-if="s.show.crt_nm" ><a href="" ng-href="#user/{{item.crt}}"  ng-bind="users.index.id[item.crt].nm"></a></td>
-					<td><img width="16px" ng-src="https://hst-api.wialon.com{{item.uri}}" alt=""></td>
+					<td><img width="16px" ng-src="{{paths.request_url}}{{item.uri}}" alt=""></td>
 					<td ng-if="s.show.nm" ><a href="" ng-href="#unit/{{item.id}}" ng-bind="item.nm"></a></td>
 					<td ng-if="s.show.uid"  ng-bind="item.uid"></td>
 					<td ng-if="s.show.hw"  nowrap ng-bind="hwtypes.index.id[item.hw].name"></td>

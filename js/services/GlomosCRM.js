@@ -3,7 +3,9 @@ Main.service('GlomosCRM', ['$http', 'Options'
 
 	var _s = this;
 	//_s.url = 'http://62.76.187.239/crm/api/';
-	_s.url = 'https://crm.glomos.ru/api/';
+	//_s.url = 'https://crm.glomos.ru/api/';
+	_s.url = 'https://wialoncrm.com/';
+	_s.url = '';
 	_s.user = null;
 	_s.auth = false;
 	_s.error = null;
@@ -70,7 +72,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	}
 
 	_s.getAccount = function(params, callback) {
-		$http.post(_s.url+'wcrm.php?obj=account&m=get',params).then(function(response) {
+		$http.post(_s.url+'wcrm.php?obj=account&m=get',params).then(function(response) { //934f7600d5b927346a70184ba52d33cb
 			var data = response.data;
 			if(!data.error) {
 				if(callback) callback(data);
@@ -80,24 +82,13 @@ Main.service('GlomosCRM', ['$http', 'Options'
 		});
 	}
 
-	_s.createAccount = function(params, callback) {
+	_s.createAccount = function(params, callback, onerror) {
 		$http.post(_s.url+'wcrm.php?obj=account&m=create',params).then(function(response) {
 			var data = response.data;
 			if(!data.error) {
 				if(callback) callback(data);
 			} else {
-				log(data.error);
-			}
-		});
-
-	}
-	_s.registerAccount = function(params, callback) {
-		$http.post(_s.url+'wcrm.php?obj=amember&m=register',params).then(function(response) {
-			var data = response.data;
-			if(!data.error) {
-				if(callback) callback(data);
-			} else {
-				log(data.error);
+				if(onerror) onerror(data);
 			}
 		});
 
