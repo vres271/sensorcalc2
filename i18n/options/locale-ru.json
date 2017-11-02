@@ -1,5 +1,5 @@
 {
-    "WIALON_CRM_TOKEN":"Wialon CRM токен"
+    "WIALON_CRM_TOKEN":"Wialon CRM ключ"
     ,"LANGUAGE":"Язык"
     ,"WIALONCRM_USER": "WialonCRM пользователь"
     ,"USERNAME": "Имя"
@@ -7,5 +7,5 @@
     ,"END_DATE": "Окончание действия"
     ,"DESCRIPTION": "Описание"
     ,"MAX UNIT ONLINE INTERVAL, S":"Макс. продолжительность онлайна, с"
-    ,"Wrong token": "Неправильный токен"
+    ,"Wrong WCRM Token": "Неверный ключ"
 }

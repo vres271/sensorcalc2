@@ -1,0 +1,137 @@
+<nav class="navbar navbar-fluide navbar-fixed-top marg-1 bg-white" >
+	<div class="container-fluide">
+		<form action="" class="navbar-form ">
+ 			<div class="form-group">
+				<select ng-model="f.type" class="form-control" >
+					<option></option>
+					<option  ng-repeat="(key, type) in wcrmrights.items.ref.types" value="{{key}}">{{type}}</option>
+				</select>
+			</div>
+ 			<div class="form-group">
+				<select ng-model="f.object" class="form-control" >
+					<option></option>
+					<option  ng-repeat="(key,object) in wcrmrights.items.ref.tree[wcrmrights.items.ref.types[f.type]]" value="{{object.id}}">{{key}}</option>
+				</select>
+			</div>
+ 			<div class="form-group">
+				<select ng-model="f.level" class="form-control" >
+					<option></option>
+					<option  ng-repeat="(key,level) in wcrmrights.items.ref.levels" value="{{key}}">{{level}}</option>
+				</select>
+			</div>
+ 			<div class="form-group">
+				<select ng-model="f.accounts_id" class="form-control" >
+					<option></option>
+					<option  ng-repeat="account in allaccounts.items " value="{{account.id}}">{{account.name}}</option>
+				</select>
+			</div>
+ 			<div class="form-group">
+				<select ng-model="f.ugroups_id" class="form-control" >
+					<option></option>
+					<option  ng-repeat="ugroup in allugroups.items | filter: {accounts_id: f.accounts_id} " value="{{ugroup.id}}">{{ugroup.name}}</option>
+				</select>
+			</div>
+ 			<div class="form-group">
+				<select ng-model="f.users_id" class="form-control" >
+					<option></option>
+					<option  ng-repeat="user in allusers.items | filter: {ugroups_id: f.ugroups_id, accounts_id: f.accounts_id} " value="{{user.id}}">{{user.name}}</option>
+				</select>
+			</div>
+ 			<div class="form-group">
+				<button class="btn btn-success" ng-click="getRights(f)" type="button">Search</button>
+			</div>
+
+		</form>
+	</div>
+</nav>
+<br>
+<div class="container" >
+	<table class="table" ng-if="wcrmrights.items.full">
+		<tbody>
+			<tr ng-if="f.type == wcrmrights.items.inv.ref.types[type]" ng-repeat="(type, bytype) in wcrmrights.items.ref.tree">
+				<td>{{type}}</td>
+				<td>
+					<table class="table">
+						<tbody>
+							<tr ng-if="f.object == byobject.id" ng-repeat="(object, byobject) in bytype">
+								<td>{{object}}</td>
+								<td>
+									<table class="table">
+										<tbody>
+											<tr ng-if="!f.level || (f.level == level)" ng-repeat="(level, levelname) in wcrmrights.items.ref.levels">
+												<td>{{levelname}}</td>
+												<td>
+
+													<table class="table" ng-if="level===0">
+														<tbody>
+															<tr ng-if="wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][0]">
+																<td width="200px"></td>
+																<td ng-repeat="(key, right) in rights_list" width="30px" align="center"  ng-click="switchRight(wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][0][0], right)" class="pointer"><i class="fa fa-{{rightIcon(wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][0][0][right])}}" title="{{wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] ? wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] : right}}"></i></td>
+																<td></td>
+															</tr>
+															<tr ng-if="!wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][0]">
+																<td width="200px"></td>
+																<td ng-repeat="(key, right) in rights_list" width="30px" align="center"  ng-click="switchRight({type: 1*wcrmrights.items.inv.ref.types[type], level: level, subject_id: 0, object: byobject.id}, right)" class="pointer"><i class="fa fa-{{rightIcon(bysubject_id[right])}}" title="{{wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] ? wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] : right}}"></i></td>
+																<td></td>
+															</tr>
+														</tbody>
+													</table>
+
+													<table class="table" ng-if="level===1" ng-repeat="(key, module) in products.items">
+														<tbody>
+															<tr ng-if="wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][1][module.id]">
+																<td width="200px">{{module.name}}</td>
+																<td ng-repeat="(key, right) in rights_list" width="30px" align="center"  ng-click="switchRight(wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][1][module.id], right)" class="pointer"><i class="fa fa-{{rightIcon(wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][1][module.id][right])}}" title="{{wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] ? wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] : right}}"></i></td>
+																<td></td>
+															</tr>
+															<tr ng-if="!wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][1][module.id]">
+																<td width="200px">{{module.name}}</td>
+																<td  ng-repeat="(key, right) in rights_list" width="30px" align="center"  ng-click="switchRight({type: 1*wcrmrights.items.inv.ref.types[type], level: level, subject_id: module.id, object: byobject.id}, right)" class="pointer"><i class="fa fa-{{rightIcon(bysubject_id[right])}}" title="{{wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] ? wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] : right}}"></i></td>
+																<td></td>
+															</tr>
+														</tbody>
+													</table>
+
+													<table class="table" ng-if="level===2" ng-repeat="(key, ugroup) in allugroups.items">
+														<tbody>
+															<tr ng-if="wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][2][ugroup.id]">
+																<td width="200px">{{ugroup.name}} ({{ugroup.accounts_id}})</td>
+																<td ng-repeat="(key, right) in rights_list" width="30px" align="center"  ng-click="switchRight(wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][2][ugroup.id], right)" class="pointer"><i class="fa fa-{{rightIcon(wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][2][ugroup.id][right])}}" title="{{wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] ? wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] : right}}"></i></td>
+																<td></td>
+															</tr>
+															<tr ng-if="!wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][2][ugroup.id]">
+																<td width="200px">{{ugroup.name}} ({{ugroup.accounts_id}})</td>
+																<td ng-repeat="(key, right) in rights_list" width="30px" align="center"  ng-click="switchRight({type: 1*wcrmrights.items.inv.ref.types[type], level: level, subject_id: ugroup.id, object: byobject.id}, right)" class="pointer"><i class="fa fa-{{rightIcon(bysubject_id[right])}}" title="{{wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] ? wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] : right}}"></i></td>
+																<td></td>
+															</tr>
+														</tbody>
+													</table>
+
+													<table class="table" ng-if="level===3" ng-repeat="(key, user) in allusers.items">
+														<tbody>
+															<tr ng-if="wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][3][user.id]">
+																<td width="200px">{{user.name}}</td>
+																<td ng-repeat="(key, right) in rights_list" width="30px" align="center"  ng-click="switchRight(wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][3][user.id], right)" class="pointer"><i class="fa fa-{{rightIcon(wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][3][user.id][right])}}" title="{{wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] ? wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] : right}}"></i></td>
+																<td></td>
+															</tr>
+															<tr ng-if="!wcrmrights.items.full[wcrmrights.items.inv.ref.types[type]][byobject.id][3][user.id]">
+																<td width="200px">{{user.name}}</td>
+																<td ng-repeat="(key, right) in rights_list" width="30px" align="center"  ng-click="switchRight({type: 1*wcrmrights.items.inv.ref.types[type], level: level, subject_id: user.id, object: byobject.id}, right)" class="pointer"><i class="fa fa-{{rightIcon(bysubject_id[right])}}" title="{{wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] ? wcrmrights.items.inv.tree[wcrmrights.items.inv.ref.types[type]][byobject.id].alias[right] : right}}"></i></td>
+																<td></td>
+															</tr>
+														</tbody>
+													</table>
+
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

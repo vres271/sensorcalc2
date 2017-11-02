@@ -88,4 +88,45 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 	}
 
 
+	// $scope.openScriptDialog = function() {
+	// 	$scope.script_dialog = {
+	// 		items: []
+	// 		,symbol: '0'
+	// 		,action: '+'
+	// 		,start: function() {
+	// 			var nextStep = function(key) {
+	// 				if(!$scope.script_dialog.items[key]) return;
+	// 				var item = $scope.script_dialog.items[key];
+	// 				var symbol = $scope.script_dialog.symbol;
+	// 				if($scope.script_dialog.action === '+') {
+	// 					//item.nm = '+'+item.nm;
+	// 					item.uid = symbol+item.uid;
+	// 					item.ph = '+'+symbol+item.ph.substr(1);
+	// 				} else if ($scope.script_dialog.action === '-') {
+	// 					if(item.uid[0]===symbol) {
+	// 						item.uid = item.uid.substr(1);
+	// 					}
+	// 					if(item.ph[1]===symbol) {
+	// 						item.ph = '+'+item.ph.substr(2,item.ph.length);
+	// 					}
+	// 				}
+	// 				Units.saveUnit(item, function(data) {
+	// 					item._result = data;
+	// 					key = key + 1;
+	// 					nextStep(key);
+	// 				});
+	// 			}
+	// 			nextStep(0);
+	// 		}
+	// 	}
+	// 	for(var key in $scope.items_result) {
+	// 		var item = $scope.items_result[key];
+	// 		if(item._checked) {
+	// 			$scope.script_dialog.items.push(item);
+	// 		}
+	// 	}
+	// 	$('#script-dialog').modal('show');
+	// }
+
+
 }]);

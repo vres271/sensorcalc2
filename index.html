@@ -22,10 +22,16 @@
 					<li><a href="" ng-href="#units" translate>UNITS</a></li>
 					<li><a href="" ng-href="#users-list" translate>USERS</a></li>
 					<li><a href="" ng-href="#accounts-list" translate>ACCOUNTS</a></li>
+					<li ng-if="gcrm.account.rights_comp.nav.rights"><a href="" ng-href="#rights-list" translate>RIGHTS</a></li>
 					<!-- <li><a href="" ng-href="#about/support" >{{'SUPPORT'|translate}} <sup><span class="label label-primary">CRM</span></sup></a></li> -->
 				</ul>
 		        <ul ng-hide="!wialon.auth" class="nav navbar-nav navbar-right">
-		          <li ng-if="gcrm.user.sid"><a href="#">{{'WialonCRM User'|translate}}: {{gcrm.user.name}}</a></li>	
+		          <li ng-if="gcrm.enabled">
+		          	<a href="#"  ng-href="#/options">{{'WialonCRM Account'|translate}} 
+		          		<i  ng-if="gcrm.auth" class="fa fa-check green" title="{{'Connected'|translate}}"></i>
+		          		<i  ng-if="!gcrm.auth" class="fa fa-check grey" title="{{'Disconnected'|translate}}"></i>
+		          	</a>
+		          </li>	<!-- gcrm.user.name -->
 		          <li><a href="#">{{now.ut*1000|date:'yyyy-MM-dd HH:mm:ss'}}</a></li>	
 		          <li ng-if="wialon.refresh_interval > wialon.default_refresh_interval"><a href="#" title="{{'Slow internet connection'|translate}}"><i class="fa fa-exclamation-triangle"></i></a></li>	
 			      <li><a href="#" id="username"><span class="glyphicon glyphicon-user"></span> {{wialon.user.nm}}</a></li>

@@ -29,28 +29,39 @@ $urow = $core->_parent->dbi->FetchQuery(
 		Array('s',$_POST->token)
 	),"
 		SELECT
-			u.id uid,
-			u.name name,
-			ut.enabled enabled,
-			ut.start_dt start_dt,
-			ut.end_dt end_dt,
-			ut.dsc dsc
+			u.id uid
+			,u.name name
 		FROM
 			users u
-		LEFT OUTER JOIN
-			users_tokens ut ON ut.users_id = u.id
 		WHERE
-			ut.token = ?
-			AND ut.start_dt <= NOW()
-			AND ut.end_dt >= NOW()
+			u.wcrm_token = ?
 			AND !u.d
-			AND !ut.d
 	");
+// $urow = $core->_parent->dbi->FetchQuery(
+// 	Array(
+// 		Array('s',$_POST->token)
+// 	),"
+// 		SELECT
+// 			u.id uid,
+// 			u.name name,
+// 			ut.enabled enabled,
+// 			ut.start_dt start_dt,
+// 			ut.end_dt end_dt,
+// 			ut.dsc dsc
+// 		FROM
+// 			users u
+// 		LEFT OUTER JOIN
+// 			users_tokens ut ON ut.users_id = u.id
+// 		WHERE
+// 			ut.token = ?
+// 			AND ut.start_dt <= NOW()
+// 			AND ut.end_dt >= NOW()
+// 			AND !u.d
+// 			AND !ut.d
+// 	");
 if (@$urow['uid']) {
 	$sessno = md5(substr(time(), 3, 11).rand(100,999));
-	if(!$core->mobile) {
-		$_SESSION[PROJECTNAME.'us_no'] = $sessno;
-	}
+	$_SESSION[PROJECTNAME.'us_no'] = $sessno;
 	$core->_parent->dbi->Query(
 		Array(
 			Array('i',$urow['uid'])
@@ -65,16 +76,12 @@ if (@$urow['uid']) {
 			,?
 		)
 	");
-	if(!$urow['enabled']) {
-		$response->error = 'Token is disabled';
-	} else {
+	if(@$urow['uid']) {
 		$response->uid = $urow['uid'];
 		$response->name = $urow['name'];
-		$response->enabled = $urow['enabled'];
-		$response->start_dt = $urow['start_dt'];
-		$response->end_dt = $urow['end_dt'];
-		$response->dsc = $urow['dsc'];
 		$response->sid = $sessno;
+	} else {
+		$response->error = 'Error on log in';
 	}
 } else {
 	$response->error = 'Wrong token';

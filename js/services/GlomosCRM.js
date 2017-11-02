@@ -4,45 +4,51 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	var _s = this;
 	//_s.url = 'http://62.76.187.239/crm/api/';
 	//_s.url = 'https://crm.glomos.ru/api/';
-	_s.url = 'https://wialoncrm.com/';
-	_s.url = '';
-	_s.user = null;
+	//_s.url = 'https://wialoncrm.com/';
+	_s.url = 'wcrm.php';
+	_s.url = 'api/';
+	_s.account = null;
 	_s.auth = false;
 	_s.error = null;
 	_s.enabled = true;
 
 	_s.login = function() {
 		if(!_s.enabled) return;
-		_s.user = null;
+		_s.account = null;
+		_s.auth = false;
 		_s.error = null;
 		if(!Options.item.wialon_crm_token) return;
-		$http.post(_s.url+'bytoken.php',{token: Options.item.wialon_crm_token}).then(function(response) {
-			var data = response.data;
-			if(!data.error) {
-				if(data.sid) {
-					_s.user = data;
-					_s.auth = true;
-				}
-			} else {
-				_s.error = data.error;
+		_s.request('account','login',{token: Options.item.wialon_crm_token}, function(data) {
+			if(data.user.sid) {
+				_s.account = data;
+				_s.sid = _s.account.user.sid;
+				_s.auth = true;
 			}
-		});
+		},function(data) {_s.error = data.message});
 	}
 
-	_s.request = function(c, m, params, callback) {
-		if(!_s.auth) return;
-		$http.post(_s.url+'?c='+c+'&m='+m+'&sid='+_s.user.sid,params).then(function(response) {
+	_s.request = function(o, m, params, callback, onerror) {
+		if(!_s.enabled) return;
+		//var url = _s.url+''+o+'/'+m+(_s.auth?'?sid='+_s.sid:'');
+		if(!params) params = {};
+		var url = _s.url+''+o+'/'+m;
+		if(_s.auth) params.sid = _s.sid;
+		$http.post(url,params).then(function(response) {
 			var data = response.data;
 			if(!data.error) {
 				if(callback) callback(data);
 			} else {
-				log(data.error);
+				if(onerror) {
+					onerror(data);
+				} else {
+					log(data);
+				}
 			}
 		});
 	}
 
-
 	_s.getObject = function(wid, callback) {
+		return false;
 		if(!_s.auth) return;
 		_s.request('Objects', 'get', {wid:wid}, function(data) {
 			var crm_object = null;
@@ -58,6 +64,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	}
 
 	_s.saveObject = function(item, crm_object, callback) {
+		return false;
 		if(!_s.auth) return;
 		if(!crm_object) return;
 		_s.request('Objects', 'save', {
@@ -71,28 +78,59 @@ Main.service('GlomosCRM', ['$http', 'Options'
 		})
 	}
 
-	_s.getAccount = function(params, callback) {
-		$http.post(_s.url+'wcrm.php?obj=account&m=get',params).then(function(response) { //934f7600d5b927346a70184ba52d33cb
-			var data = response.data;
-			if(!data.error) {
-				if(callback) callback(data);
-			} else {
-				log(data.error);
-			}
-		});
-	}
+	// _s.getAccount = function(params, callback) {
+	// 	$http.post(_s.url+'wcrm.php?obj=account&m=get&sid='+_s.account.sid,params).then(function(response) { //934f7600d5b927346a70184ba52d33cb
+	// 		var data = response.data;
+	// 		if(!data.error) {
+	// 			if(callback) callback(data);
+	// 		} else {
+	// 			log(data.error);
+	// 		}
+	// 	});
+	// }
 
 	_s.createAccount = function(params, callback, onerror) {
-		$http.post(_s.url+'wcrm.php?obj=account&m=create',params).then(function(response) {
-			var data = response.data;
-			if(!data.error) {
-				if(callback) callback(data);
-			} else {
-				if(onerror) onerror(data);
+		_s.request('account','create',params, function(data) {
+			if(data.created) {
+				if(data.wcrm_token) {
+					Options.item.wialon_crm_token = data.wcrm_token;
+					Options.save();
+					_s.login();
+				}
 			}
-		});
-
+			if(callback) callback(data);
+		},onerror);
 	}
 
-  
+	_s.getAmCredentials = function(callback, onerror) {
+		_s.request('account','getamcredentials',{}, function(data) {
+			if(callback) callback(data);
+		}, onerror);
+	}
+ 
+	_s.gotoAm = function(params) {
+		var elem = function(id) {
+			return document.getElementById(id);
+		}
+		elem('amember-login').value = params.login;
+		elem('amember-pass').value = params.pass;
+		elem('amember-login_attempt_id').value = params.attempt_id;
+		elem('am-login-form').submit();
+	}
+
+	_s.test = function(callback, onerror) {
+		_s.request('account','test',{}, function(data) {
+			log(data);
+			if(callback) callback(data);
+		}, onerror);
+	}
+ 
+	_s.test2 = function(callback, onerror) {
+		_s.request('test_object','test_method',{}, function(data) {
+			log(data);
+			if(callback) callback(data);
+		}, onerror);
+	}
+ 
+
 }]);

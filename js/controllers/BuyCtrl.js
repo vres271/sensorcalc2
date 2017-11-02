@@ -7,16 +7,22 @@ Main.controller('BuyCtrl',['$scope','$translate' ,'$translatePartialLoader', 'Gl
 	$scope.crm_account = {}
 
 	WaitFor(function() {return Wialon.auth;} ,function() {
-		getCRMAccount();
+		$scope.crm_account = {
+			name: Wialon.user.nm
+			,w_accounts_id: Wialon.user.bact
+		}
+		if(Wialon.user.prp.email && !$scope.crm_account.email) {
+			$scope.crm_account.email = Wialon.user.prp.email;
+		}
 	});
-	var getCRMAccount = function() {
-		var params = {w_accounts_id:Wialon.user.bact};
-		GlomosCRM.getAccount(params, function(data) {
-			$scope.crm_account = data.item;
-			$scope.crm_account.name = Wialon.user.nm;
-			$scope.crm_account.w_accounts_id = Wialon.user.bact;
-		});
-	}
+	// var getCRMAccount = function() {
+	// 	var params = {w_accounts_id:Wialon.user.bact};
+	// 	GlomosCRM.getAccount(params, function(data) {
+	// 		$scope.crm_account = data.item;
+	// 		$scope.crm_account.name = Wialon.user.nm;
+	// 		$scope.crm_account.w_accounts_id = Wialon.user.bact;
+	// 	});
+	// }
 
 	var err = function(e) {
 		if(!e) {

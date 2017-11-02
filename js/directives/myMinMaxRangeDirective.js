@@ -33,7 +33,7 @@
   		$element.on('mouseup',stopMoving);
   		$element.on('click',Move);
   		$element.on('change',Move);
-		Move();
+		  Move();
 
       // $element.on('dragleave', function(event) {
       //   event.preventDefault();

@@ -175,6 +175,10 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
 		}
 	}
 
+	$scope.copySensor = function(sensor) {
+		Units.copySensor($scope.item, sensor);
+	}
+
 	$scope.inverseSrcTable = function(sensor) {
 		Units.inverseSrcTable(sensor);
 		sensor._parser = 'standart';

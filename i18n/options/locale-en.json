@@ -1,5 +1,5 @@
 {
-    "WIALON_CRM_TOKEN":"Wialon CRM Token"
+    "WIALON_CRM_TOKEN":"Wialon CRM Key"
     ,"LANGUAGE":"Language"
     ,"WIALONCRM_USER": "WialonCRM User"
     ,"USERNAME": "Name"
@@ -7,5 +7,5 @@
     ,"END_DATE": "End date"
     ,"DESCRIPTION": "Description"
     ,"MAX UNIT ONLINE INTERVAL, S":"Max unit online interval, s"
-    ,"Wrong token": "Wrong token"
+    ,"Wrong WCRM Token": "Wrong key"
 }

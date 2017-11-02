@@ -1,0 +1,25 @@
+<!-- Modal -->
+<div id="emailconfirm-dialog" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{'Attention'|translate}}!</h4>
+      </div>
+      <div class="modal-body">
+		<p>{{'Какой email использовать'|translate}}?</p>
+		<div class="form-group">
+			<div class="form-group">
+				<input ng-model="new_crm_account.email"  class="form-control input-lg" type="email" placeholder="Укажите свой email">
+			</div>
+		</div>
+		<div ng-if="emailconfirm_dialog.error" class="alert alert-danger" translate>{{emailconfirm_dialog.error}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" ng-click="emailconfirm_dialog.onSubmit()" ng-disabled="!new_crm_account.email" >Ok</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{'Close'|translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

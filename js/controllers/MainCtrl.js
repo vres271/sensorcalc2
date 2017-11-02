@@ -23,6 +23,8 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		//GlomosCRM.enabled = true;
 	}
 
+	//if($scope.testmode) GlomosCRM.enabled = true;
+
 	var sid_from_url = Wialon.checkURLForSID();
 	var sid_from_storage = Wialon.storage.getItem('sid');
 	var token = Wialon.checkURLForToken()
@@ -55,7 +57,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		if(HWTypes.items.length===0) HWTypes.get();
 		if(Accounts.items.length===0) Accounts.get();
 		if(Users.items.length===0) Users.get();
-		if(Wialon.user.nm==='glomosru') GlomosCRM.enabled = true;
+		//if(Wialon.user.nm==='glomosru') GlomosCRM.enabled = true;
 		GlomosCRM.login();
 	});
 

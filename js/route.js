@@ -79,6 +79,12 @@ Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functi
                 '': {templateUrl: 'html/views/buy.html', controller: 'BuyCtrl'}
             }
         })
+         .state('rights-list', {
+            url: '/rights-list'
+            ,views: {
+                '': {templateUrl: 'html/views/rights-list.html', controller: 'RightsListCtrl'}
+            }
+        })
     //    .state('account', {
      //        url: '/account'
      //        ,views: {

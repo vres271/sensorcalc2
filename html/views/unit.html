@@ -86,7 +86,8 @@
 						<td>{{short_item.lmsg.p[sensor.p]}}</td>
 						<td>{{sensor | ParamToSensorValue : short_item.lmsg : item}}</td>
 						<td>{{sensor.m}}</td>
-						<td><a href="" ng-click=" deleteSensor(sensor, key); validate(); checkChagnes();" title="{{'Delete Sensor'|translate}}"><i class="fa fa-remove red"></i></a></td>
+						<td width="30px"><a href="" ng-click="copySensor(sensor, key); validate(); checkChagnes();"><i class="fa fa-clone" aria-hidden="true" title="{{'Copy Sensor'|translate}}"></i></a></td>
+						<td width="30px"><a href="" ng-click="deleteSensor(sensor, key); validate(); checkChagnes();" title="{{'Delete Sensor'|translate}}"><i class="fa fa-remove red"></i></a></td>
 					</tr>
 					<tr ng-if="1*sensor._id === 1*sensor_id" ng-repeat-end class="trans-open-down">
 						<td colspan="100" ng-include="'html/views/unit.sensor-form.html'" scope=""   onload=""></td>
@@ -105,4 +106,4 @@
 		<br>
 	</div>
 </form>
-<div ng-include="'html/views/unit.multisensor-dialog.html'" scope="" onload="">11</div>
+<div ng-include="'html/views/unit.multisensor-dialog.html'" scope="" onload=""></div>

@@ -7,28 +7,61 @@
 	    		<select ng-model="options.item.language" ng-options="key as value for (key,value) in languages " class="form-control"  id="hw" name="hw"  ng-change="validate(); saveItem();"></select>
 		      </div>
 		    </div>
-		    <div  ng-if="glomoscrm.enabled" class="form-group {{errClass('nm')}}">
-		      <label class="control-label col-sm-3" for="wialon_crm_token">{{'WIALON_CRM_TOKEN'|translate}} <sup><span class="label label-primary">CRM</span></sup></label>
+		    <div  ng-if="glomoscrm.enabled" class="form-group">
+		      <label class="control-label col-sm-3" for="wialon_crm_token">{{'WIALON_CRM_TOKEN'|translate}} <!-- <sup><span class="label label-primary">CRM</span></sup> --></label>
 		      <div class="col-sm-5">
 				<div class="input-group">
 				    <input  ng-model="options.item.wialon_crm_token"  data-ng-model-options="{debounce: 400}" type="text" class="form-control" id="wialon_crm_token" placeholder="" name="wialon_crm_token"  ng-change="validate(); loginToCRM(); saveItem();">
 				    <div class="input-group-btn">
 				      <button class="btn btn-default" type="button">
-				        <i class="fa fa-check green" ng-if="gcrm.user"></i>
-				        <i class="fa fa-warning red" ng-if="!gcrm.user && options.item.wialon_crm_token"></i>
+				        <i class="fa fa-check green" ng-if="gcrm.account"></i>
+				        <i class="fa fa-warning red" ng-if="!gcrm.account && options.item.wialon_crm_token"></i>
 				        <i class="fa fa-warning grey" ng-if="!options.item.wialon_crm_token"></i>
 				      </button>
 				    </div>
 				</div>
-				<div ng-if="gcrm.user">
-					<br><p><strong>{{'WIALONCRM_USER'|translate}}:</strong></p>
-					<p>{{'USERNAME'|translate}}: {{gcrm.user.name}}</p>
-					<p>{{'START_DATE'|translate}}: {{gcrm.user.start_dt}}</p>
-					<p>{{'END_DATE'|translate}}: {{gcrm.user.end_dt}}</p>
-					<p>{{'DESCRIPTION'|translate}}: {{gcrm.user.dsc}}</p>
-				</div>
-				<div ng-if="!gcrm.user && options.item.wialon_crm_token" class="alert alert-danger" translate>{{gcrm.error}}</div>
 		      </div>
+		    </div>
+			<div class="text-center" ng-if="glomoscrm.enabled">
+				<a href="" ng-click="test()" class="btn btn-warning btn-lg">Test</a>
+				<a href="" ng-click="test2()" class="btn btn-warning btn-lg">Test2</a>
+				<br>
+			</div>
+		    <div ng-if="glomoscrm.enabled" class="form-group">
+				<label class="control-label col-sm-3" >{{'Мои продукты'|translate}}</label>
+				<div class="col-sm-5">
+					<div ng-if="gcrm.account" class="input-group">
+						<!-- <br><p><strong>{{'WIALONCRM_USER'|translate}}:</strong></p> -->
+						<!-- <p>{{'USERNAME'|translate}}: {{gcrm.account.name}}</p> -->
+						<!-- <p>{{'ACCOUNT'|translate}}: {{gcrm.account.name}}</p> -->
+						<!-- <p><b>{{'EMAIL'|translate}}:</b> {{gcrm.account.email}}</p> -->
+						<div ng-if="gcrm.account.subscriptions" >
+							<table class="table">
+								<tr ng-repeat="(id, dtto) in gcrm.account.subscriptions">
+									<!-- <td>{{id}}</td> -->
+									<td>
+										<span class="fa-stack fa-3x grey">
+											<i class="fa fa-square-o fa-stack-2x"></i>
+											<i class="fa fa-{{['first-order','wrench'][(1*id-1)]}}  fa-stack-1x"></i>
+										</span>
+									</td>
+									<td>
+										<b>{{products.index.am_products_id[id].name}}</b>
+										<p>{{products.index.am_products_id[id].dsc}}</p>
+									</td>
+									<td width="100px"><small>истекает:</small> {{dtto}}</td>
+								</tr>
+							</table>
+						</div>
+
+						<!-- <p>{{'START_DATE'|translate}}: {{gcrm.account.start_dt}}</p> -->
+						<!-- <p>{{'END_DATE'|translate}}: {{gcrm.account.end_dt}}</p> -->
+						<!-- <p>{{'DESCRIPTION'|translate}}: {{gcrm.account.dsc}}</p> -->
+						<hr>
+					</div>
+					<div ng-if="!gcrm.account && options.item.wialon_crm_token" class="alert alert-danger" translate>{{gcrm.error}}</div>
+					<div class="text-center"><a href="" ng-click="buy()" class="btn btn-success btn-lg">Купить модулей</a></div><br>
+				</div>
 		    </div>
 		    <div class="form-group {{errClass('nm')}}">
 		      <label class="control-label col-sm-3" for="unit_online_max_interval" translate>MAX UNIT ONLINE INTERVAL, S</label>
@@ -36,12 +69,8 @@
 		        <input ng-model="options.item.unit_online_max_interval" type="text" class="form-control" id="unit_online_max_interval" placeholder="" name="unit_online_max_interval"  ng-change="validate(); saveItem();">
 		      </div>
 		    </div>
-<!-- 		    <div class="form-group">
-		    	<div class="col-sm-5 col-md-offset-3">
-					<button class="btn btn-default" type="button" ng-click="saveItem();"><i class="fa fa-save"></i> Save</button>
-				</div>
-		    </div>
- -->		
  		</div>
 	</form>
+	<div ng-include="'html/views/gotoam.form.html'" ng-hide="true"></div>
 </div>
+<div ng-include="'html/views/options.gotoam-email-dialog.html'" scope="" onload=""></div>

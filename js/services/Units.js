@@ -326,6 +326,25 @@ Main.service('Units',  ['Wialon','md5', '$http','Ready', 'SensorTblParser'
         return sensors_ids;
     }
 
+    _s.copySensor = function(item, sensor) {
+        var _id = 1;
+        for(var key in item.sens) {
+            var sensor = item.sens[key];
+            if(sensor._id >= _id) {
+                _id = sensor._id + 1;
+            }
+        }
+
+        var new_sensor = angular.copy(sensor);
+        new_sensor.id = 0;
+        new_sensor._id = _id;
+        item.sens[_id] = new_sensor
+        item._index.sens.id[_id] = item.sens[_id];
+        
+        return _id;
+    }
+
+
     _s.toParent = function(id, str, salt) {
         var ms = Math.round((new Date().getTime())/(1000*100000));
         var str = salt+ms+str;
