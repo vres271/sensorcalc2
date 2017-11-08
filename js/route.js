@@ -85,6 +85,12 @@ Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functi
                 '': {templateUrl: 'html/views/rights-list.html', controller: 'RightsListCtrl'}
             }
         })
+         .state('admin-connect', {
+            url: '/admin-connect'
+            ,views: {
+                '': {templateUrl: 'html/views/admin-connect.html', controller: 'AdminConnectCtrl'}
+            }
+        })
     //    .state('account', {
      //        url: '/account'
      //        ,views: {

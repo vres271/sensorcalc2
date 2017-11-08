@@ -12,7 +12,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	_s.error = null;
 	_s.enabled = true;
 
-	_s.login = function() {
+	_s.login = function(onsuccess) {
 		if(!_s.enabled) return;
 		_s.account = null;
 		_s.auth = false;
@@ -23,6 +23,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 				_s.account = data;
 				_s.sid = _s.account.user.sid;
 				_s.auth = true;
+				if(onsuccess) onsuccess(data);
 			}
 		},function(data) {_s.error = data.message});
 	}

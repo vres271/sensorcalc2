@@ -1,5 +1,5 @@
-Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', 'Users', '$translate' ,'$translatePartialLoader'
-	,function($scope, State, Units, HWTypes, Accounts, Users, $translate,  $translatePartialLoader) {
+Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', 'Users', 'WCRMObjects', '$translate' ,'$translatePartialLoader'
+	,function($scope, State, Units, HWTypes, Accounts, Users, WCRMObjects, $translate,  $translatePartialLoader) {
 	$translatePartialLoader.addPart('units-list');
 	$translatePartialLoader.addPart('messages');
 	$translate.refresh();
@@ -8,6 +8,8 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 	$scope.hwtypes = HWTypes;
 	$scope.accounts = Accounts;
 	$scope.users = Users;
+
+	$scope.wcrmobjects = WCRMObjects;
 
 	$scope.s = State.units_list;
 

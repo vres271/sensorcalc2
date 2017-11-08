@@ -23,6 +23,17 @@ var isEmptyObject =  function(obj) {
     return !Object.keys(obj).length;
 }
 
+var getChecked = function(items) {
+    var checked_items = [];
+    for(var key in items) {
+        var item = items[key];
+        if(item._checked) {
+            checked_items.push(item);
+        }
+    }
+    return checked_items;
+};
+
 
 /*
  Copyright 2011-2013 Abdulla Abdurakhmanov

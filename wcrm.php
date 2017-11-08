@@ -49,7 +49,7 @@ try {
 	if($object_name=='account') {
 		if($method_name=='login') {
 			$response = $account->login(toParams(Array('token'),$params));
-		}else if($method_name=='get') {
+		} else if($method_name=='get') {
 			$response = $account->get();
 		} else if($method_name=='create') {
 			$response = $account->create(toParams(Array('name','w_accounts_id','email'),$params));
@@ -103,6 +103,36 @@ try {
 			if(@$result->body) {
 				$response->items = $result->body;
 			}
+		}
+	} else if($object_name=='companies') {
+		$companies = new Companies($core->_parent);
+		if($method_name=='get') {
+			$response = $companies->WCRMget();
+		}
+	} else if($object_name=='c_users') {
+		$c_users = new C_Users($core->_parent);
+		if($method_name=='get') {
+			$result = $response = $c_users->get();
+			if(@$result->body) {
+				$response->items = $result->body;
+			}
+		}
+	} else if($object_name=='objects') {
+		$objects = new Objects($core->_parent);
+		if($method_name=='get') {
+			$result = $response = $objects->get();
+			if(@$result->body) {
+				$response->items = $result->body;
+			}
+		}
+	} else if($object_name=='connector') {
+		$connector = new WCRMConnector($core->_parent);
+		if($method_name=='connect') {
+			$response = $connector->connectAccount($params);
+		} else if($method_name=='clear') {
+			$response = $connector->clearByAccount($params);
+		} else if($method_name=='clearacc') {
+			$response = $connector->clearAllByAccount($params);
 		}
 	}
 

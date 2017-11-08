@@ -1,5 +1,5 @@
-Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM', 'Statistics','$translate' ,'$translatePartialLoader', 'tmhDynamicLocale'
-	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM, Statistics,$translate,  $translatePartialLoader, tmhDynamicLocale) {
+Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM','WCRMCompanies','WCRMCUsers','WCRMObjects', 'Statistics','$translate' ,'$translatePartialLoader', 'tmhDynamicLocale'
+	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM,WCRMCompanies,WCRMCUsers,WCRMObjects, Statistics,$translate,  $translatePartialLoader, tmhDynamicLocale) {
 
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
@@ -20,7 +20,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		Units.from = 1500;
 		Units.to = 2000;
 		Units.autorefresh = false;
-		//GlomosCRM.enabled = true;
+		GlomosCRM.enabled = true;
 	}
 
 	//if($scope.testmode) GlomosCRM.enabled = true;
@@ -58,7 +58,11 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		if(Accounts.items.length===0) Accounts.get();
 		if(Users.items.length===0) Users.get();
 		//if(Wialon.user.nm==='glomosru') GlomosCRM.enabled = true;
-		GlomosCRM.login();
+		GlomosCRM.login(function() {
+			if(WCRMCompanies.items.length===0) WCRMCompanies.get();
+			if(WCRMCUsers.items.length===0) WCRMCUsers.get();
+			if(WCRMObjects.items.length===0) WCRMObjects.get();
+		});
 	});
 
 	Units.loadUnit(1002,function(data) {

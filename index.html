@@ -22,7 +22,13 @@
 					<li><a href="" ng-href="#units" translate>UNITS</a></li>
 					<li><a href="" ng-href="#users-list" translate>USERS</a></li>
 					<li><a href="" ng-href="#accounts-list" translate>ACCOUNTS</a></li>
-					<li ng-if="gcrm.account.rights_comp.nav.rights"><a href="" ng-href="#rights-list" translate>RIGHTS</a></li>
+					<li class="dropdown" ng-if="gcrm.account.rights_comp.nav.admin">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" ng-href="#" >ADMIN<span class="caret"></span></a>
+				        <ul class="dropdown-menu">
+				          <li ng-if="gcrm.account.rights_comp.nav.rights"><a href="" ng-href="#rights-list" translate>RIGHTS</a></li>
+				          <li><a href="" ng-href="#admin-connect" translate>Connecting</a></li>
+				        </ul>
+					</li>
 					<!-- <li><a href="" ng-href="#about/support" >{{'SUPPORT'|translate}} <sup><span class="label label-primary">CRM</span></sup></a></li> -->
 				</ul>
 		        <ul ng-hide="!wialon.auth" class="nav navbar-nav navbar-right">

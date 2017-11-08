@@ -52,6 +52,17 @@ var isEmptyObject =  function(obj) {
     return !Object.keys(obj).length;
 }
 
+var getChecked = function(items) {
+    var checked_items = [];
+    for(var key in items) {
+        var item = items[key];
+        if(item._checked) {
+            checked_items.push(item);
+        }
+    }
+    return checked_items;
+};
+
 
 /*
  Copyright 2011-2013 Abdulla Abdurakhmanov
@@ -729,6 +740,12 @@ Main.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functi
                 '': {templateUrl: 'html/views/rights-list.html', controller: 'RightsListCtrl'}
             }
         })
+         .state('admin-connect', {
+            url: '/admin-connect'
+            ,views: {
+                '': {templateUrl: 'html/views/admin-connect.html', controller: 'AdminConnectCtrl'}
+            }
+        })
     //    .state('account', {
      //        url: '/account'
      //        ,views: {
@@ -880,7 +897,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 	_s.error = null;
 	_s.enabled = true;
 
-	_s.login = function() {
+	_s.login = function(onsuccess) {
 		if(!_s.enabled) return;
 		_s.account = null;
 		_s.auth = false;
@@ -891,6 +908,7 @@ Main.service('GlomosCRM', ['$http', 'Options'
 				_s.account = data;
 				_s.sid = _s.account.user.sid;
 				_s.auth = true;
+				if(onsuccess) onsuccess(data);
 			}
 		},function(data) {_s.error = data.message});
 	}
@@ -3224,6 +3242,190 @@ Main.service('WCRMAccounts',  ['GlomosCRM'
 	}
 
 }]);
+Main.service('WCRMCompanies',  ['GlomosCRM'
+    ,function(GlomosCRM){
+
+	var _s = this;
+	_s.items = [];
+	_s.get = function(params, callback) {
+		GlomosCRM.request('companies','get',{}, function(data) {			
+			if(!data.error) {
+				_s.items = data.items;
+	        	_s.index = {
+	                id: createIndex(data.items, 'id')
+	                ,wid: createIndex(data.items, 'wid')
+	        	};
+	        	log(_s.index)
+			} else {
+				log(data.error);
+			}
+		});
+	}
+
+
+
+
+}]);
+Main.service('WCRMConnector',  ['GlomosCRM', 'Users', 'Units'
+    ,function(GlomosCRM, Users, Units){
+
+	var _s = this;
+	_s.i = '';
+
+	_s.connect = function(items, callback) {
+		_s.i = 0;
+		var nextStep = function(i) {
+			if(!items[i]) {if(callback) {callback();}; _s.i = ''; return;}
+			var item = items[i];
+			item._result = [];
+			i++;
+			_s.i = i;
+			var creator = Users.index.id[item.crt];
+			var units = _s.getAccountsUnits(item);
+			var users = _s.getAccountsUsers(item);
+			var params = {
+				account: {
+					wid: item.id
+					,name: item.nm
+				}
+				,creator: {
+					wid: creator.id
+					,name: creator.nm
+				}
+				,units: units
+				,users: users
+			}
+			GlomosCRM.request('connector','connect',params, function(data) {	
+				item._result.push({message:data})
+				item._checked = false;
+				nextStep(i);
+			},function(data) {	
+				if(!item._result) item._result = [];
+				item._result.push({error:true,message:data.message});
+				nextStep(i);
+			});
+		}; nextStep(0);
+
+	}
+
+	_s.clear = function(accounts_id, callback) {
+		GlomosCRM.request('connector','clear',{accounts_id: accounts_id}, function(data) {
+			if(callback) callback(data);
+		});
+	}
+
+	_s.clearAcc = function(accounts_id, callback) {
+		GlomosCRM.request('connector','clearacc',{accounts_id: accounts_id}, function(data) {
+			if(callback) callback(data);
+		});
+	}
+
+	_s.getAccountsUnits = function(account) {
+		var units = [];
+		for(var key in Units.items) {
+			var unit = Units.items[key];
+			if(unit.bact === account.id) {
+				units.push({
+					wid:unit.id
+					,name:unit.nm
+					,uid:unit.uid
+					,ph:unit.ph
+					,hw:unit.hw
+				});
+			}
+		}
+		return units;
+	}
+
+	_s.getAccountsUsers = function(account) {
+		var users = [];
+		for(var key in Users.items) {
+			var user = Users.items[key];
+			if(user.bact === account.id) {
+				users.push({
+					wid:user.id
+					,name:user.nm
+				});
+			}
+		}
+		return users;
+	}
+
+
+
+}]);
+Main.service('WCRMCUsers',  ['GlomosCRM'
+    ,function(GlomosCRM){
+
+	var _s = this;
+	_s.items = [];
+	_s.get = function(params, callback) {
+		GlomosCRM.request('c_users','get',{}, function(data) {			
+			if(!data.error) {
+				_s.items = data.items;
+	        	_s.index = {
+	                id: createIndex(data.items, 'id')
+	                ,wid: createIndex(data.items, 'wid')
+	        	};
+			} else {
+				log(data.error);
+			}
+		});
+	}
+
+	_s.getAll = function(params, callback) {
+		GlomosCRM.request('c_users','getall',{}, function(data) {			
+			if(!data.error) {
+	        	data.index = {
+	                id: createIndex(data.items, 'id')
+	                ,wid: createIndex(data.items, 'wid')
+	        	};
+				callback(data);
+			} else {
+				log(data.error);
+			}
+		});
+	}
+
+
+
+}]);
+Main.service('WCRMObjects',  ['GlomosCRM'
+    ,function(GlomosCRM){
+
+	var _s = this;
+	_s.items = [];
+	_s.get = function(params, callback) {
+		GlomosCRM.request('objects','get',{}, function(data) {			
+			if(!data.error) {
+				_s.items = data.items;
+	        	_s.index = {
+	                id: createIndex(data.items, 'id')
+	                ,wid: createIndex(data.items, 'wid')
+	        	};
+			} else {
+				log(data.error);
+			}
+		});
+	}
+
+	_s.getAll = function(params, callback) {
+		GlomosCRM.request('objects','getall',{}, function(data) {			
+			if(!data.error) {
+	        	data.index = {
+	                id: createIndex(data.items, 'id')
+	                ,wid: createIndex(data.items, 'wid')
+	        	};
+				callback(data);
+			} else {
+				log(data.error);
+			}
+		});
+	}
+
+
+
+}]);
 Main.service('WCRMProducts',  ['GlomosCRM'
     ,function(GlomosCRM){
 
@@ -3368,6 +3570,7 @@ Main.service('WCRMUsers',  ['GlomosCRM'
 				_s.items = data.items;
 	        	_s.index = {
 	                id: createIndex(data.items, 'id')
+	                ,wid: createIndex(data.items, 'wid')
 	        	};
 			} else {
 				log(data.error);
@@ -3380,6 +3583,7 @@ Main.service('WCRMUsers',  ['GlomosCRM'
 			if(!data.error) {
 	        	data.index = {
 	                id: createIndex(data.items, 'id')
+	                ,wid: createIndex(data.items, 'wid')
 	        	};
 				callback(data);
 			} else {
@@ -3896,6 +4100,85 @@ Main.controller('AccountsListCtrl',['$scope','$translate' ,'$translatePartialLoa
 
 
 }]);
+Main.controller('AdminConnectCtrl',['$scope','$translate' ,'$translatePartialLoader', 'GlomosCRM', 'WaitFor', 'Wialon', 'Units', 'Users', 'Accounts','WCRMCompanies','WCRMCUsers','WCRMObjects','WCRMConnector'
+	,function($scope,$translate,  $translatePartialLoader, GlomosCRM, WaitFor, Wialon, Units, Users, Accounts,WCRMCompanies,WCRMCUsers,WCRMObjects,WCRMConnector) {
+	//$translatePartialLoader.addPart('admin');
+	//$translate.refresh();
+
+	$scope.glomoscrm = GlomosCRM;
+
+	$scope.units = Units;
+	$scope.accounts = Accounts;
+	$scope.users = Users;
+
+	$scope.companies = WCRMCompanies;
+	$scope.c_users = WCRMCUsers;
+	$scope.objects = WCRMCUsers;
+	var getAll = function() {
+		WCRMCompanies.get();
+		WCRMCUsers.get();
+		WCRMObjects.get();
+	}; //getAll();
+
+	$scope.checkAll = function() {
+		for(var key in $scope.items_result) {
+			var item = $scope.items_result[key];
+			if(!$scope.companies.index.wid[item.id]) item._checked = $scope.all_checked;
+		}
+	}
+
+    $scope.$watch(function() {
+		$scope.items_checked = false;
+		for(var key in $scope.items_result) {
+			var item = $scope.items_result[key];
+			if(item._checked) {
+				$scope.items_checked = true;
+				return true;
+			}
+		}
+		return false;
+	});
+
+	$scope.connect = function() {
+		if(!$scope.items_checked) return false;
+		var checked_items = getChecked($scope.items_result);
+		if(checked_items.length) {
+			$scope.progress_dialog = {
+				title: 'Connecting to CRM'
+				,N: checked_items.length
+				,counterService: WCRMConnector
+			}
+			$('#progress-dialog').modal('show'); 
+			WCRMConnector.connect(checked_items, function() {
+				getAll();
+				$('#progress-dialog').modal('hide');
+				$scope.all_checked = false;
+			});
+		}
+	}
+
+	$scope.clear = function() {
+		if(!GlomosCRM.account.id) return;
+		WCRMConnector.clear(GlomosCRM.account.id, function() {
+			getAll();
+			Accounts.get();
+		});
+	}
+
+	$scope.clearAcc = function() {
+		if(!GlomosCRM.account.id) return;
+		WCRMConnector.clearAcc(GlomosCRM.account.id, function() {
+			//location.hash = '';
+		});
+	}
+
+
+}]);
+
+
+
+
+
 Main.controller('BuyCtrl',['$scope','$translate' ,'$translatePartialLoader', 'GlomosCRM', 'WaitFor', 'Wialon'
 	,function($scope,$translate,  $translatePartialLoader, GlomosCRM, WaitFor, Wialon) {
 	$translatePartialLoader.addPart('about');
@@ -3992,8 +4275,8 @@ Main.controller('LoginCtrl',['$scope', 'Wialon','Statistics'
 	}
 }]);
 
-Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM', 'Statistics','$translate' ,'$translatePartialLoader', 'tmhDynamicLocale'
-	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM, Statistics,$translate,  $translatePartialLoader, tmhDynamicLocale) {
+Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', 'Units', 'HWTypes', 'Accounts', 'Users', 'Options', 'GlomosCRM','WCRMCompanies','WCRMCUsers','WCRMObjects', 'Statistics','$translate' ,'$translatePartialLoader', 'tmhDynamicLocale'
+	,function($scope, Ready,  WaitFor, State, Wialon, Units, HWTypes, Accounts, Users, Options, GlomosCRM,WCRMCompanies,WCRMCUsers,WCRMObjects, Statistics,$translate,  $translatePartialLoader, tmhDynamicLocale) {
 
 	$scope.wialon = Wialon;
 	$scope.ready = Ready;
@@ -4014,7 +4297,7 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		Units.from = 1500;
 		Units.to = 2000;
 		Units.autorefresh = false;
-		//GlomosCRM.enabled = true;
+		GlomosCRM.enabled = true;
 	}
 
 	//if($scope.testmode) GlomosCRM.enabled = true;
@@ -4052,7 +4335,11 @@ Main.controller('MainCtrl', ['$scope', 'Ready',  'WaitFor', 'State', 'Wialon', '
 		if(Accounts.items.length===0) Accounts.get();
 		if(Users.items.length===0) Users.get();
 		//if(Wialon.user.nm==='glomosru') GlomosCRM.enabled = true;
-		GlomosCRM.login();
+		GlomosCRM.login(function() {
+			if(WCRMCompanies.items.length===0) WCRMCompanies.get();
+			if(WCRMCUsers.items.length===0) WCRMCUsers.get();
+			if(WCRMObjects.items.length===0) WCRMObjects.get();
+		});
 	});
 
 	Units.loadUnit(1002,function(data) {
@@ -4377,7 +4664,6 @@ Main.controller('RightsListCtrl',['$scope','$translate' ,'$translatePartialLoade
 		WCRMRights.get(f);
 	}
 
-
 	$scope.rightIcon = function(val) {
       if(val === null || val === undefined) {
         return 'circle-o grey';  
@@ -4399,7 +4685,7 @@ Main.controller('RightsListCtrl',['$scope','$translate' ,'$translatePartialLoade
 		} else if(item[right] == false ) {
 			item[right] = null;
 		}
-		WCRMRights.saveRight({item: item, right: right}, function(data) {log(data);});
+		WCRMRights.saveRight({item: item, right: right}, function(data) {});
 	}
 
 }]);
@@ -4640,8 +4926,8 @@ Main.controller('UnitCtrl',['$scope', '$location', '$stateParams', '$timeout', '
     $scope.tbl_parsers = ['standart','italon','omnicomm'];
 
 }]);
-Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', 'Users', '$translate' ,'$translatePartialLoader'
-	,function($scope, State, Units, HWTypes, Accounts, Users, $translate,  $translatePartialLoader) {
+Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Accounts', 'Users', 'WCRMObjects', '$translate' ,'$translatePartialLoader'
+	,function($scope, State, Units, HWTypes, Accounts, Users, WCRMObjects, $translate,  $translatePartialLoader) {
 	$translatePartialLoader.addPart('units-list');
 	$translatePartialLoader.addPart('messages');
 	$translate.refresh();
@@ -4650,6 +4936,8 @@ Main.controller('UnitsListCtrl',['$scope', 'State', 'Units', 'HWTypes', 'Account
 	$scope.hwtypes = HWTypes;
 	$scope.accounts = Accounts;
 	$scope.users = Users;
+
+	$scope.wcrmobjects = WCRMObjects;
 
 	$scope.s = State.units_list;
 

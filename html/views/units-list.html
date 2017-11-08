@@ -92,7 +92,8 @@
 			<thead>
                 <tr>
                   <!-- <th><input type="checkbox" ng-model="all_checked" ng-click="checkAll()"></th>  -->
-                  <th width="50px">#</th>
+                  <th width="30px">#</th>
+                  <th width="30px"></th>
                   <th ng-if="s.show.p_accounts_nm"><a href="" ng-click="setOrderBy('bpact')" ><i ng-if="s.orderby === 'bpact'" class="fa fa-sort-{{s.orderby_reverse ? 'asc' : 'desc'}}" aria-hidden="true"></i> {{'col_show_p_accounts_nm'|translate}}</a></th>
                   <th ng-if="s.show.accounts_nm"><a href="" ng-click="setOrderBy('bact')" ><i ng-if="s.orderby === 'bact'" class="fa fa-sort-{{s.orderby_reverse ? 'asc' : 'desc'}}" aria-hidden="true"></i> {{'ACCOUNT'|translate}}</a></th>
                   <th ng-if="s.show.crt_nm"><a href="" ng-click="setOrderBy('crt')" ><i ng-if="s.orderby === 'crt'" class="fa fa-sort-{{s.orderby_reverse ? 'asc' : 'desc'}}" aria-hidden="true"></i> {{'CRT_USER_NAME'|translate}}</a></th>
@@ -111,6 +112,7 @@
 				<tr ng-repeat="item in units.items | filter: s.filter | UnitsFilter: s.custom_filter : now.ut : hwtypes : accounts : users | orderBy : s.orderby : s.orderby_reverse | limitTo : s.limit : 0 as items_result track by $index" class="item-row {{item._checked?'info':''}}">
 					<!-- <td><input type="checkbox" ng-model="item._checked" ng-change="onItemSelect();"></td> -->
 					<td ng-bind="$index+1"></td>
+					<td><i ng-if="wcrmobjects.index.wid[item.id].id" class="fa fa-link green" aria-hidden="true"></i></td>
 					<td ng-if="s.show.p_accounts_nm" ><a href="" ng-href="#account/{{accounts.index.id[item.bact].bpact}}"  ng-bind="accounts.index.id[accounts.index.id[item.bact].bpact].nm"></a></td>
 					<td ng-if="s.show.accounts_nm" ><a href="" ng-href="#account/{{item.bact}}"  ng-bind="accounts.index.id[item.bact].nm"></a></td>
 					<td ng-if="s.show.crt_nm" ><a href="" ng-href="#user/{{item.crt}}"  ng-bind="users.index.id[item.crt].nm"></a></td>

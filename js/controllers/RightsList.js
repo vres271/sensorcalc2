@@ -27,7 +27,6 @@ Main.controller('RightsListCtrl',['$scope','$translate' ,'$translatePartialLoade
 		WCRMRights.get(f);
 	}
 
-
 	$scope.rightIcon = function(val) {
       if(val === null || val === undefined) {
         return 'circle-o grey';  
@@ -49,7 +48,7 @@ Main.controller('RightsListCtrl',['$scope','$translate' ,'$translatePartialLoade
 		} else if(item[right] == false ) {
 			item[right] = null;
 		}
-		WCRMRights.saveRight({item: item, right: right}, function(data) {log(data);});
+		WCRMRights.saveRight({item: item, right: right}, function(data) {});
 	}
 
 }]);

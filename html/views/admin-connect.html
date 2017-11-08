@@ -1,0 +1,61 @@
+<div class="container text-center">
+	<button ng-click="connect();" type="button" class="btn btn-primary btn-lg" ng-disabled="!items_checked"><i class="fa fa-link" aria-hidden="true"></i> Подключить выбранные учетные записи к WialonCRM</button> <button ng-click="clear();" type="button" class="btn btn-danger btn-lg" ><i class="fa fa-remove" aria-hidden="true"></i> Clear</button> <button ng-click="clearAcc();" type="button" class="btn btn-danger btn-lg" ><i class="fa fa-remove" aria-hidden="true"></i> Clear All</button>
+	<br>
+	<br>
+	<small ng-if="!items_checked">Выберите, какие учетные записи подключить</small>
+	<br>
+	<br>
+</div>
+<div class="container">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th width="30px"><input type="checkbox" ng-model="all_checked" ng-click="checkAll()"></th>
+				<th width="30px">#</th>
+				<th width="30px"></th>
+				<th>Name</th>
+				<th>Result</th>
+			</tr>
+		</thead>
+		<tr ng-repeat="item in accounts.items | orderBy: ['-id'] | limitTo: 20 : 0 as items_result">
+			<td><input type="checkbox" ng-disabled="companies.index.wid[item.id]" ng-model="item._checked" ng-change="onItemSelect();"></td>
+			<td>{{$index+1}}</td>
+			<td><i ng-if="companies.index.wid[item.id]" class="fa fa-link green" aria-hidden="true"></i></td>
+			<td>{{item.nm}}</td>
+			<td>
+				<ul ng-if="item._result">
+					<div ng-repeat="row in item._result">
+						<i class="fa fa-warning red" ng-if="row.error"></i> <span ng-if="!row.message.company_add">{{row.message}}</span>
+						<table ng-if="row.message.company_add" class="table">
+							<tr>
+								<td width="200px">Учетная запись</td><td><i ng-if="row.message.company_add.added" class="fa fa-link green" aria-hidden="true"></i> {{accounts.index.id[row.message.company_add.wid].nm}}</td>
+							</tr>
+							<tr>
+								<td>Пользователь-создатель</td><td><i ng-if="row.message.c_user_creator_add.c_user.added" class="fa fa-link green" aria-hidden="true"></i> {{users.index.id[row.message.c_user_creator_add.wid].nm}}</td>
+							</tr>
+							<tr>
+								<td>Остальные пользователи</td>
+								<td>
+									<div ng-repeat="(key, row) in row.message.c_users_add">
+										<i ng-if="row.c_user.added" class="fa fa-link green" aria-hidden="true"></i> {{users.index.id[row.wid].nm}}
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>Объекты</td>
+								<td>
+									<div ng-repeat="(key, row) in row.message.objects_add">
+										<i ng-if="row.added" class="fa fa-link green" aria-hidden="true"></i> {{units.index.id[row.wid].nm}} 
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</ul>
+			</td>
+		</tr>
+	</table>
+</div>
+<div ng-include="'html/views/progress-dialog.html'" scope="" onload=""></div>
+
+
